@@ -34,10 +34,25 @@ export const updateProfilePic = createAsyncThunk<
 >("user/updateProfilePic", async (profile_picture_link, thunkApi) => {
   // TODO implement api
   // try {
-  //   await updateProfilePicAPI(profile_picture_link)
+  //   await updateProfilePicApi(profile_picture_link)
   // } catch (error) {
   //   thunkApi.rejectWithValue(error)
   // }
 });
+
+export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
+  "user/getSelfUser",
+  async (_, thunkApi) => {
+    // TODO implement api
+    // const response = await getSelfUserApi()
+    // return response
+    return {
+      id: 0,
+      username: "",
+      is_following: false,
+      profile_picture_link: "",
+    };
+  }
+);
 
 export default userSlice.reducer;
