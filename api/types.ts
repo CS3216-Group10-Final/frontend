@@ -29,6 +29,7 @@ export interface User {
   id: number;
   username: string;
   profile_picture_link: string;
+  is_following: boolean;
 }
 
 export interface UserStatistics {
