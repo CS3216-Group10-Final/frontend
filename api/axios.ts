@@ -4,7 +4,7 @@
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 import axios from "axios";
 import TokenService from "./authentication/token_service";
-import { refreshTokens } from "./authentication/authentication_api";
+import { refreshTokensApi } from "./authentication/authentication_api";
 
 const API_BASE_URL = "";
 
@@ -31,7 +31,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-createAuthRefreshInterceptor(axiosInstance, refreshTokens);
+createAuthRefreshInterceptor(axiosInstance, refreshTokensApi);
 
 export function getFullURL(url: string): string {
   return API_BASE_URL + url;
