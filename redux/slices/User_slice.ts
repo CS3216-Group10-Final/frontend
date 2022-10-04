@@ -1,3 +1,4 @@
+import { getSelfUserApi } from "@api/users_api";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../api/types";
 import { RootState } from "../store";
@@ -20,6 +21,9 @@ const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(getSelfUser.fulfilled, (state, action) => {
+      state.user = action.payload;
+    });
     builder.addCase(updateProfilePic.fulfilled, (state, action) => {
       const newUser = Object.create(state.user);
       state.user = { profile_picture_link: action.payload, ...newUser };
@@ -43,15 +47,8 @@ export const updateProfilePic = createAsyncThunk<
 export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
   "user/getSelfUser",
   async (_, thunkApi) => {
-    // TODO implement api
-    // const response = await getSelfUserApi()
-    // return response
-    return {
-      id: 0,
-      username: "",
-      is_following: false,
-      profile_picture_link: "",
-    };
+    const response = await getSelfUserApi();
+    return response;
   }
 );
 
