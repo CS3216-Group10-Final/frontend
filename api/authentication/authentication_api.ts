@@ -29,7 +29,8 @@ interface AuthenticationResponse {
 export async function registerUser(userRegisterDetails: UserLoginDetails) {
   const response = await axiosInstance.post<AuthenticationResponse>(
     REGISTER_PATH,
-    userRegisterDetails
+    userRegisterDetails,
+    { skipAuthRefresh: true } as AxiosRequestConfig
   );
   return response.data;
 }
@@ -51,12 +52,8 @@ export async function login(userLoginDetails: UserLoginDetails) {
 export async function refreshTokens() {
   const response = await axiosInstance.post<TokenResponseData>(
     REFRESH_TOKEN_PATH,
-    {
-      refresh: TokenService.getLocalRefreshToken(),
-    },
-    {
-      skipAuthRefresh: true,
-    } as AxiosRequestConfig
+    { refresh: TokenService.getLocalRefreshToken() },
+    { skipAuthRefresh: true } as AxiosRequestConfig
   );
   const tokenResponseData = response.data;
   TokenService.setTokens({
@@ -68,7 +65,7 @@ export async function refreshTokens() {
 export async function logout() {
   const refreshToken = TokenService.getLocalRefreshToken();
   TokenService.removeTokens();
-  await axiosInstance.post(LOGOUT_PATH, {
-    refresh: refreshToken,
-  });
+  await axiosInstance.post(LOGOUT_PATH, { refresh: refreshToken }, {
+    skipAuthRefresh: true,
+  } as AxiosRequestConfig);
 }
