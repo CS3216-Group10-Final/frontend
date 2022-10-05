@@ -26,8 +26,14 @@ export async function getGameEntryListApi(
   return response.data;
 }
 
-export async function createGameEntryApi(gameEntry: GameEntry) {
-  await axiosInstance.post(GAME_ENTRIES_PATH, gameEntry);
+export async function createGameEntryApi(
+  gameEntry: GameEntry
+): Promise<GameEntry> {
+  const response = await axiosInstance.post<GameEntry>(
+    GAME_ENTRIES_PATH,
+    gameEntry
+  );
+  return response.data;
 }
 
 export async function updateGameEntryApi(gameEntry: GameEntry) {
