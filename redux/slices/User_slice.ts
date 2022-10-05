@@ -1,5 +1,6 @@
+import { updateUserProfilePictureApi } from "@api/pictures_api";
 import { getSelfUserApi } from "@api/users_api";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User } from "../../api/types";
 import { RootState } from "../store";
 
@@ -32,21 +33,17 @@ const userSlice = createSlice({
 });
 
 export const updateProfilePic = createAsyncThunk<
-  void,
-  string | undefined,
+  string,
+  File,
   { state: RootState }
->("user/updateProfilePic", async (profile_picture_link, thunkApi) => {
-  // TODO implement api
-  // try {
-  //   await updateProfilePicApi(profile_picture_link)
-  // } catch (error) {
-  //   thunkApi.rejectWithValue(error)
-  // }
+>("user/updateProfilePic", async (profile_picture) => {
+  const response = await updateUserProfilePictureApi(profile_picture);
+  return response;
 });
 
 export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
   "user/getSelfUser",
-  async (_, thunkApi) => {
+  async () => {
     const response = await getSelfUserApi();
     return response;
   }
