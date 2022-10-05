@@ -4,7 +4,7 @@ import {
   getGameEntryListApi,
   updateGameEntryApi,
 } from "@api/game_entries_api";
-import { GameEntry } from "@api/types";
+import { GameEntry, GameEntryStatus } from "@api/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
@@ -42,6 +42,13 @@ const gameEntrySlice = createSlice({
       newEntries[action.meta.arg.game_id] = action.meta.arg;
       state.gameEntries = newEntries;
     });
+    builder.addCase(changeGameEntryStatus.fulfilled, (state, action) => {
+      const newEntries: Record<number, GameEntry> = Object.create(
+        state.gameEntries
+      );
+      newEntries[action.meta.arg.gameEntry.game_id] = action.meta.arg.gameEntry;
+      state.gameEntries = newEntries;
+    });
     builder.addCase(deleteGameEntry.fulfilled, (state, action) => {
       const newEntries: Record<number, GameEntry> = Object.create(
         state.gameEntries
@@ -52,16 +59,9 @@ const gameEntrySlice = createSlice({
   },
 });
 
-interface GameEntryListProps {
-  page?: number;
-  query?: string;
-  user_id?: number;
-  game_id?: number;
-}
-
 export const getGameEntries = createAsyncThunk<
   GameEntry[],
-  GameEntryListProps,
+  { page?: number; query?: string; user_id?: number; game_id?: number },
   { state: RootState }
 >("gameEntry/getGameEntries", async ({ page, query, user_id, game_id }) => {
   const response = await getGameEntryListApi(page, query, user_id, game_id);
@@ -83,6 +83,15 @@ export const updateGameEntry = createAsyncThunk<
   { state: RootState }
 >("gameEntry/updateGameEntry", async (gameEntry) => {
   await updateGameEntryApi(gameEntry);
+});
+
+export const changeGameEntryStatus = createAsyncThunk<
+  void,
+  { gameEntry: GameEntry; newStatus: GameEntryStatus },
+  { state: RootState }
+>("gameEntry/changeGameEntryStatus", async ({ gameEntry, newStatus }) => {
+  const newGameEntry: GameEntry = { ...gameEntry, status: newStatus };
+  await updateGameEntryApi(newGameEntry);
 });
 
 export const deleteGameEntry = createAsyncThunk<
