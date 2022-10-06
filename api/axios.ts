@@ -6,7 +6,7 @@ import axios from "axios";
 import TokenService from "./authentication/token_service";
 import { refreshTokensApi } from "./authentication/authentication_api";
 
-const API_BASE_URL = "";
+const API_BASE_URL = process.env.NEXT_PUBLIC_BE_ENDPOINT;
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
