@@ -49,4 +49,6 @@ export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
   }
 );
 
+export const selectUser = (state: RootState) => state.user.user;
+
 export default userSlice.reducer;

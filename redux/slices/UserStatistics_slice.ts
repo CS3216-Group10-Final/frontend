@@ -39,4 +39,7 @@ const getSelfUserStatistics = createAsyncThunk<
   return response;
 });
 
+export const selectUserStatistics = (state: RootState) =>
+  state.userStatistics.userStatistics;
+
 export default userStatisticsSlice.reducer;

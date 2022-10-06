@@ -5,7 +5,11 @@ import {
   updateGameEntryApi,
 } from "@api/game_entries_api";
 import { GameEntry, GameEntryStatus } from "@api/types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 interface GameEntryState {
@@ -101,5 +105,46 @@ export const deleteGameEntry = createAsyncThunk<
 >("gameEntry/deleteGameEntry", async (id) => {
   await deleteGameEntryApi(id);
 });
+
+function filterGameEntriesByStatus(
+  gameEntries: Record<number, GameEntry>,
+  status: GameEntryStatus
+): Record<number, GameEntry> {
+  const newEntries: Record<number, GameEntry> = Object.create(gameEntries);
+  for (const key in Object.keys(newEntries)) {
+    if (newEntries[key].status != status) {
+      delete newEntries[key];
+    }
+  }
+  return newEntries;
+}
+
+export const selectAllGameEntries = (state: RootState) =>
+  state.gameEntry.gameEntries;
+export const selectWishlistGameEntries = createSelector(
+  selectAllGameEntries,
+  (gameEntries) =>
+    filterGameEntriesByStatus(gameEntries, GameEntryStatus.WISHLIST)
+);
+export const selectBacklogGameEntries = createSelector(
+  selectAllGameEntries,
+  (gameEntries) =>
+    filterGameEntriesByStatus(gameEntries, GameEntryStatus.BACKLOG)
+);
+export const selectPlayingGameEntries = createSelector(
+  selectAllGameEntries,
+  (gameEntries) =>
+    filterGameEntriesByStatus(gameEntries, GameEntryStatus.PLAYING)
+);
+export const selectCompletedGameEntries = createSelector(
+  selectAllGameEntries,
+  (gameEntries) =>
+    filterGameEntriesByStatus(gameEntries, GameEntryStatus.COMPLETED)
+);
+export const selectDroppedGameEntries = createSelector(
+  selectAllGameEntries,
+  (gameEntries) =>
+    filterGameEntriesByStatus(gameEntries, GameEntryStatus.DROPPED)
+);
 
 export default gameEntrySlice.reducer;
