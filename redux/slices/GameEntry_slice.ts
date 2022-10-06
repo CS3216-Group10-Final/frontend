@@ -68,7 +68,7 @@ export const getGameEntries = createAsyncThunk<
   { page?: number; query?: string; user_id?: number; game_id?: number },
   { state: RootState }
 >("gameEntry/getGameEntries", async ({ page, query, user_id, game_id }) => {
-  const response = await getGameEntryListApi(page, query, user_id, game_id);
+  const response = await getGameEntryListApi({ page, query, user_id, game_id });
   return response;
 });
 

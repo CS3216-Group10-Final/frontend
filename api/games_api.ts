@@ -7,10 +7,15 @@ export async function getGameByIdApi(id: number): Promise<Game> {
   return response.data;
 }
 
-export async function getGameListApi(
-  page?: number,
-  query?: string
-): Promise<Game[]> {
+interface GameListParams {
+  page?: number;
+  query?: string;
+}
+
+export async function getGameListApi({
+  page,
+  query,
+}: GameListParams): Promise<Game[]> {
   const response = await axiosInstance.get<Game[]>(GAMES_PATH, {
     params: {
       ...(page ? { page: page } : {}),
