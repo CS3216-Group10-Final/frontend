@@ -2,6 +2,7 @@
  * API call handlers for authentication.
  */
 
+import { ApiRequestError, ErrorType } from "@api/error_handling";
 import axios, { AxiosRequestConfig } from "axios";
 import axiosInstance from "../axios";
 import {
@@ -18,6 +19,11 @@ interface TokenResponseData {
   refresh: string;
 }
 
+interface AuthExpectedError {
+  error_code: number;
+  error_message: string;
+}
+
 export interface UserLoginDetails {
   email: string;
   password: string;
@@ -32,7 +38,7 @@ export interface UserRegisterDetails {
 export async function registerUserApi(
   userRegisterDetails: UserRegisterDetails
 ) {
-  const response = await axiosInstance.post<TokenResponseData>(
+  const response = await axiosInstance.post<TokenResponseData | AuthExpectedError>(
     REGISTER_PATH,
     userRegisterDetails,
     { skipAuthRefresh: true } as AxiosRequestConfig
@@ -43,11 +49,19 @@ export async function registerUserApi(
       accessToken: tokenResponseData.access,
       refreshToken: tokenResponseData.refresh,
     });
+    return
+  }
+  const authExpectedError = response.data as AuthExpectedError
+  if (authExpectedError.error_code == 1) {
+    throw new ApiRequestError(ErrorType.USERNAME_IN_USE, authExpectedError.error_message)
+  }
+  if (authExpectedError.error_code == 2) {
+    throw new ApiRequestError(ErrorType.EMAIL_IN_USE, authExpectedError.error_message)
   }
 }
 
 export async function loginApi(userLoginDetails: UserLoginDetails) {
-  const response = await axiosInstance.post<TokenResponseData>(
+  const response = await axiosInstance.post<TokenResponseData | AuthExpectedError>(
     LOGIN_PATH,
     userLoginDetails,
     { skipAuthRefresh: true } as AxiosRequestConfig
@@ -58,6 +72,11 @@ export async function loginApi(userLoginDetails: UserLoginDetails) {
       accessToken: tokenResponseData.access,
       refreshToken: tokenResponseData.refresh,
     });
+    return
+  }
+  const authExpectedError = response.data as AuthExpectedError
+  if (authExpectedError.error_code == 1) {
+    throw new ApiRequestError(ErrorType.INCORRECT_LOGIN_DETAILS, authExpectedError.error_message)
   }
 }
 
