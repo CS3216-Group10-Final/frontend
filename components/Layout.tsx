@@ -8,7 +8,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
       padding="md"
       header={<AppBar />}
       styles={(theme) => ({
-        main: { backgroundColor: theme.colors.dark[8] },
+        main: { backgroundColor: theme.colors.dark[5] },
       })}
     >
       <Container>{children}</Container>

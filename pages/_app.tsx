@@ -8,7 +8,20 @@ function MyApp({ Component, pageProps }: AppProps) {
     <MantineProvider
       withGlobalStyles
       withNormalizeCSS
-      theme={{ colorScheme: "dark" }}
+      theme={{
+        colorScheme: "dark",
+        primaryColor: "yellow",
+        primaryShade: 6,
+        components: {
+          Input: {
+            styles: (theme) => ({
+              input: {
+                backgroundColor: theme.colors.dark[7],
+              },
+            }),
+          },
+        },
+      }}
     >
       <Layout>
         <Component {...pageProps} />
