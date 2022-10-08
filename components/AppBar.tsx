@@ -1,13 +1,38 @@
+import { logoutApi } from "@api/authentication/authentication_api";
+import { handleApiRequestError } from "@api/error_handling";
 import { Button, Group, Header, Text, useMantineTheme } from "@mantine/core";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import { selectUser } from "@redux/slices/User_slice";
 import { useState } from "react";
 import AuthModal from "./AuthModal";
 
 const AppBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [authModalIsOpen, setAuthModalIsOpen] = useState(false);
+  const user = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
   const theme = useMantineTheme();
 
   const handleClose = () => {
-    setIsOpen(false);
+    setAuthModalIsOpen(false);
+  };
+
+  const handleClick = () => {
+    if (user) {
+      setAuthModalIsOpen(true);
+    } else {
+      logout();
+    }
+  };
+
+  const logout = () => {
+    logoutApi()
+      .catch((error) => {
+        // TODO error handling
+        console.log(handleApiRequestError(error));
+      })
+      .finally(() => {
+        dispatch({ type: "USER_LOGOUT" });
+      });
   };
 
   return (
@@ -18,9 +43,9 @@ const AppBar = () => {
     >
       <Group sx={{ height: "100%" }} position="apart">
         <Text>Logo</Text>
-        <Button onClick={() => setIsOpen(true)}>Login</Button>
+        <Button onClick={handleClick}>{user ? "Login" : "Logout"}</Button>
       </Group>
-      <AuthModal opened={isOpen} onClose={handleClose} />
+      <AuthModal opened={authModalIsOpen} onClose={handleClose} />
     </Header>
   );
 };

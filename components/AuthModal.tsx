@@ -1,4 +1,9 @@
 import {
+  loginApi,
+  registerUserApi,
+} from "@api/authentication/authentication_api";
+import { handleApiRequestError } from "@api/error_handling";
+import {
   Anchor,
   Button,
   Group,
@@ -9,6 +14,8 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useAppDispatch } from "@redux/hooks";
+import { getSelfUser } from "@redux/slices/User_slice";
 import { useState } from "react";
 
 type Props = {
@@ -19,6 +26,7 @@ type Props = {
 const AuthModal = (props: Props) => {
   const { opened, onClose } = props;
   const [modalType, setModalType] = useState<"login" | "register">("login");
+  const dispatch = useAppDispatch();
 
   interface FormValues {
     email: string;
@@ -56,9 +64,27 @@ const AuthModal = (props: Props) => {
     console.log(values);
 
     if (modalType === "login") {
-      // handle login
+      loginApi({ email, password })
+        .then(() => {
+          dispatch(getSelfUser());
+        })
+        .catch((error) => {
+          // TODO error handling
+          console.log(handleApiRequestError(error));
+        });
     } else if (modalType === "register") {
       // handle register
+      registerUserApi({ email, username, password })
+        .then(() => {
+          loginApi({ email, password });
+        })
+        .then(() => {
+          dispatch(getSelfUser());
+        })
+        .catch((error) => {
+          // TODO error handling
+          console.log(handleApiRequestError(error));
+        });
     }
   };
 
