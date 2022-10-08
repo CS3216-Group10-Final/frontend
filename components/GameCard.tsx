@@ -1,12 +1,5 @@
 import { Game } from "@api/types";
-import {
-  BackgroundImage,
-  Box,
-  Card,
-  Paper,
-  Text,
-  createStyles,
-} from "@mantine/core";
+import { Card, createStyles, Text } from "@mantine/core";
 
 type Props = {
   game: Game;
