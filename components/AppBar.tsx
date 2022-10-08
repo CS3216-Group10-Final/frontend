@@ -18,9 +18,9 @@ const AppBar = () => {
 
   const handleClick = () => {
     if (user) {
-      setAuthModalIsOpen(true);
-    } else {
       logout();
+    } else {
+      setAuthModalIsOpen(true);
     }
   };
 
@@ -43,7 +43,7 @@ const AppBar = () => {
     >
       <Group sx={{ height: "100%" }} position="apart">
         <Text>Logo</Text>
-        <Button onClick={handleClick}>{user ? "Login" : "Logout"}</Button>
+        <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
       </Group>
       <AuthModal opened={authModalIsOpen} onClose={handleClose} />
     </Header>
