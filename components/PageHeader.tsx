@@ -8,13 +8,13 @@ interface PageHeaderProps {
 }
 
 const PageHeader = ({ title, description, image }: PageHeaderProps) => {
+  const pageTitle = title + " | DisplayCase";
   return (
     <Head>
-      <title>{title} | DisplayCase</title>
+      <title>{pageTitle}</title>
       <meta property="og:title" content={title} key="title" />
       <meta property="og:description" content={description} key="description" />
       <meta property="og:image" content={image} key="image" />
-      <link rel="icon" href="/favicon.ico" />
     </Head>
   );
 };
