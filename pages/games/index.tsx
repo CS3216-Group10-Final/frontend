@@ -4,8 +4,8 @@ import { AiOutlineSearch } from "react-icons/ai";
 import type { NextPage } from "next";
 import GameCard from "@components/GameCard";
 
-const Games: NextPage = () => {
-  const testArray = Array.from({ length: 8 }, (x, i) => i);
+const GamesList: NextPage = () => {
+  const testArray = Array.from({ length: 8 }, (_, i) => i);
   return (
     <>
       <PageHeader
@@ -56,4 +56,4 @@ const Games: NextPage = () => {
   );
 };
 
-export default Games;
+export default GamesList;

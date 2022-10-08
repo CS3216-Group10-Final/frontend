@@ -1,5 +1,6 @@
 import { Game } from "@api/types";
 import { Card, createStyles, Text } from "@mantine/core";
+import Link from "next/link";
 
 type Props = {
   game: Game;
@@ -10,6 +11,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     card: {
       position: "relative",
       height: 280,
+      cursor: "pointer",
 
       [`&:hover .${image}`]: {
         transform: "scale(1.03)",
@@ -53,24 +55,19 @@ const GameCard = ({ game }: Props) => {
   const { classes } = useStyles();
 
   return (
-    <Card
-      p="lg"
-      shadow="lg"
-      className={classes.card}
-      radius="md"
-      component="a"
-      target="_blank"
-    >
-      <div
-        className={classes.image}
-        style={{ backgroundImage: `url(${game.cover})` }}
-      />
-      <div className={classes.overlay} />
+    <Link href={"/games/" + game.id}>
+      <Card p="lg" shadow="lg" className={classes.card} radius="md">
+        <div
+          className={classes.image}
+          style={{ backgroundImage: `url(${game.cover})` }}
+        />
+        <div className={classes.overlay} />
 
-      <div className={classes.content}>
-        <Text size="lg">{game.name}</Text>
-      </div>
-    </Card>
+        <div className={classes.content}>
+          <Text size="lg">{game.name}</Text>
+        </div>
+      </Card>
+    </Link>
   );
 };
 
