@@ -1,21 +1,15 @@
-import { GameEntryStatus, Genre, Platform, UserStatistics } from "@api/types";
+import { UserStatistics } from "@api/types";
 import { getUserStatisticsByIdApi } from "@api/user_statistics_api";
 import store, { RootState } from "@redux/store";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { selectUser } from "./User_slice";
 
 interface UserStatisticsState {
-  userStatistics: UserStatistics;
+  userStatistics?: UserStatistics;
 }
 
 const initialState: UserStatisticsState = {
-  userStatistics: {
-    average_rating: 0,
-    game_status_distribution: {} as Record<GameEntryStatus, number>,
-    game_genre_distribution: {} as Record<Genre, number>,
-    platform_distribution: {} as Record<Platform, number>,
-    release_year_distribution: {},
-    play_year_distribution: {},
-  },
+  userStatistics: undefined,
 };
 
 const userStatisticsSlice = createSlice({
@@ -30,13 +24,18 @@ const userStatisticsSlice = createSlice({
 });
 
 const getSelfUserStatistics = createAsyncThunk<
-  UserStatistics,
+  UserStatistics | undefined,
   void,
   { state: RootState }
 >("userStatistics/getUserStatisticsById", async () => {
-  const selfId = store.getState().user.user.id;
-  const response = await getUserStatisticsByIdApi(selfId);
-  return response;
+  const selfUser = selectUser(store.getState());
+  if (selfUser) {
+    const selfId = selfUser.id;
+    const response = await getUserStatisticsByIdApi(selfId);
+    return response;
+  } else {
+    return undefined;
+  }
 });
 
 export const selectUserStatistics = (state: RootState) =>

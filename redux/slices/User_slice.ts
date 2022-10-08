@@ -1,6 +1,10 @@
 import { updateUserProfilePictureApi } from "@api/pictures_api";
 import { getSelfUserApi } from "@api/users_api";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { User } from "../../api/types";
 import { RootState } from "../store";
 
@@ -47,5 +51,8 @@ export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
 );
 
 export const selectUser = (state: RootState) => state.user.user;
+export const selectUserId = createSelector(selectUser, (user) =>
+  user ? user.id : -1
+);
 
 export default userSlice.reducer;
