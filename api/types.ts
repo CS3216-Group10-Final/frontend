@@ -44,7 +44,8 @@ export interface UserStatistics {
 // In progress
 export interface Game {
   id: number;
-  picture_link: string;
+  name: string;
+  cover: string;
 }
 
 export interface GameEntry {
