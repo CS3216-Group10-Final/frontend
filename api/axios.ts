@@ -5,7 +5,7 @@ import createAuthRefreshInterceptor from "axios-auth-refresh";
 import axios from "axios";
 import TokenService from "./authentication/token_service";
 import { refreshTokensApi } from "./authentication/authentication_api";
-import { REGISTER_PATH } from "./endpoint_paths";
+import { GAMES_PATH, REGISTER_PATH } from "./endpoint_paths";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BE_ENDPOINT;
 
@@ -16,10 +16,12 @@ const axiosInstance = axios.create({
   },
 });
 
+const ignoreTokenPaths = [REGISTER_PATH, GAMES_PATH];
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = TokenService.getLocalAccessToken();
-    if (token && config.url !== REGISTER_PATH) {
+    if (token && config.url && !ignoreTokenPaths.includes(config.url)) {
       if (!config.headers) {
         config.headers = {};
       }

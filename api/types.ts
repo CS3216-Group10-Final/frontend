@@ -46,6 +46,9 @@ export interface Game {
   id: number;
   name: string;
   cover: string;
+  first_release_date: Date;
+  genres: string[];
+  platforms: string[];
 }
 
 export interface GameEntry {

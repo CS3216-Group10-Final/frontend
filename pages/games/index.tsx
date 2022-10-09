@@ -11,16 +11,31 @@ import { AiOutlineSearch } from "react-icons/ai";
 import type { NextPage } from "next";
 import GameCard from "@components/GameCard";
 import { useState } from "react";
+import { Game } from "@api/types";
+import { useIsomorphicEffect } from "@mantine/hooks";
+import { getGameListApi } from "@api/games_api";
 
 const GamesList: NextPage = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(99);
+  const [games, setGames] = useState<Game[]>([]);
+
+  useIsomorphicEffect(() => {
+    getGameListApi({ page: activePage, query: "" })
+      .then(({ games, totalPage }) => {
+        setGames(games);
+        setTotalPage(totalPage ? totalPage : 0);
+      })
+      .catch((error) => {
+        //TODO Error handling
+        setGames([]);
+      });
+  }, [activePage]);
 
   const loadPage = (page: number) => {
     setActivePage(page);
   };
 
-  const testArray = Array.from({ length: 8 }, (_, i) => i);
   return (
     <>
       <PageHeader
@@ -42,30 +57,8 @@ const GamesList: NextPage = () => {
           { maxWidth: 600, cols: 1, spacing: "sm" },
         ]}
       >
-        {testArray.map((val) => {
-          return (
-            <GameCard
-              game={{
-                id: 4,
-                name: "Space Quest 6: The Spinal Frontier",
-                cover:
-                  "//images.igdb.com/igdb/image/upload/t_1080p/mrpip4oeuvf9a1rgrtnq.jpg",
-              }}
-              key={val}
-            />
-          );
-        })}
-        {testArray.map((val) => {
-          return (
-            <GameCard
-              game={{
-                id: 3,
-                name: "System Shock 2",
-                cover: "//images.igdb.com/igdb/image/upload/t_1080p/co4bak.jpg",
-              }}
-              key={val}
-            />
-          );
+        {games.map((game) => {
+          return <GameCard game={game} key={game.id} />;
         })}
       </SimpleGrid>
       <Space h="lg" />
