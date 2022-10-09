@@ -1,5 +1,5 @@
 import { UserStatistics } from "@api/types";
-import { getUserStatisticsByIdApi } from "@api/user_statistics_api";
+import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import store, { RootState } from "@redux/store";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { selectUser } from "./User_slice";
@@ -27,11 +27,11 @@ const getSelfUserStatistics = createAsyncThunk<
   UserStatistics | undefined,
   void,
   { state: RootState }
->("userStatistics/getUserStatisticsById", async () => {
+>("userStatistics/getSelfUserStatistics", async () => {
   const selfUser = selectUser(store.getState());
   if (selfUser) {
-    const selfId = selfUser.id;
-    const response = await getUserStatisticsByIdApi(selfId);
+    const selfUsername = selfUser.username;
+    const response = await getUserStatisticsByNameApi(selfUsername);
     return response;
   } else {
     return undefined;

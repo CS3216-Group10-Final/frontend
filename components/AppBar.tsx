@@ -45,7 +45,11 @@ const AppBar = () => {
         <Text>Logo</Text>
         <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
       </Group>
-      <AuthModal opened={authModalIsOpen} onClose={handleClose} />
+      <AuthModal
+        isOpen={authModalIsOpen}
+        setIsOpen={setAuthModalIsOpen}
+        onClose={handleClose}
+      />
     </Header>
   );
 };

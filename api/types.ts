@@ -35,10 +35,10 @@ export interface User {
 export interface UserStatistics {
   average_rating: number;
   game_status_distribution: Record<GameEntryStatus, number>;
-  game_genre_distribution: Record<Genre, number>;
-  platform_distribution: Record<Platform, number>;
-  release_year_distribution: Record<number, number>;
-  play_year_distribution: Record<number, number>;
+  game_genre_distribution?: Record<Genre, number>;
+  platform_distribution?: Record<Platform, number>;
+  release_year_distribution?: Record<number, number>;
+  play_year_distribution?: Record<number, number>;
 }
 
 // In progress

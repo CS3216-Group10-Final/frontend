@@ -13,8 +13,8 @@ export async function getSelfUserApi(): Promise<User> {
 /**
  * Gets User object by user id
  */
-export async function getUserApi(userId: number): Promise<User> {
-  const pathForGetUser = getPathForGetUser(userId);
+export async function getUserApi(username: string): Promise<User> {
+  const pathForGetUser = getPathForGetUser(username);
   const response = await axiosInstance.get<User>(pathForGetUser);
   return response.data;
 }

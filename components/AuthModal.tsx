@@ -19,12 +19,12 @@ import { getSelfUser } from "@redux/slices/User_slice";
 import { useState } from "react";
 
 type Props = {
-  opened: boolean;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: () => void;
 };
 
-const AuthModal = (props: Props) => {
-  const { opened, onClose } = props;
+const AuthModal = ({ isOpen, setIsOpen, onClose }: Props) => {
   const [modalType, setModalType] = useState<"login" | "register">("login");
   const dispatch = useAppDispatch();
 
@@ -66,7 +66,11 @@ const AuthModal = (props: Props) => {
     if (modalType === "login") {
       loginApi({ email, password })
         .then(() => {
-          dispatch(getSelfUser());
+          return dispatch(getSelfUser());
+        })
+        .then(() => {
+          setIsOpen(false);
+          handleClose();
         })
         .catch((error) => {
           // TODO error handling
@@ -76,14 +80,21 @@ const AuthModal = (props: Props) => {
       // handle register
       registerUserApi({ email, username, password })
         .then(() => {
-          loginApi({ email, password });
+          return loginApi({ email, password });
         })
         .then(() => {
-          dispatch(getSelfUser());
+          return dispatch(getSelfUser());
+        })
+        .then(() => {
+          setIsOpen(false);
+          handleClose();
         })
         .catch((error) => {
           // TODO error handling
-          console.log(handleApiRequestError(error));
+          console.log(
+            handleApiRequestError(error).message,
+            handleApiRequestError(error).errorType
+          );
         });
     }
   };
@@ -94,7 +105,7 @@ const AuthModal = (props: Props) => {
   };
 
   return (
-    <Modal centered opened={opened} onClose={handleClose} title="Welcome Back!">
+    <Modal centered opened={isOpen} onClose={handleClose} title="Welcome Back!">
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
           {modalType === "register" && (
