@@ -11,7 +11,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
         main: { backgroundColor: theme.colors.dark[8] },
       })}
     >
-      <Container>{children}</Container>
+      <Container mb={128}>{children}</Container>
     </AppShell>
   );
 };
