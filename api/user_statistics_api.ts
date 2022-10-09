@@ -1,12 +1,12 @@
 import axiosInstance from "./axios";
-import { getPathForUserStatisticsWithId } from "./endpoint_paths";
+import { getPathForUserStatisticsWithName } from "./endpoint_paths";
 import { UserStatistics } from "./types";
 
-export async function getUserStatisticsByIdApi(
-  id: number
+export async function getUserStatisticsByNameApi(
+  username: string
 ): Promise<UserStatistics> {
   const response = await axiosInstance.get<UserStatistics>(
-    getPathForUserStatisticsWithId(id)
+    getPathForUserStatisticsWithName(username)
   );
   return response.data;
 }

@@ -6,15 +6,19 @@
 export const LOGIN_PATH = "/login";
 export const REGISTER_PATH = "/register";
 export const LOGOUT_PATH = "/logout";
-export const VERIFY_AUTHENTICATION = "/token/verify";
-export const REFRESH_TOKEN_PATH = "/token/refresh";
+export const VERIFY_AUTHENTICATION = "/tokens/verify";
+export const REFRESH_TOKEN_PATH = "/tokens/refresh";
 
 // User
 export const USER_PATH = "/user";
-export function getPathForGetUser(id: number) {
-  return USER_PATH + "/" + id;
+export const USER_COLLECTION_PATH = "/users";
+export function getPathForGetUser(username: string) {
+  return USER_COLLECTION_PATH + "/" + username;
 }
-export const PROFILE_PICTURE_PATH = "/user/picture";
+// User Statistics
+export function getPathForUserStatisticsWithName(username: string) {
+  return getPathForGetUser(username) + "/stats";
+}
 
 // Games
 export const GAMES_PATH = "/games";
@@ -26,10 +30,4 @@ export function getPathForGameWithId(id: number) {
 export const GAME_ENTRIES_PATH = "/game-entries";
 export function getPathForGameEntryWithId(id: number) {
   return GAME_ENTRIES_PATH + "/" + id;
-}
-
-// User Statistics
-export const USER_STATISTICS_PATH = "/userstats";
-export function getPathForUserStatisticsWithId(id: number) {
-  return USER_STATISTICS_PATH + "/" + id;
 }

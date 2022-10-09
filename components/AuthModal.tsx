@@ -1,4 +1,9 @@
 import {
+  loginApi,
+  registerUserApi,
+} from "@api/authentication/authentication_api";
+import { handleApiRequestError } from "@api/error_handling";
+import {
   Anchor,
   Button,
   Group,
@@ -9,16 +14,19 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useAppDispatch } from "@redux/hooks";
+import { getSelfUser } from "@redux/slices/User_slice";
 import { useState } from "react";
 
 type Props = {
-  opened: boolean;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: () => void;
 };
 
-const AuthModal = (props: Props) => {
-  const { opened, onClose } = props;
+const AuthModal = ({ isOpen, setIsOpen, onClose }: Props) => {
   const [modalType, setModalType] = useState<"login" | "register">("login");
+  const dispatch = useAppDispatch();
 
   interface FormValues {
     email: string;
@@ -56,9 +64,38 @@ const AuthModal = (props: Props) => {
     console.log(values);
 
     if (modalType === "login") {
-      // handle login
+      loginApi({ email, password })
+        .then(() => {
+          return dispatch(getSelfUser());
+        })
+        .then(() => {
+          setIsOpen(false);
+          handleClose();
+        })
+        .catch((error) => {
+          // TODO error handling
+          console.log(handleApiRequestError(error));
+        });
     } else if (modalType === "register") {
       // handle register
+      registerUserApi({ email, username, password })
+        .then(() => {
+          return loginApi({ email, password });
+        })
+        .then(() => {
+          return dispatch(getSelfUser());
+        })
+        .then(() => {
+          setIsOpen(false);
+          handleClose();
+        })
+        .catch((error) => {
+          // TODO error handling
+          console.log(
+            handleApiRequestError(error).message,
+            handleApiRequestError(error).errorType
+          );
+        });
     }
   };
 
@@ -68,7 +105,7 @@ const AuthModal = (props: Props) => {
   };
 
   return (
-    <Modal centered opened={opened} onClose={handleClose} title="Welcome Back!">
+    <Modal centered opened={isOpen} onClose={handleClose} title="Welcome Back!">
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
           {modalType === "register" && (

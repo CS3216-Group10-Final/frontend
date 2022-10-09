@@ -1,20 +1,19 @@
 import { updateUserProfilePictureApi } from "@api/pictures_api";
 import { getSelfUserApi } from "@api/users_api";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { User } from "../../api/types";
 import { RootState } from "../store";
 
 interface UserState {
-  user: User;
+  user?: User;
 }
 
 const initialState: UserState = {
-  user: {
-    id: 0,
-    username: "",
-    is_following: false,
-    profile_picture_link: "",
-  },
+  user: undefined,
 };
 
 const userSlice = createSlice({
@@ -26,8 +25,10 @@ const userSlice = createSlice({
       state.user = action.payload;
     });
     builder.addCase(updateProfilePic.fulfilled, (state, action) => {
-      const newUser = Object.create(state.user);
-      state.user = { profile_picture_link: action.payload, ...newUser };
+      if (state.user) {
+        const newUser = Object.create(state.user);
+        state.user = { profile_picture_link: action.payload, ...newUser };
+      }
     });
   },
 });
@@ -50,5 +51,8 @@ export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
 );
 
 export const selectUser = (state: RootState) => state.user.user;
+export const selectUserId = createSelector(selectUser, (user) =>
+  user ? user.id : -1
+);
 
 export default userSlice.reducer;

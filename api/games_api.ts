@@ -12,15 +12,24 @@ interface GameListParams {
   query?: string;
 }
 
+interface GetGameListResponse {
+  games: Game[];
+  totalPage?: number;
+}
+
 export async function getGameListApi({
   page,
   query,
-}: GameListParams): Promise<Game[]> {
+}: GameListParams): Promise<GetGameListResponse> {
   const response = await axiosInstance.get<Game[]>(GAMES_PATH, {
     params: {
       ...(page ? { page: page } : {}),
       ...(query ? { query: query } : {}),
     },
   });
-  return response.data;
+  const pageNumber = response.headers["pages"];
+  const totalPage = Number.isNaN(Number(pageNumber))
+    ? Number(pageNumber)
+    : undefined;
+  return { games: response.data, totalPage: totalPage };
 }

@@ -37,7 +37,11 @@ export interface UserStatistics {
 // In progress
 export interface Game {
   id: number;
-  picture_link: string;
+  name: string;
+  cover: string;
+  first_release_date: Date;
+  genres: Genre[];
+  platforms: Platform[];
 }
 
 export interface GameEntry {
