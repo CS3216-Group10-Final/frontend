@@ -28,7 +28,7 @@ export async function getGameListApi({
     },
   });
   const pageNumber = response.headers["pages"];
-  const totalPage = Number.isNaN(Number(pageNumber))
+  const totalPage = !Number.isNaN(Number(pageNumber))
     ? Number(pageNumber)
     : undefined;
   return { games: response.data, totalPage: totalPage };
