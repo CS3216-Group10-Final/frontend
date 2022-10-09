@@ -5,7 +5,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { selectUser } from "./User_slice";
 
 interface UserStatisticsState {
-  userStatistics?: UserStatistics;
+  userStatistics: UserStatistics | undefined;
 }
 
 const initialState: UserStatisticsState = {
@@ -23,7 +23,7 @@ const userStatisticsSlice = createSlice({
   },
 });
 
-const getSelfUserStatistics = createAsyncThunk<
+export const getSelfUserStatistics = createAsyncThunk<
   UserStatistics | undefined,
   void,
   { state: RootState }

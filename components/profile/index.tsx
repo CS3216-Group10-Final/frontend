@@ -1,8 +1,14 @@
-import { useAppSelector } from "@redux/hooks";
-import { selectUserStatistics } from "@redux/slices/UserStatistics_slice";
-import { Avatar, Box, Divider, Group, Stack, Text, Title } from "@mantine/core";
+import { handleApiRequestError } from "@api/error_handling";
 import ChartBarDistribution from "@components/profile/ChartBarDistribution";
 import GameSection from "@components/profile/GameSection";
+import { Avatar, Box, Divider, Group, Stack, Text, Title } from "@mantine/core";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import {
+  getSelfUserStatistics,
+  selectUserStatistics,
+} from "@redux/slices/UserStatistics_slice";
+import { selectUser } from "@redux/slices/User_slice";
+import { useEffect } from "react";
 // import { GameEntryStatus, Genre, Platform } from "@api/types";
 
 // const game_status_distribution: Record<GameEntryStatus, number> = {
@@ -47,21 +53,22 @@ import GameSection from "@components/profile/GameSection";
 const ProfilePage = () => {
   // TODO: Fetch user statistics
 
-  const {
-    average_rating,
-    game_status_distribution,
-    game_genre_distribution,
-    platform_distribution,
-    play_year_distribution,
-    release_year_distribution,
-  } = useAppSelector(selectUserStatistics);
+  const user = useAppSelector(selectUser);
+  const userStatistics = useAppSelector(selectUserStatistics);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getSelfUserStatistics()).catch((error) => {
+      console.log(handleApiRequestError(error).errorType);
+    });
+  }, []);
 
   return (
     <Stack>
       <Box>
         <Avatar size={128} radius={18} mx="auto" mb={24} />
         <Text size="xl" align="center" mb={8} color="white">
-          Username
+          {user?.username}
         </Text>
       </Box>
       <Divider />
@@ -69,16 +76,22 @@ const ProfilePage = () => {
         <Title order={1} align="center">
           Statistics
         </Title>
-        <Text align="center">Average rating: {average_rating}/10</Text>
-        <Group mt={36} align="center" grow>
-          <ChartBarDistribution
-            gameStatusDistribution={game_status_distribution}
-            gameGenreDistribution={game_genre_distribution}
-            platformDistribution={platform_distribution}
-            releaseYearDistribution={play_year_distribution}
-            playYearDistribution={release_year_distribution}
-          />
-        </Group>
+        {userStatistics && (
+          <Text align="center">
+            Average rating: {userStatistics.average_rating}/10
+          </Text>
+        )}
+        {userStatistics && (
+          <Group mt={36} align="center" grow>
+            <ChartBarDistribution
+              gameStatusDistribution={userStatistics.game_status_distribution}
+              gameGenreDistribution={userStatistics.game_genre_distribution}
+              platformDistribution={userStatistics.platform_distribution}
+              releaseYearDistribution={userStatistics.play_year_distribution}
+              playYearDistribution={userStatistics.release_year_distribution}
+            />
+          </Group>
+        )}
       </Box>
       <Divider />
       <Box>
