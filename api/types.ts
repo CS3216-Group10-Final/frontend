@@ -13,17 +13,10 @@ export enum ActivityType {
 }
 
 // In Progress
-export enum Genre {
-  OTHERS = 0,
-  FPS = 1,
-  MMORPG = 2,
-  MOBA = 3,
-}
+export type Genre = string;
 
 // In Progress
-export enum Platform {
-  PC = 0,
-}
+export type Platform = string;
 
 export interface User {
   id: number;
@@ -34,11 +27,11 @@ export interface User {
 
 export interface UserStatistics {
   average_rating: number;
-  game_status_distribution: Record<GameEntryStatus, number>;
-  game_genre_distribution?: Record<Genre, number>;
-  platform_distribution?: Record<Platform, number>;
-  release_year_distribution?: Record<number, number>;
-  play_year_distribution?: Record<number, number>;
+  game_status_distribution: Partial<Record<GameEntryStatus, number>>;
+  game_genre_distribution: Partial<Record<Genre, number>>;
+  platform_distribution: Partial<Record<Platform, number>>;
+  release_year_distribution: Record<number, number>;
+  play_year_distribution: Record<number, number>;
 }
 
 // In progress
@@ -47,19 +40,21 @@ export interface Game {
   name: string;
   cover: string;
   first_release_date: Date;
-  genres: string[];
-  platforms: string[];
+  genres: Genre[];
+  platforms: Platform[];
 }
 
 export interface GameEntry {
   id: number;
   user_id: number;
   game_id: number;
+  game_name: string;
+  game_cover: string;
   rating?: number;
   review?: string;
   hours?: number;
   is_favourite: boolean;
   status: GameEntryStatus;
-  time_started: Date;
-  time_completed: Date;
+  time_started?: Date;
+  time_completed?: Date;
 }
