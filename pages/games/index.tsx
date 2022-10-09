@@ -1,10 +1,25 @@
 import PageHeader from "@components/PageHeader";
-import { Center, Input, SimpleGrid, Space, Text } from "@mantine/core";
+import {
+  Center,
+  Input,
+  Pagination,
+  SimpleGrid,
+  Space,
+  Text,
+} from "@mantine/core";
 import { AiOutlineSearch } from "react-icons/ai";
 import type { NextPage } from "next";
 import GameCard from "@components/GameCard";
+import { useState } from "react";
 
 const GamesList: NextPage = () => {
+  const [activePage, setActivePage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(99);
+
+  const loadPage = (page: number) => {
+    setActivePage(page);
+  };
+
   const testArray = Array.from({ length: 8 }, (_, i) => i);
   return (
     <>
@@ -15,6 +30,7 @@ const GamesList: NextPage = () => {
       <Center>
         <Text size="xl">Games</Text>
       </Center>
+      <Space h="md" />
       <Input placeholder="Search" icon={<AiOutlineSearch />} />
       <Space h="md" />
       <SimpleGrid
@@ -52,6 +68,10 @@ const GamesList: NextPage = () => {
           );
         })}
       </SimpleGrid>
+      <Space h="lg" />
+      <Center>
+        <Pagination total={totalPage} page={activePage} onChange={loadPage} />
+      </Center>
     </>
   );
 };
