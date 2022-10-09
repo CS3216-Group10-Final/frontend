@@ -1,8 +1,9 @@
 import { logoutApi } from "@api/authentication/authentication_api";
 import { handleApiRequestError } from "@api/error_handling";
-import { Button, Group, Header, Text, useMantineTheme } from "@mantine/core";
+import { Button, Group, Header, Image, useMantineTheme } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
+import Link from "next/link";
 import { useState } from "react";
 import AuthModal from "./AuthModal";
 
@@ -42,7 +43,14 @@ const AppBar = () => {
       style={{ backgroundColor: theme.colors.dark[6] }}
     >
       <Group sx={{ height: "100%" }} position="apart">
-        <Text>Logo</Text>
+        <Link href="/">
+          <Image
+            src="logo-transparent.png"
+            alt="Logo"
+            width={30}
+            style={{ cursor: "pointer" }}
+          />
+        </Link>
         <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
       </Group>
       <AuthModal
