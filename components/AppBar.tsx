@@ -63,7 +63,9 @@ const AppBar = () => {
           </Link>
           <Space h="md" />
           <Link href="/games">
-            <Text style={{ cursor: "pointer" }}>Games</Text>
+            <Text style={{ cursor: "pointer" }} weight="bold">
+              Games
+            </Text>
           </Link>
         </Group>
         <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
