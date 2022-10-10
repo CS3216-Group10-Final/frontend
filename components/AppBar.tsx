@@ -20,6 +20,7 @@ const AppBar = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
+  console.log();
 
   const handleClose = () => {
     setAuthModalIsOpen(false);
@@ -55,7 +56,7 @@ const AppBar = () => {
         <Group>
           <Link href="/">
             <Image
-              src="logo-transparent.png"
+              src="/logo-transparent.png"
               alt="Logo"
               width={30}
               style={{ cursor: "pointer" }}

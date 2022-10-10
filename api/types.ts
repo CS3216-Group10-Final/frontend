@@ -40,6 +40,8 @@ export interface Game {
   name: string;
   cover: string;
   first_release_date: Date;
+  summary: string;
+  franchis: string;
   genres: Genre[];
   platforms: Platform[];
 }
