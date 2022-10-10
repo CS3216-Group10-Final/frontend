@@ -1,24 +1,25 @@
+import { getGameListApi } from "@api/games_api";
+import { Game } from "@api/types";
+import GameCard from "@components/GameCard";
 import PageHeader from "@components/PageHeader";
 import {
-  Center,
-  Input,
-  Pagination,
+  Center, Pagination,
   SimpleGrid,
   Space,
   Text,
+  TextInput
 } from "@mantine/core";
-import { AiOutlineSearch } from "react-icons/ai";
+import { useDebouncedValue, useIsomorphicEffect } from "@mantine/hooks";
 import type { NextPage } from "next";
-import GameCard from "@components/GameCard";
-import { useState } from "react";
-import { Game } from "@api/types";
-import { useIsomorphicEffect } from "@mantine/hooks";
-import { getGameListApi } from "@api/games_api";
+import { ChangeEvent, useState } from "react";
+import { AiOutlineSearch } from "react-icons/ai";
 
 const GamesList: NextPage = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(99);
   const [games, setGames] = useState<Game[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [debouncedSearchTerm] = useDebouncedValue(searchTerm, 300)
 
   useIsomorphicEffect(() => {
     getGameListApi({ page: activePage, query: "" })
@@ -46,7 +47,7 @@ const GamesList: NextPage = () => {
         <Text size="xl">Games</Text>
       </Center>
       <Space h="md" />
-      <Input placeholder="Search" icon={<AiOutlineSearch />} />
+      <TextInput placeholder="Search" icon={<AiOutlineSearch/>} value={searchTerm} onChange={(event: ChangeEvent) => setSearchTerm((event.currentTarget as HTMLInputElement).value)}/>
       <Space h="md" />
       <SimpleGrid
         cols={4}
@@ -63,7 +64,7 @@ const GamesList: NextPage = () => {
       </SimpleGrid>
       <Space h="lg" />
       <Center>
-        <Pagination total={totalPage} page={activePage} onChange={loadPage} />
+        <Pagination total={totalPage} page={activePage} onChange={loadPage}  />
       </Center>
     </>
   );
