@@ -2,6 +2,7 @@ import { handleApiRequestError } from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
 import {
   createGameEntryApi,
+  deleteGameEntryApi,
   getGameEntryListApi,
   updateGameEntryApi,
 } from "@api/game_entries_api";
@@ -28,6 +29,7 @@ import { useEffect, useState } from "react";
 interface SidebarProps {
   game?: Game;
   gameEntry?: GameEntry;
+  setGameEntry: React.Dispatch<React.SetStateAction<GameEntry | undefined>>;
   user?: User;
 }
 const useStyles = createStyles((theme) => ({
@@ -43,7 +45,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
+const GameDetailsSidebar = ({
+  game,
+  gameEntry,
+  setGameEntry,
+  user,
+}: SidebarProps) => {
   const { classes } = useStyles();
   const [status, setStatus] = useState<string>(
     String(gameEntry?.status) || String(GameEntryStatus.WISHLIST)
@@ -56,20 +63,27 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
     if (!user || !game) {
       return;
     }
-    const newGameEntry: GameEntry = {
-      id: 0,
-      user_id: user.id,
-      game_id: game.id,
-      game_name: game.name,
-      game_cover: game.cover,
-      is_favourite: false,
-      status: Number(status),
-      rating: Number(rating),
-    };
+    const newGameEntry: GameEntry = gameEntry
+      ? {
+          ...gameEntry,
+          status: Number(status),
+          rating: Number(rating),
+        }
+      : {
+          id: 0,
+          user_id: user.id,
+          game_id: game.id,
+          game_name: game.name,
+          game_cover: game.cover,
+          is_favourite: false,
+          status: Number(status),
+          rating: Number(rating),
+        };
     if (!gameEntry) {
       createGameEntryApi(newGameEntry)
-        .then(() => {
+        .then((gameEntry) => {
           // TODO notifications
+          setGameEntry(gameEntry);
           console.log("created");
         })
         .catch((error) => {
@@ -80,6 +94,7 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
       updateGameEntryApi(newGameEntry)
         .then(() => {
           // TODO notifications
+          setGameEntry(newGameEntry);
           console.log("updated");
         })
         .catch((error) => {
@@ -87,6 +102,22 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
           console.log(handleApiRequestError(error).errorType);
         });
     }
+  };
+
+  const deleteGameEntry = () => {
+    if (!gameEntry) {
+      return;
+    }
+    deleteGameEntryApi(gameEntry.id)
+      .then(() => {
+        // TODO notifications
+        setGameEntry(undefined);
+        console.log("deleted");
+      })
+      .catch((error) => {
+        // TODO error handling
+        console.log(handleApiRequestError(error).errorType);
+      });
   };
 
   return (
@@ -131,6 +162,11 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
                 .map((_, index) => `${index}`)}
             />
             <Button onClick={submitGameEntry}>Update</Button>
+            {gameEntry && (
+              <Button onClick={deleteGameEntry} color="red">
+                Delete
+              </Button>
+            )}
           </>
         )}
       </Stack>
@@ -176,7 +212,12 @@ const Games: NextPage = () => {
       </Center>
       <Grid grow>
         <Grid.Col span={2}>
-          <GameDetailsSidebar game={game} gameEntry={gameEntry} user={user} />
+          <GameDetailsSidebar
+            game={game}
+            gameEntry={gameEntry}
+            setGameEntry={setGameEntry}
+            user={user}
+          />
         </Grid.Col>
         <Grid.Col span={6}>
           <div className={classes.box}>
