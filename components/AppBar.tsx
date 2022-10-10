@@ -49,6 +49,7 @@ const AppBar = () => {
       height={60}
       p="sm"
       style={{ backgroundColor: theme.colors.dark[6] }}
+      zIndex="100"
     >
       <Group sx={{ height: "100%" }} position="apart">
         <Group>
