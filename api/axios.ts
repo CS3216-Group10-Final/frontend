@@ -1,13 +1,19 @@
 /**
  * Create custom instance of Axios for intercepting and injecting headers like authorization.
  */
-import createAuthRefreshInterceptor from "axios-auth-refresh";
 import axios from "axios";
-import TokenService from "./authentication/token_service";
+import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { refreshTokensApi } from "./authentication/authentication_api";
-import { GAMES_PATH, REGISTER_PATH } from "./endpoint_paths";
+import TokenService from "./authentication/token_service";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BE_ENDPOINT;
+
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    authNotRequired?: boolean;
+    skipAuthRefresh?: boolean;
+  }
+}
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -16,12 +22,10 @@ const axiosInstance = axios.create({
   },
 });
 
-const ignoreTokenPaths = [REGISTER_PATH, GAMES_PATH];
-
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = TokenService.getLocalAccessToken();
-    if (token && config.url && !ignoreTokenPaths.includes(config.url)) {
+    if (token && !config.authNotRequired) {
       if (!config.headers) {
         config.headers = {};
       }
