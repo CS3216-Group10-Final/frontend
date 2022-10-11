@@ -51,8 +51,6 @@ import { useEffect } from "react";
 // };
 
 const ProfilePage = () => {
-  // TODO: Fetch user statistics
-
   const user = useAppSelector(selectUser);
   const userStatistics = useAppSelector(selectUserStatistics);
   const dispatch = useAppDispatch();
@@ -61,6 +59,7 @@ const ProfilePage = () => {
     dispatch(getSelfUserStatistics()).catch((error) => {
       console.log(handleApiRequestError(error).errorType);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -78,7 +77,7 @@ const ProfilePage = () => {
         </Title>
         {userStatistics && (
           <Text align="center">
-            Average rating: {userStatistics.average_rating}/10
+            Average rating: {userStatistics.average_rating.toFixed(1)}/10
           </Text>
         )}
         {userStatistics && (
