@@ -27,16 +27,12 @@ const GameSection = () => {
         Games
       </Title>
       {gameEntries.map((value) => {
-        const { game_id, game_name, game_cover, rating } = value;
+        const { game_id } = value;
 
         return (
           <Box mt={12} key={game_id}>
             <Link href={`/games/${game_id}`}>
-              <GameEntryCard
-                title={game_name}
-                cover={game_cover}
-                rating={rating}
-              />
+              <GameEntryCard gameEntry={value} />
             </Link>
           </Box>
         );

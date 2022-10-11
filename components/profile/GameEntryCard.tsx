@@ -1,17 +1,25 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { Card, Image, Text, Group } from "@mantine/core";
+import { GameEntry, GameEntryStatus } from "@api/types";
+import { Card, Image, Text, Group, Stack, Badge } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 
 type Props = {
-  title: string;
-  cover: string;
-  rating?: number;
+  gameEntry: GameEntry;
   onClick?: () => void;
 };
 
 const GameEntryCard = (props: Props) => {
-  const { title, cover, rating, onClick } = props;
+  const { gameEntry, onClick } = props;
+  const { game_name: title, game_cover: cover, rating, status } = gameEntry;
   const { hovered, ref } = useHover();
+
+  const badgeColor = {
+    [GameEntryStatus.DROPPED]: "red",
+    [GameEntryStatus.COMPLETED]: "green",
+    [GameEntryStatus.PLAYING]: "yellow",
+    [GameEntryStatus.BACKLOG]: "blue",
+    [GameEntryStatus.WISHLIST]: "dark",
+  };
 
   return (
     <Card
@@ -25,13 +33,20 @@ const GameEntryCard = (props: Props) => {
       <Card.Section>
         <Group position="apart">
           <Group>
-            <Image width={180} height={72} src={cover} withPlaceholder />
-            <Text size="xl" weight={500}>
-              {title}
-            </Text>
+            <Image width={180} height={80} src={cover} withPlaceholder />
+            <Stack>
+              <Text mt="sm" size="md" weight={500}>
+                {title}
+              </Text>
+              <Group mb="sm">
+                <Badge color={badgeColor[status]}>
+                  {GameEntryStatus[status]}
+                </Badge>
+              </Group>
+            </Stack>
           </Group>
           {rating && (
-            <Text size="xl" mr={24} weight={500}>
+            <Text size="md" mr={24} weight={500}>
               {rating}/10
             </Text>
           )}
