@@ -82,7 +82,7 @@ const ProfilePage = () => {
           <Stack>
             <Avatar
               src={user?.profile_picture_link}
-              size={128}
+              size={160}
               radius={18}
               mx="auto"
             />
