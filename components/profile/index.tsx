@@ -109,11 +109,9 @@ const ProfilePage = () => {
                   gameGenreDistribution={userStatistics.game_genre_distribution}
                   platformDistribution={userStatistics.platform_distribution}
                   releaseYearDistribution={
-                    userStatistics.play_year_distribution
-                  }
-                  playYearDistribution={
                     userStatistics.release_year_distribution
                   }
+                  playYearDistribution={userStatistics.play_year_distribution}
                 />
               </Group>
             )}
