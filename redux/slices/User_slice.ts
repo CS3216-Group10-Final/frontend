@@ -23,18 +23,25 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getSelfUser.fulfilled, (state, action) => {
       state.user = action.payload;
+      state.user.profile_picture_link = `${process.env.NEXT_PUBLIC_BE_ENDPOINT}${action.payload.profile_picture_link}`;
     });
     builder.addCase(updateProfilePic.fulfilled, (state, action) => {
       if (state.user) {
         const newUser = Object.create(state.user);
-        state.user = { profile_picture_link: action.payload, ...newUser };
+        const { profile_picture_link } = action.payload;
+
+        state.user = {
+          ...action.payload,
+          ...newUser,
+          profile_picture_link: `${process.env.NEXT_PUBLIC_BE_ENDPOINT}${profile_picture_link}`,
+        };
       }
     });
   },
 });
 
 export const updateProfilePic = createAsyncThunk<
-  string,
+  User,
   File,
   { state: RootState }
 >("user/updateProfilePic", async (profile_picture) => {

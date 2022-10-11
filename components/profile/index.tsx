@@ -1,14 +1,24 @@
 import { handleApiRequestError } from "@api/error_handling";
 import ChartBarDistribution from "@components/profile/ChartBarDistribution";
 import GameSection from "@components/profile/GameSection";
-import { Avatar, Box, Divider, Group, Stack, Text, Title } from "@mantine/core";
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   getSelfUserStatistics,
   selectUserStatistics,
 } from "@redux/slices/UserStatistics_slice";
 import { selectUser } from "@redux/slices/User_slice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import UploadProfileModal from "./UploadProfileModal";
 // import { GameEntryStatus, Genre, Platform } from "@api/types";
 
 // const game_status_distribution: Record<GameEntryStatus, number> = {
@@ -55,6 +65,8 @@ const ProfilePage = () => {
   const userStatistics = useAppSelector(selectUserStatistics);
   const dispatch = useAppDispatch();
 
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     dispatch(getSelfUserStatistics()).catch((error) => {
       console.log(handleApiRequestError(error).errorType);
@@ -62,41 +74,58 @@ const ProfilePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log(user && `${user.profile_picture_link}`);
   return (
-    <Stack>
-      <Box>
-        <Avatar size={128} radius={18} mx="auto" mb={24} />
-        <Text size="xl" align="center" mb={8} color="white">
-          {user?.username}
-        </Text>
-      </Box>
-      <Divider />
-      <Box>
-        <Title order={1} align="center">
-          Statistics
-        </Title>
-        {userStatistics && (
-          <Text align="center">
-            Average rating: {userStatistics.average_rating.toFixed(1)}/10
-          </Text>
-        )}
-        {userStatistics && (
-          <Group mt={36} align="center" grow>
-            <ChartBarDistribution
-              gameStatusDistribution={userStatistics.game_status_distribution}
-              gameGenreDistribution={userStatistics.game_genre_distribution}
-              platformDistribution={userStatistics.platform_distribution}
-              releaseYearDistribution={userStatistics.play_year_distribution}
-              playYearDistribution={userStatistics.release_year_distribution}
+    <>
+      <Stack>
+        <Group>
+          <Stack>
+            <Avatar
+              src={user?.profile_picture_link}
+              size={128}
+              radius={18}
+              mx="auto"
             />
-          </Group>
-        )}
-      </Box>
-      <Divider />
-      <Box>
-        <GameSection />
-      </Box>
-    </Stack>
+            <Text size="xl" align="center" mb={8} color="white">
+              {user?.username}
+            </Text>
+            <Button onClick={() => setIsOpen(true)}>Upload</Button>
+          </Stack>
+          <Box sx={{ flex: 1 }}>
+            <Title order={1} align="center">
+              Statistics
+            </Title>
+            {userStatistics && (
+              <Text align="center">
+                Average rating: {userStatistics.average_rating.toFixed(1)}/10
+              </Text>
+            )}
+            {userStatistics && (
+              <Group mt={36} align="center" grow>
+                <ChartBarDistribution
+                  gameStatusDistribution={
+                    userStatistics.game_status_distribution
+                  }
+                  gameGenreDistribution={userStatistics.game_genre_distribution}
+                  platformDistribution={userStatistics.platform_distribution}
+                  releaseYearDistribution={
+                    userStatistics.play_year_distribution
+                  }
+                  playYearDistribution={
+                    userStatistics.release_year_distribution
+                  }
+                />
+              </Group>
+            )}
+          </Box>
+        </Group>
+        <Divider />
+        <Box>
+          <GameSection />
+        </Box>
+      </Stack>
+      <UploadProfileModal opened={isOpen} onClose={() => setIsOpen(false)} />
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import { MantineProvider } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 import type { AppProps } from "next/app";
 import Layout from "@components/Layout";
 import { Provider } from "react-redux";
@@ -50,11 +51,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         },
       }}
     >
-      <Provider store={store}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </Provider>
+      <NotificationsProvider>
+        <Provider store={store}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </Provider>
+      </NotificationsProvider>
     </MantineProvider>
   );
 }

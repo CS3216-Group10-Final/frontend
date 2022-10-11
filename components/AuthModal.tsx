@@ -20,11 +20,10 @@ import { useState } from "react";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: () => void;
 };
 
-const AuthModal = ({ isOpen, setIsOpen, onClose }: Props) => {
+const AuthModal = ({ isOpen, onClose }: Props) => {
   const [modalType, setModalType] = useState<"login" | "register">("login");
   const dispatch = useAppDispatch();
 
@@ -61,15 +60,12 @@ const AuthModal = ({ isOpen, setIsOpen, onClose }: Props) => {
   const handleSubmit = (values: FormValues) => {
     const { email, username, password } = values;
 
-    console.log(values);
-
     if (modalType === "login") {
       loginApi({ email, password })
         .then(() => {
           return dispatch(getSelfUser());
         })
         .then(() => {
-          setIsOpen(false);
           handleClose();
         })
         .catch((error) => {
@@ -86,7 +82,6 @@ const AuthModal = ({ isOpen, setIsOpen, onClose }: Props) => {
           return dispatch(getSelfUser());
         })
         .then(() => {
-          setIsOpen(false);
           handleClose();
         })
         .catch((error) => {
