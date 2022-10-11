@@ -17,7 +17,8 @@ const Layout = ({ children }: React.PropsWithChildren) => {
         console.log(handleApiRequestError(error).errorType);
       });
     }
-  }, []);
+  }, [dispatch]);
+
   return (
     <AppShell
       padding="md"

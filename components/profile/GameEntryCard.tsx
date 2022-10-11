@@ -5,11 +5,12 @@ import { useHover } from "@mantine/hooks";
 type Props = {
   title: string;
   cover: string;
+  rating?: number;
   onClick?: () => void;
 };
 
 const GameEntryCard = (props: Props) => {
-  const { title, cover, onClick } = props;
+  const { title, cover, rating, onClick } = props;
   const { hovered, ref } = useHover();
 
   return (
@@ -22,11 +23,18 @@ const GameEntryCard = (props: Props) => {
       onClick={onClick}
     >
       <Card.Section>
-        <Group>
-          <Image width={180} height={72} src={cover} withPlaceholder />
-          <Text size="xl" weight={500}>
-            {title}
-          </Text>
+        <Group position="apart">
+          <Group>
+            <Image width={180} height={72} src={cover} withPlaceholder />
+            <Text size="xl" weight={500}>
+              {title}
+            </Text>
+          </Group>
+          {rating && (
+            <Text size="xl" mr={24} weight={500}>
+              {rating}/10
+            </Text>
+          )}
         </Group>
       </Card.Section>
     </Card>
