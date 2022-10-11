@@ -2,7 +2,7 @@ import {
   loginApi,
   registerUserApi,
 } from "@api/authentication/authentication_api";
-import { handleApiRequestError } from "@api/error_handling";
+import { ErrorType, handleApiRequestError } from "@api/error_handling";
 import {
   Anchor,
   Button,
@@ -14,8 +14,10 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { showNotification } from "@mantine/notifications";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
+import { IconX } from "@tabler/icons";
 import { useState } from "react";
 
 type Props = {
@@ -24,6 +26,8 @@ type Props = {
 };
 
 const AuthModal = ({ isOpen, onClose }: Props) => {
+  const [loading, setLoading] = useState(false);
+
   const [modalType, setModalType] = useState<"login" | "register">("login");
   const dispatch = useAppDispatch();
 
@@ -60,6 +64,7 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
   const handleSubmit = (values: FormValues) => {
     const { email, username, password } = values;
 
+    setLoading(true);
     if (modalType === "login") {
       loginApi({ email, password })
         .then(() => {
@@ -69,9 +74,18 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
           handleClose();
         })
         .catch((error) => {
-          // TODO error handling
-          console.log(handleApiRequestError(error));
-        });
+          const apiRequestError = handleApiRequestError(error);
+
+          if (apiRequestError.errorType === ErrorType.INCORRECT_LOGIN_DETAILS) {
+            showNotification({
+              title: "Invalid Credential",
+              message: "Oh no, cannot login with the provided credentials :(",
+              icon: <IconX size={18} />,
+              color: "red",
+            });
+          }
+        })
+        .finally(() => setLoading(false));
     } else if (modalType === "register") {
       // handle register
       registerUserApi({ email, username, password })
@@ -86,11 +100,30 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
         })
         .catch((error) => {
           // TODO error handling
+
+          const apiRequestError = handleApiRequestError(error);
+
+          if (apiRequestError.errorType === ErrorType.EMAIL_IN_USE) {
+            showNotification({
+              title: "Email has been taken by someone else",
+              message: "Oh no, the email has already been taken :(",
+              icon: <IconX size={18} />,
+              color: "red",
+            });
+          } else if (apiRequestError.errorType === ErrorType.USERNAME_IN_USE) {
+            showNotification({
+              title: "Username has been taken by someone else",
+              message: "Oh no, the username has already been taken :(",
+              icon: <IconX size={18} />,
+              color: "red",
+            });
+          }
           console.log(
             handleApiRequestError(error).message,
             handleApiRequestError(error).errorType
           );
-        });
+        })
+        .finally(() => setLoading(false));
     }
   };
 
@@ -133,7 +166,7 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
                 ? "Don't have an account? Register"
                 : "Already have an account? Login"}
             </Anchor>
-            <Button type="submit">
+            <Button type="submit" loading={loading}>
               {modalType === "login" ? "Login" : "Register"}
             </Button>
           </Group>

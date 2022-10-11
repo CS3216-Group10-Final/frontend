@@ -11,7 +11,10 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <PageHeader title="DisplayCase" description="Display" />
+      <PageHeader
+        title={user ? user.username : "Welcome"}
+        description={user ? `${user.username}'s profile page` : "Onboard page"}
+      />
       {user ? <ProfilePage /> : <OnboardingPage />}
     </>
   );
