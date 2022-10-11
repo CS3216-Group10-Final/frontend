@@ -20,6 +20,7 @@ const AppBar = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
+  console.log();
 
   const handleClose = () => {
     setAuthModalIsOpen(false);
@@ -49,12 +50,13 @@ const AppBar = () => {
       height={60}
       p="sm"
       style={{ backgroundColor: theme.colors.dark[6] }}
+      zIndex="100"
     >
       <Group sx={{ height: "100%" }} position="apart">
         <Group>
           <Link href="/">
             <Image
-              src="logo-transparent.png"
+              src="/logo-transparent.png"
               alt="Logo"
               width={30}
               style={{ cursor: "pointer" }}
@@ -62,7 +64,9 @@ const AppBar = () => {
           </Link>
           <Space h="md" />
           <Link href="/games">
-            <Text style={{ cursor: "pointer" }}>Games</Text>
+            <Text style={{ cursor: "pointer" }} weight="bold">
+              Games
+            </Text>
           </Link>
         </Group>
         <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>

@@ -15,6 +15,8 @@ export async function getSelfUserApi(): Promise<User> {
  */
 export async function getUserApi(username: string): Promise<User> {
   const pathForGetUser = getPathForGetUser(username);
-  const response = await axiosInstance.get<User>(pathForGetUser);
+  const response = await axiosInstance.get<User>(pathForGetUser, {
+    authNotRequired: true,
+  });
   return response.data;
 }
