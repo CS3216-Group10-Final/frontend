@@ -7,6 +7,7 @@ import {
   updateGameEntryApi,
 } from "@api/game_entries_api";
 import { Game, GameEntry, GameEntryStatus, User } from "@api/types";
+import PageHeader from "@components/PageHeader";
 import {
   Badge,
   Button,
@@ -122,6 +123,14 @@ const GameDetailsSidebar = ({
 
   return (
     <div className={classes.box} style={{ minWidth: 250 }}>
+      <PageHeader
+        title={game?.name || "Loading"}
+        description={
+          game
+            ? `Add ${game?.name} to your list or check out the game's details`
+            : "Error occurred"
+        }
+      />
       <Stack>
         <Image src={game?.cover} alt="Game Cover" radius="md" />
         {user && (
