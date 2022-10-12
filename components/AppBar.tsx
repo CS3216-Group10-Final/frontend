@@ -1,6 +1,7 @@
 import { logoutApi } from "@api/authentication/authentication_api";
 import { handleApiRequestError } from "@api/error_handling";
 import {
+  Avatar,
   Button,
   Group,
   Header,
@@ -69,7 +70,19 @@ const AppBar = () => {
             </Text>
           </Link>
         </Group>
-        <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
+        <Group>
+          {user && (
+            <Link href={"/"}>
+              <Avatar
+                src={user?.profile_picture_link}
+                size={35}
+                radius={5}
+                style={{ cursor: "pointer" }}
+              />
+            </Link>
+          )}
+          <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
+        </Group>
       </Group>
       <AuthModal isOpen={authModalIsOpen} onClose={handleClose} />
     </Header>
