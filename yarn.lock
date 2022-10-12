@@ -519,11 +519,6 @@
   dependencies:
     tslib "^2.4.0"
 
-"@tabler/icons@^1.102.0":
-  version "1.102.0"
-  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-1.102.0.tgz#d0a2a92a62feca757c04d2407d006c32f886d928"
-  integrity sha512-8cfPL5Mg1HPNdMV6il3GoboC5dvq9x39DR5CwRmhcjyHuX+Hil3t4KUVDh70sxgc4/9C+xFnIRf1mKLLZPGyow==
-
 "@types/hoist-non-react-statics@^3.3.1":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz#1124aafe5118cb591977aeb1ceaaed1070eb039f"
