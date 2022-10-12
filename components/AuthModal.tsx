@@ -14,11 +14,10 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
-import { IconX } from "@tabler/icons";
 import { useState } from "react";
+import { showErrorNotification } from "utils/notifications";
 
 type Props = {
   isOpen: boolean;
@@ -77,17 +76,14 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
           const apiRequestError = handleApiRequestError(error);
 
           if (apiRequestError.errorType === ErrorType.INCORRECT_LOGIN_DETAILS) {
-            showNotification({
+            showErrorNotification({
               title: "Invalid Credential",
               message: "Oh no, cannot login with the provided credentials :(",
-              icon: <IconX size={18} />,
-              color: "red",
             });
           }
         })
         .finally(() => setLoading(false));
     } else if (modalType === "register") {
-      // handle register
       registerUserApi({ email, username, password })
         .then(() => {
           return loginApi({ email, password });
@@ -99,23 +95,17 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
           handleClose();
         })
         .catch((error) => {
-          // TODO error handling
-
           const apiRequestError = handleApiRequestError(error);
 
           if (apiRequestError.errorType === ErrorType.EMAIL_IN_USE) {
-            showNotification({
+            showErrorNotification({
               title: "Email has been taken by someone else",
               message: "Oh no, the email has already been taken :(",
-              icon: <IconX size={18} />,
-              color: "red",
             });
           } else if (apiRequestError.errorType === ErrorType.USERNAME_IN_USE) {
-            showNotification({
+            showErrorNotification({
               title: "Username has been taken by someone else",
               message: "Oh no, the username has already been taken :(",
-              icon: <IconX size={18} />,
-              color: "red",
             });
           }
           console.log(
