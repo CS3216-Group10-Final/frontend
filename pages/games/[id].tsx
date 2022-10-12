@@ -60,6 +60,13 @@ const GameDetailsSidebar = ({
     String(gameEntry?.rating) || "0"
   );
 
+  useEffect(() => {
+    if (gameEntry) {
+      setStatus(String(gameEntry.status));
+      setRating(String(gameEntry.rating));
+    }
+  }, [gameEntry]);
+
   const submitGameEntry = () => {
     if (!user || !game) {
       return;
