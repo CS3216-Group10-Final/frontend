@@ -17,7 +17,10 @@ import { useForm } from "@mantine/form";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
 import { useState } from "react";
-import { showErrorNotification } from "utils/notifications";
+import {
+  showErrorNotification,
+  showSuccessNotification,
+} from "utils/notifications";
 
 type Props = {
   isOpen: boolean;
@@ -93,6 +96,10 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
         })
         .then(() => {
           handleClose();
+          showSuccessNotification({
+            title: "Successfully registered!",
+            message: `Welcome ${username}!`,
+          });
         })
         .catch((error) => {
           const apiRequestError = handleApiRequestError(error);

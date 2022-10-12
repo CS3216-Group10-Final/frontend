@@ -17,6 +17,7 @@ import {
   Grid,
   Group,
   Image,
+  LoadingOverlay,
   Select,
   Stack,
   Text,
@@ -26,6 +27,7 @@ import { selectUser } from "@redux/slices/User_slice";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { showSuccessNotification } from "utils/notifications";
 
 interface SidebarProps {
   game?: Game;
@@ -93,6 +95,10 @@ const GameDetailsSidebar = ({
           // TODO notifications
           setGameEntry(gameEntry);
           console.log("created");
+          showSuccessNotification({
+            title: "Game added to display case",
+            message: `${gameEntry.game_name}`,
+          });
         })
         .catch((error) => {
           // TODO error handling
@@ -104,6 +110,10 @@ const GameDetailsSidebar = ({
           // TODO notifications
           setGameEntry(newGameEntry);
           console.log("updated");
+          showSuccessNotification({
+            title: "Entry updated",
+            message: `${gameEntry.game_name}`,
+          });
         })
         .catch((error) => {
           // TODO error handling
@@ -139,7 +149,7 @@ const GameDetailsSidebar = ({
         }
       />
       <Stack>
-        <Image src={game?.cover} alt="Game Cover" radius="md" />
+        {game && <Image src={game?.cover} alt="Game Cover" radius="md" />}
         {user && (
           <>
             {gameEntry ? (
@@ -197,11 +207,13 @@ const Games: NextPage = () => {
   const [game, setGame] = useState<Game>();
   const [gameEntry, setGameEntry] = useState<GameEntry>();
   const user = useAppSelector(selectUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!router.isReady) {
       return;
     }
+    setIsLoading(true);
     getGameByIdApi(Number(id))
       .then((game) => {
         setGame(game);
@@ -218,11 +230,15 @@ const Games: NextPage = () => {
       .catch((error) => {
         // TODO error handling
         console.log(handleApiRequestError(error).errorType);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [router.isReady]);
 
   return (
     <>
+      <LoadingOverlay visible={isLoading} overlayBlur={3} zIndex="1" />
       <Center>
         <Text size={35}>{game?.name}</Text>
       </Center>
