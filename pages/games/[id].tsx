@@ -1,4 +1,7 @@
-import { handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
 import {
   createGameEntryApi,
@@ -62,7 +65,7 @@ const GameDetailsSidebar = ({
   const [rating, setRating] = useState<string>(
     String(gameEntry?.rating) || "0"
   );
-  const [platform, setPlatform] = useState<string>(game?.platforms[0] || '') //TODO update
+  const [platform, setPlatform] = useState<string>(game?.platforms[0] || ""); //TODO update
 
   useEffect(() => {
     if (gameEntry) {
@@ -77,8 +80,8 @@ const GameDetailsSidebar = ({
       return;
     }
     const newGameEntry: GameEntry = gameEntry
-    //TODO update platforms
-      ? {
+      ? //TODO update platforms
+        {
           ...gameEntry,
           status: Number(status),
           rating: Number(rating),
@@ -104,8 +107,7 @@ const GameDetailsSidebar = ({
           });
         })
         .catch((error) => {
-          // TODO error handling
-          console.log(handleApiRequestError(error).errorType);
+          showApiRequestErrorNotification(handleApiRequestError(error));
         });
     } else {
       updateGameEntryApi(newGameEntry)
@@ -118,8 +120,7 @@ const GameDetailsSidebar = ({
           });
         })
         .catch((error) => {
-          // TODO error handling
-          console.log(handleApiRequestError(error).errorType);
+          showApiRequestErrorNotification(handleApiRequestError(error));
         });
     }
   };
@@ -131,29 +132,26 @@ const GameDetailsSidebar = ({
     deleteGameEntryApi(gameEntry.id)
       .then(() => {
         setGameEntry(undefined);
-        setStatus('')
-        setRating('')
+        setStatus("");
+        setRating("");
         console.log("deleted");
       })
       .catch((error) => {
-        // TODO error handling
-        console.log(handleApiRequestError(error).errorType);
+        showApiRequestErrorNotification(handleApiRequestError(error));
       });
   };
 
   const handleDeleteClick = () => {
     openConfirmModal({
-      title: 'Delete entry',
+      title: "Delete entry",
       children: (
-        <Text size="sm">
-          Are you sure you want to delete this entry?
-        </Text>
+        <Text size="sm">Are you sure you want to delete this entry?</Text>
       ),
-      labels: { confirm: 'Delete', cancel: 'Cancel' },
-      confirmProps: { color: 'red' },
-      onConfirm: () => deleteGameEntry()
-    })
-  }
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: () => deleteGameEntry(),
+    });
+  };
 
   return (
     <div className={classes.box} style={{ minWidth: 250 }}>
@@ -254,13 +252,12 @@ const Games: NextPage = () => {
         }
       })
       .catch((error) => {
-        // TODO error handling
-        console.log(handleApiRequestError(error).errorType);
+        showApiRequestErrorNotification(handleApiRequestError(error));
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [router.isReady]);
+  }, [id, router.isReady, user]);
 
   return (
     <>

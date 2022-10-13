@@ -1,3 +1,7 @@
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import { getGameListApi } from "@api/games_api";
 import { Game } from "@api/types";
 import GameCard from "@components/GameCard";
@@ -32,7 +36,7 @@ const GamesList: NextPage = () => {
         setTotalPage(totalPage ? totalPage : 0);
       })
       .catch((error) => {
-        //TODO Error handling
+        showApiRequestErrorNotification(handleApiRequestError(error));
         setGames([]);
       })
       .finally(() => {
@@ -48,7 +52,7 @@ const GamesList: NextPage = () => {
         setTotalPage(totalPage ? totalPage : 0);
       })
       .catch((error) => {
-        //TODO Error handling
+        showApiRequestErrorNotification(handleApiRequestError(error));
         setGames([]);
       })
       .finally(() => {

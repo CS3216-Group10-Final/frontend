@@ -2,7 +2,10 @@ import {
   loginApi,
   registerUserApi,
 } from "@api/authentication/authentication_api";
-import { ErrorType, handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import {
   Anchor,
   Button,
@@ -18,10 +21,7 @@ import { useForm } from "@mantine/form";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
 import { useState } from "react";
-import {
-  showErrorNotification,
-  showSuccessNotification,
-} from "utils/notifications";
+import { showSuccessNotification } from "utils/notifications";
 import { FaceBookButton, GoogleButton, TwitterButton } from "./SocialButtons";
 
 type Props = {
@@ -78,14 +78,7 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
           handleClose();
         })
         .catch((error) => {
-          const apiRequestError = handleApiRequestError(error);
-
-          if (apiRequestError.errorType === ErrorType.INCORRECT_LOGIN_DETAILS) {
-            showErrorNotification({
-              title: "Invalid Credential",
-              message: "Oh no, cannot login with the provided credentials :(",
-            });
-          }
+          showApiRequestErrorNotification(handleApiRequestError(error));
         })
         .finally(() => setLoading(false));
     } else if (modalType === "register") {
@@ -104,23 +97,7 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
           });
         })
         .catch((error) => {
-          const apiRequestError = handleApiRequestError(error);
-
-          if (apiRequestError.errorType === ErrorType.EMAIL_IN_USE) {
-            showErrorNotification({
-              title: "Email has been taken by someone else",
-              message: "Oh no, the email has already been taken :(",
-            });
-          } else if (apiRequestError.errorType === ErrorType.USERNAME_IN_USE) {
-            showErrorNotification({
-              title: "Username has been taken by someone else",
-              message: "Oh no, the username has already been taken :(",
-            });
-          }
-          console.log(
-            handleApiRequestError(error).message,
-            handleApiRequestError(error).errorType
-          );
+          showApiRequestErrorNotification(handleApiRequestError(error));
         })
         .finally(() => setLoading(false));
     }
@@ -132,7 +109,12 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Modal centered opened={isOpen} onClose={handleClose} title={modalType == 'register' ? "Register an account" : "Welcome Back!"}>
+    <Modal
+      centered
+      opened={isOpen}
+      onClose={handleClose}
+      title={modalType == "register" ? "Register an account" : "Welcome Back!"}
+    >
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
           {modalType === "login" && (
@@ -140,7 +122,7 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
               <GoogleButton>Login with Google</GoogleButton>
               <TwitterButton>Login with Twitter</TwitterButton>
               <FaceBookButton>Login with Facebook</FaceBookButton>
-              <Divider/>
+              <Divider />
             </Stack>
           )}
           {modalType === "register" && (

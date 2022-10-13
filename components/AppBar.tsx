@@ -1,5 +1,8 @@
 import { logoutApi } from "@api/authentication/authentication_api";
-import { handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import {
   Avatar,
   Button,
@@ -31,16 +34,12 @@ const AppBar = () => {
   const handleClick = () => {
     if (user) {
       openConfirmModal({
-        title: 'Logout',
-        children: (
-          <Text size="sm">
-            Are you sure you want to log out?
-          </Text>
-        ),
-        labels: { confirm: 'Confirm', cancel: 'Cancel' },
-        confirmProps: { color: 'red' },
-        onConfirm: () => logout()
-      })
+        title: "Logout",
+        children: <Text size="sm">Are you sure you want to log out?</Text>,
+        labels: { confirm: "Confirm", cancel: "Cancel" },
+        confirmProps: { color: "red" },
+        onConfirm: () => logout(),
+      });
     } else {
       setAuthModalIsOpen(true);
     }
@@ -49,8 +48,7 @@ const AppBar = () => {
   const logout = () => {
     logoutApi()
       .catch((error) => {
-        // TODO error handling
-        console.log(handleApiRequestError(error));
+        showApiRequestErrorNotification(handleApiRequestError(error));
       })
       .finally(() => {
         dispatch({ type: "USER_LOGOUT" });
@@ -67,17 +65,31 @@ const AppBar = () => {
       <Group sx={{ height: "100%" }} position="apart">
         <Group>
           <Link href="/">
-              <Image
-                src="/logo-transparent.png"
-                alt="Logo"
-                width={30}
-                style={{ cursor: "pointer" }}
-              />
+            <Image
+              src="/logo-transparent.png"
+              alt="Logo"
+              width={30}
+              style={{ cursor: "pointer" }}
+            />
           </Link>
           <Link href="/">
             <Group spacing={0}>
-              <Text size="lg" weight="bold" color="yellow.5" style={{cursor: "pointer"}}>Display</Text>
-              <Text size="lg" weight="bold" color="yellow.6" style={{cursor: "pointer"}}>Case</Text>
+              <Text
+                size="lg"
+                weight="bold"
+                color="yellow.5"
+                style={{ cursor: "pointer" }}
+              >
+                Display
+              </Text>
+              <Text
+                size="lg"
+                weight="bold"
+                color="yellow.6"
+                style={{ cursor: "pointer" }}
+              >
+                Case
+              </Text>
             </Group>
           </Link>
           <Space h="lg" />

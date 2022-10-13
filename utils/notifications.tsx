@@ -1,7 +1,7 @@
 import { showNotification } from "@mantine/notifications";
 import { TbCheck, TbX } from "react-icons/tb";
 
-interface NotificationProps {
+export interface NotificationProps {
   title: string;
   message: string;
 }
