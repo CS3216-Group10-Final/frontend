@@ -74,7 +74,9 @@ const AppBar = () => {
                 style={{ cursor: "pointer" }}
               />
           </Link>
-          <Text size="lg" weight="bold" color="yellow.5">DisplayCase</Text>
+          <Link href="/">
+            <Text size="lg" weight="bold" color="yellow.5" style={{cursor: "pointer"}}>DisplayCase</Text>
+          </Link>
           <Space h="lg" />
           <Link href="/games">
             <Text style={{ cursor: "pointer" }} weight="bold">
