@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import Layout from "@components/Layout";
 import { Provider } from "react-redux";
 import store from "@redux/store";
+import { ModalsProvider } from "@mantine/modals";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -52,11 +53,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <NotificationsProvider>
-        <Provider store={store}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </Provider>
+        <ModalsProvider>
+          <Provider store={store}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </Provider>
+        </ModalsProvider>
       </NotificationsProvider>
     </MantineProvider>
   );

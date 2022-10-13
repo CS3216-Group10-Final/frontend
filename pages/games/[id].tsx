@@ -22,6 +22,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import { openConfirmModal } from "@mantine/modals";
 import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import { NextPage } from "next";
@@ -130,6 +131,8 @@ const GameDetailsSidebar = ({
       .then(() => {
         // TODO notifications
         setGameEntry(undefined);
+        setStatus('')
+        setRating('')
         console.log("deleted");
       })
       .catch((error) => {
@@ -137,6 +140,20 @@ const GameDetailsSidebar = ({
         console.log(handleApiRequestError(error).errorType);
       });
   };
+
+  const handleDeleteClick = () => {
+    openConfirmModal({
+      title: 'Delete entry',
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete this entry?
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => deleteGameEntry()
+    })
+  }
 
   return (
     <div className={classes.box} style={{ minWidth: 250 }}>
@@ -189,7 +206,7 @@ const GameDetailsSidebar = ({
             />
             <Button onClick={submitGameEntry}>Update</Button>
             {gameEntry && (
-              <Button onClick={deleteGameEntry} color="red">
+              <Button onClick={handleDeleteClick} color="red">
                 Delete
               </Button>
             )}

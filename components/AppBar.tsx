@@ -10,6 +10,7 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import { openConfirmModal } from "@mantine/modals";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
@@ -29,7 +30,17 @@ const AppBar = () => {
 
   const handleClick = () => {
     if (user) {
-      logout();
+      openConfirmModal({
+        title: 'Logout',
+        children: (
+          <Text size="sm">
+            Are you sure you want to log out?
+          </Text>
+        ),
+        labels: { confirm: 'Confirm', cancel: 'Cancel' },
+        confirmProps: { color: 'red' },
+        onConfirm: () => logout()
+      })
     } else {
       setAuthModalIsOpen(true);
     }
