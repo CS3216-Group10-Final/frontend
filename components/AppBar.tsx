@@ -75,7 +75,10 @@ const AppBar = () => {
               />
           </Link>
           <Link href="/">
-            <Text size="lg" weight="bold" color="yellow.5" style={{cursor: "pointer"}}>DisplayCase</Text>
+            <Group spacing={0}>
+              <Text size="lg" weight="bold" color="yellow.5" style={{cursor: "pointer"}}>Display</Text>
+              <Text size="lg" weight="bold" color="yellow.6" style={{cursor: "pointer"}}>Case</Text>
+            </Group>
           </Link>
           <Space h="lg" />
           <Link href="/games">
