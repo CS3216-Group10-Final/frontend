@@ -7,6 +7,7 @@ import {
   updateGameEntryApi,
 } from "@api/game_entries_api";
 import { Game, GameEntry, GameEntryStatus, User } from "@api/types";
+import PageHeader from "@components/PageHeader";
 import {
   Badge,
   Button,
@@ -16,15 +17,18 @@ import {
   Grid,
   Group,
   Image,
+  LoadingOverlay,
   Select,
   Stack,
   Text,
 } from "@mantine/core";
+import { openConfirmModal } from "@mantine/modals";
 import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { showSuccessNotification } from "utils/notifications";
 
 interface SidebarProps {
   game?: Game;
@@ -58,12 +62,22 @@ const GameDetailsSidebar = ({
   const [rating, setRating] = useState<string>(
     String(gameEntry?.rating) || "0"
   );
+  const [platform, setPlatform] = useState<string>(game?.platforms[0] || '') //TODO update
+
+  useEffect(() => {
+    if (gameEntry) {
+      setStatus(String(gameEntry.status));
+      setRating(String(gameEntry.rating));
+      // TODO update platform
+    }
+  }, [gameEntry]);
 
   const submitGameEntry = () => {
     if (!user || !game) {
       return;
     }
     const newGameEntry: GameEntry = gameEntry
+    //TODO update platforms
       ? {
           ...gameEntry,
           status: Number(status),
@@ -82,9 +96,12 @@ const GameDetailsSidebar = ({
     if (!gameEntry) {
       createGameEntryApi(newGameEntry)
         .then((gameEntry) => {
-          // TODO notifications
           setGameEntry(gameEntry);
           console.log("created");
+          showSuccessNotification({
+            title: "Game added to display case",
+            message: `${gameEntry.game_name}`,
+          });
         })
         .catch((error) => {
           // TODO error handling
@@ -93,9 +110,12 @@ const GameDetailsSidebar = ({
     } else {
       updateGameEntryApi(newGameEntry)
         .then(() => {
-          // TODO notifications
           setGameEntry(newGameEntry);
           console.log("updated");
+          showSuccessNotification({
+            title: "Entry updated",
+            message: `${gameEntry.game_name}`,
+          });
         })
         .catch((error) => {
           // TODO error handling
@@ -110,8 +130,9 @@ const GameDetailsSidebar = ({
     }
     deleteGameEntryApi(gameEntry.id)
       .then(() => {
-        // TODO notifications
         setGameEntry(undefined);
+        setStatus('')
+        setRating('')
         console.log("deleted");
       })
       .catch((error) => {
@@ -120,10 +141,32 @@ const GameDetailsSidebar = ({
       });
   };
 
+  const handleDeleteClick = () => {
+    openConfirmModal({
+      title: 'Delete entry',
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete this entry?
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => deleteGameEntry()
+    })
+  }
+
   return (
     <div className={classes.box} style={{ minWidth: 250 }}>
+      <PageHeader
+        title={game?.name || "Loading"}
+        description={
+          game
+            ? `Add ${game?.name} to your list or check out the game's details`
+            : "Error occurred"
+        }
+      />
       <Stack>
-        <Image src={game?.cover} alt="Game Cover" radius="md" />
+        {game && <Image src={game?.cover} alt="Game Cover" radius="md" />}
         {user && (
           <>
             {gameEntry ? (
@@ -161,9 +204,18 @@ const GameDetailsSidebar = ({
                 .fill(0)
                 .map((_, index) => `${index}`)}
             />
+            <Select
+              label="Platform"
+              placeholder="Pick one"
+              value={platform}
+              onChange={(value) => {
+                setPlatform(value || "");
+              }}
+              data={game?.platforms || []}
+            />
             <Button onClick={submitGameEntry}>Update</Button>
             {gameEntry && (
-              <Button onClick={deleteGameEntry} color="red">
+              <Button onClick={handleDeleteClick} color="red">
                 Delete
               </Button>
             )}
@@ -181,11 +233,13 @@ const Games: NextPage = () => {
   const [game, setGame] = useState<Game>();
   const [gameEntry, setGameEntry] = useState<GameEntry>();
   const user = useAppSelector(selectUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!router.isReady) {
       return;
     }
+    setIsLoading(true);
     getGameByIdApi(Number(id))
       .then((game) => {
         setGame(game);
@@ -202,11 +256,15 @@ const Games: NextPage = () => {
       .catch((error) => {
         // TODO error handling
         console.log(handleApiRequestError(error).errorType);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [router.isReady]);
 
   return (
     <>
+      <LoadingOverlay visible={isLoading} overlayBlur={3} zIndex="1" />
       <Center>
         <Text size={35}>{game?.name}</Text>
       </Center>

@@ -44,7 +44,7 @@ export async function createGameEntryApi(
 }
 
 export async function updateGameEntryApi(gameEntry: GameEntry) {
-  await axiosInstance.put(GAME_ENTRIES_PATH, gameEntry);
+  await axiosInstance.put(getPathForGameEntryWithId(gameEntry.id), gameEntry);
 }
 
 export async function deleteGameEntryApi(id: number) {

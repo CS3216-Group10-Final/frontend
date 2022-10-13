@@ -6,7 +6,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { IconArchive, IconChartLine, IconUsers } from "@tabler/icons";
+import { TbArchive, TbChartLine, TbUsers } from "react-icons/tb";
 
 const OnboardingPage = () => {
   const theme = useMantineTheme();
@@ -32,7 +32,7 @@ const OnboardingPage = () => {
         </Title>
 
         <Group mt="xl">
-          <IconArchive />
+          <TbArchive />
 
           <Text align="center" size="xl">
             Keep track of games that you have.
@@ -40,7 +40,7 @@ const OnboardingPage = () => {
         </Group>
 
         <Group mt="xl">
-          <IconChartLine />
+          <TbChartLine />
 
           <Text align="center" size="xl">
             Personalised statistics of games you played.
@@ -48,7 +48,7 @@ const OnboardingPage = () => {
         </Group>
 
         <Group mt="xl">
-          <IconUsers />
+          <TbUsers />
 
           <Text align="center" size="xl">
             Share your profile with your friends.

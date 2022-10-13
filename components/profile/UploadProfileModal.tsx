@@ -1,19 +1,17 @@
 import { handleApiRequestError } from "@api/error_handling";
 import {
+  Button,
   Center,
   FileInput,
-  Modal,
-  Image,
-  Button,
-  Stack,
   Group,
+  Image,
+  Modal,
+  Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
 import { useAppDispatch } from "@redux/hooks";
 import { updateProfilePic } from "@redux/slices/User_slice";
-import React from "react";
-import { IconCheck } from "@tabler/icons";
+import { showSuccessNotification } from "utils/notifications";
 
 type Props = {
   opened: boolean;
@@ -51,11 +49,9 @@ const UploadProfileModal = (props: Props) => {
       .then(() => {
         console.log("SUCCESS!");
         onClose();
-        showNotification({
+        showSuccessNotification({
           title: "Picture Uploaded",
           message: "Awesome!",
-          icon: <IconCheck size={18} />,
-          color: "teal",
         });
       })
       .catch((error) => {

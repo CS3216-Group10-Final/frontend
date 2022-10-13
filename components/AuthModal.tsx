@@ -6,6 +6,7 @@ import { ErrorType, handleApiRequestError } from "@api/error_handling";
 import {
   Anchor,
   Button,
+  Divider,
   Group,
   Modal,
   PasswordInput,
@@ -14,11 +15,14 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
-import { IconX } from "@tabler/icons";
 import { useState } from "react";
+import {
+  showErrorNotification,
+  showSuccessNotification,
+} from "utils/notifications";
+import { FaceBookButton, GoogleButton, TwitterButton } from "./SocialButtons";
 
 type Props = {
   isOpen: boolean;
@@ -77,17 +81,14 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
           const apiRequestError = handleApiRequestError(error);
 
           if (apiRequestError.errorType === ErrorType.INCORRECT_LOGIN_DETAILS) {
-            showNotification({
+            showErrorNotification({
               title: "Invalid Credential",
               message: "Oh no, cannot login with the provided credentials :(",
-              icon: <IconX size={18} />,
-              color: "red",
             });
           }
         })
         .finally(() => setLoading(false));
     } else if (modalType === "register") {
-      // handle register
       registerUserApi({ email, username, password })
         .then(() => {
           return loginApi({ email, password });
@@ -97,25 +98,23 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
         })
         .then(() => {
           handleClose();
+          showSuccessNotification({
+            title: "Successfully registered!",
+            message: `Welcome ${username}!`,
+          });
         })
         .catch((error) => {
-          // TODO error handling
-
           const apiRequestError = handleApiRequestError(error);
 
           if (apiRequestError.errorType === ErrorType.EMAIL_IN_USE) {
-            showNotification({
+            showErrorNotification({
               title: "Email has been taken by someone else",
               message: "Oh no, the email has already been taken :(",
-              icon: <IconX size={18} />,
-              color: "red",
             });
           } else if (apiRequestError.errorType === ErrorType.USERNAME_IN_USE) {
-            showNotification({
+            showErrorNotification({
               title: "Username has been taken by someone else",
               message: "Oh no, the username has already been taken :(",
-              icon: <IconX size={18} />,
-              color: "red",
             });
           }
           console.log(
@@ -133,9 +132,17 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Modal centered opened={isOpen} onClose={handleClose} title="Welcome Back!">
+    <Modal centered opened={isOpen} onClose={handleClose} title={modalType == 'register' ? "Register an account" : "Welcome Back!"}>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
+          {modalType === "login" && (
+            <Stack>
+              <GoogleButton>Login with Google</GoogleButton>
+              <TwitterButton>Login with Twitter</TwitterButton>
+              <FaceBookButton>Login with Facebook</FaceBookButton>
+              <Divider/>
+            </Stack>
+          )}
           {modalType === "register" && (
             <TextInput
               withAsterisk

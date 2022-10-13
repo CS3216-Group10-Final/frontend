@@ -1,6 +1,7 @@
 import { logoutApi } from "@api/authentication/authentication_api";
 import { handleApiRequestError } from "@api/error_handling";
 import {
+  Avatar,
   Button,
   Group,
   Header,
@@ -9,6 +10,7 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import { openConfirmModal } from "@mantine/modals";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
@@ -28,7 +30,17 @@ const AppBar = () => {
 
   const handleClick = () => {
     if (user) {
-      logout();
+      openConfirmModal({
+        title: 'Logout',
+        children: (
+          <Text size="sm">
+            Are you sure you want to log out?
+          </Text>
+        ),
+        labels: { confirm: 'Confirm', cancel: 'Cancel' },
+        confirmProps: { color: 'red' },
+        onConfirm: () => logout()
+      })
     } else {
       setAuthModalIsOpen(true);
     }
@@ -55,21 +67,39 @@ const AppBar = () => {
       <Group sx={{ height: "100%" }} position="apart">
         <Group>
           <Link href="/">
-            <Image
-              src="/logo-transparent.png"
-              alt="Logo"
-              width={30}
-              style={{ cursor: "pointer" }}
-            />
+              <Image
+                src="/logo-transparent.png"
+                alt="Logo"
+                width={30}
+                style={{ cursor: "pointer" }}
+              />
           </Link>
-          <Space h="md" />
+          <Link href="/">
+            <Group spacing={0}>
+              <Text size="lg" weight="bold" color="yellow.5" style={{cursor: "pointer"}}>Display</Text>
+              <Text size="lg" weight="bold" color="yellow.6" style={{cursor: "pointer"}}>Case</Text>
+            </Group>
+          </Link>
+          <Space h="lg" />
           <Link href="/games">
             <Text style={{ cursor: "pointer" }} weight="bold">
               Games
             </Text>
           </Link>
         </Group>
-        <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
+        <Group>
+          {user && (
+            <Link href={"/"}>
+              <Avatar
+                src={user?.profile_picture_link}
+                size={35}
+                radius={5}
+                style={{ cursor: "pointer" }}
+              />
+            </Link>
+          )}
+          <Button onClick={handleClick}>{user ? "Logout" : "Login"}</Button>
+        </Group>
       </Group>
       <AuthModal isOpen={authModalIsOpen} onClose={handleClose} />
     </Header>
