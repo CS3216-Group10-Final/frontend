@@ -62,11 +62,13 @@ const GameDetailsSidebar = ({
   const [rating, setRating] = useState<string>(
     String(gameEntry?.rating) || "0"
   );
+  const [platform, setPlatform] = useState<string>(game?.platforms[0] || '') //TODO update
 
   useEffect(() => {
     if (gameEntry) {
       setStatus(String(gameEntry.status));
       setRating(String(gameEntry.rating));
+      // TODO update platform
     }
   }, [gameEntry]);
 
@@ -75,6 +77,7 @@ const GameDetailsSidebar = ({
       return;
     }
     const newGameEntry: GameEntry = gameEntry
+    //TODO update platforms
       ? {
           ...gameEntry,
           status: Number(status),
@@ -93,7 +96,6 @@ const GameDetailsSidebar = ({
     if (!gameEntry) {
       createGameEntryApi(newGameEntry)
         .then((gameEntry) => {
-          // TODO notifications
           setGameEntry(gameEntry);
           console.log("created");
           showSuccessNotification({
@@ -108,7 +110,6 @@ const GameDetailsSidebar = ({
     } else {
       updateGameEntryApi(newGameEntry)
         .then(() => {
-          // TODO notifications
           setGameEntry(newGameEntry);
           console.log("updated");
           showSuccessNotification({
@@ -129,7 +130,6 @@ const GameDetailsSidebar = ({
     }
     deleteGameEntryApi(gameEntry.id)
       .then(() => {
-        // TODO notifications
         setGameEntry(undefined);
         setStatus('')
         setRating('')
@@ -203,6 +203,15 @@ const GameDetailsSidebar = ({
               data={Array(11)
                 .fill(0)
                 .map((_, index) => `${index}`)}
+            />
+            <Select
+              label="Platform"
+              placeholder="Pick one"
+              value={platform}
+              onChange={(value) => {
+                setPlatform(value || "");
+              }}
+              data={game?.platforms || []}
             />
             <Button onClick={submitGameEntry}>Update</Button>
             {gameEntry && (
