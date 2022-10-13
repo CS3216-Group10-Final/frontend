@@ -67,14 +67,15 @@ const AppBar = () => {
       <Group sx={{ height: "100%" }} position="apart">
         <Group>
           <Link href="/">
-            <Image
-              src="/logo-transparent.png"
-              alt="Logo"
-              width={30}
-              style={{ cursor: "pointer" }}
-            />
+              <Image
+                src="/logo-transparent.png"
+                alt="Logo"
+                width={30}
+                style={{ cursor: "pointer" }}
+              />
           </Link>
-          <Space h="md" />
+          <Text size="lg" weight="bold" color="yellow.5">DisplayCase</Text>
+          <Space h="lg" />
           <Link href="/games">
             <Text style={{ cursor: "pointer" }} weight="bold">
               Games
