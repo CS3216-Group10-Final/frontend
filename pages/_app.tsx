@@ -41,6 +41,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         colorScheme: "dark",
         primaryColor: "yellow",
         primaryShade: 6,
+        // fontFamily: "Quicksand, sans-serif",
+        // headings: {
+        //   fontFamily: "Quicksand, sans-serif",
+        //   fontWeight: 700 
+        // },
         components: {
           Input: {
             styles: (theme) => ({
