@@ -6,6 +6,7 @@ import { ErrorType, handleApiRequestError } from "@api/error_handling";
 import {
   Anchor,
   Button,
+  Divider,
   Group,
   Modal,
   PasswordInput,
@@ -21,6 +22,7 @@ import {
   showErrorNotification,
   showSuccessNotification,
 } from "utils/notifications";
+import { FaceBookButton, GoogleButton, TwitterButton } from "./SocialButtons";
 
 type Props = {
   isOpen: boolean;
@@ -130,9 +132,17 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Modal centered opened={isOpen} onClose={handleClose} title="Welcome Back!">
+    <Modal centered opened={isOpen} onClose={handleClose} title={modalType == 'register' ? "Register an account" : "Welcome Back!"}>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
+          {modalType === "login" && (
+            <Stack>
+              <GoogleButton>Login with Google</GoogleButton>
+              <TwitterButton>Login with Twitter</TwitterButton>
+              <FaceBookButton>Login with Facebook</FaceBookButton>
+              <Divider/>
+            </Stack>
+          )}
           {modalType === "register" && (
             <TextInput
               withAsterisk
