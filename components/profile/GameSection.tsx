@@ -1,4 +1,4 @@
-import { Title, Box } from "@mantine/core";
+import { Title, Box, Tooltip, ActionIcon } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   getGameEntries,
@@ -7,6 +7,7 @@ import {
 import { selectUserId } from "@redux/slices/User_slice";
 import Link from "next/link";
 import React, { useEffect } from "react";
+import { TbPlus } from "react-icons/tb";
 import GameEntryCard from "./GameEntryCard";
 
 const GameSection = () => {
@@ -37,6 +38,21 @@ const GameSection = () => {
           </Box>
         );
       })}
+
+      <Link href="/games">
+        <Tooltip label="Add games">
+          <ActionIcon
+            color="primary"
+            variant="filled"
+            component="a"
+            mt="lg"
+            ml="auto"
+            mr={8}
+          >
+            <TbPlus size={18} />
+          </ActionIcon>
+        </Tooltip>
+      </Link>
     </Box>
   );
 };
