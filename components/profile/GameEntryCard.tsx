@@ -1,17 +1,23 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { GameEntry, GameEntryStatus } from "@api/types";
-import { Card, Image, Text, Group, Stack, Badge } from "@mantine/core";
+import { Card, Image, Text, Group, Stack, Badge, Grid } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
+import Link from "next/link";
 
 type Props = {
   gameEntry: GameEntry;
-  onClick?: () => void;
 };
 
 const GameEntryCard = (props: Props) => {
-  const { gameEntry, onClick } = props;
-  const { game_name: title, game_cover: cover, rating, status } = gameEntry;
-  const { hovered, ref } = useHover();
+  const { gameEntry } = props;
+  const {
+    game_id,
+    game_name: title,
+    game_cover: cover,
+    rating,
+    status,
+  } = gameEntry;
+  const { ref, hovered } = useHover();
 
   const badgeColor = {
     [GameEntryStatus.DROPPED]: "red",
@@ -22,35 +28,50 @@ const GameEntryCard = (props: Props) => {
   };
 
   return (
-    <Card
-      sx={(theme) => ({
-        cursor: "pointer",
-        background: hovered ? theme.colors.dark[3] : theme.colors.dark[6],
-      })}
-      ref={ref}
-      onClick={onClick}
-    >
+    <Card>
       <Card.Section>
-        <Group position="apart">
-          <Group>
-            <Image width={180} height={80} src={cover} withPlaceholder />
+        <Grid grow>
+          <Grid.Col span={2} p={0}>
+            <Image
+              width="100%"
+              height="100%"
+              src={cover}
+              withPlaceholder
+              sx={{ maxHeight: 70 }}
+            />
+          </Grid.Col>
+          <Grid.Col span={8} p={0} pl="sm">
             <Stack>
-              <Text mt="sm" size="md" weight={500}>
-                {title}
-              </Text>
+              <Link href={`/games/${game_id}`}>
+                <Text
+                  mt="sm"
+                  size="md"
+                  weight={500}
+                  sx={{ cursor: "pointer" }}
+                  ref={ref}
+                  underline={hovered}
+                >
+                  {title}
+                </Text>
+              </Link>
               <Group mb="sm">
                 <Badge color={badgeColor[status]}>
                   {GameEntryStatus[status]}
                 </Badge>
               </Group>
             </Stack>
-          </Group>
+          </Grid.Col>
           {rating && (
-            <Text size="md" mr={24} weight={500}>
-              {rating}/10
-            </Text>
+            <Grid.Col span="content" p={0}>
+              {/* Hacky way to align text in the middle vertically */}
+              <Group sx={{ height: "100%" }} position="right" mr="sm">
+                <Text size="md" align="right" mr="sm" weight={500}>
+                  {rating}/10
+                </Text>
+              </Group>
+            </Grid.Col>
           )}
-        </Group>
+        </Grid>
       </Card.Section>
     </Card>
   );
