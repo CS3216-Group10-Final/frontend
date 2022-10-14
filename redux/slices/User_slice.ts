@@ -1,5 +1,5 @@
 import { updateUserProfilePictureApi } from "@api/pictures_api";
-import { getSelfUserApi } from "@api/users_api";
+import { getSelfUserApi, updateSelfUsernameApi } from "@api/users_api";
 import {
   createAsyncThunk,
   createSelector,
@@ -27,13 +27,25 @@ const userSlice = createSlice({
     });
     builder.addCase(updateProfilePic.fulfilled, (state, action) => {
       if (state.user) {
-        const newUser = Object.create(state.user);
+        const newUser: User = { ...state.user };
         const { profile_picture_link } = action.payload;
 
         state.user = {
           ...action.payload,
           ...newUser,
           profile_picture_link: `${process.env.NEXT_PUBLIC_BE_ENDPOINT}${profile_picture_link}`,
+        };
+      }
+    });
+    builder.addCase(updateUsername.fulfilled, (state, action) => {
+      if (state.user) {
+        const newUser: User = { ...state.user };
+        const { username } = action.payload;
+
+        state.user = {
+          ...action.payload,
+          ...newUser,
+          username: username,
         };
       }
     });
@@ -46,6 +58,15 @@ export const updateProfilePic = createAsyncThunk<
   { state: RootState }
 >("user/updateProfilePic", async (profile_picture) => {
   const response = await updateUserProfilePictureApi(profile_picture);
+  return response;
+});
+
+export const updateUsername = createAsyncThunk<
+  User,
+  string,
+  { state: RootState }
+>("user/updateUsername", async (username) => {
+  const response = await updateSelfUsernameApi(username);
   return response;
 });
 
