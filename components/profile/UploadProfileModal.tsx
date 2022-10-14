@@ -1,4 +1,7 @@
-import { handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import {
   Button,
   Center,
@@ -55,7 +58,7 @@ const UploadProfileModal = (props: Props) => {
         });
       })
       .catch((error) => {
-        console.log(handleApiRequestError(error));
+        showApiRequestErrorNotification(handleApiRequestError(error));
       });
   };
 

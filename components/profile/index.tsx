@@ -1,4 +1,7 @@
-import { handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import ChartBarDistribution from "@components/profile/ChartBarDistribution";
 import GameSection from "@components/profile/GameSection";
 import {
@@ -89,7 +92,7 @@ const UsernameModalContent = () => {
         });
       })
       .catch((error) => {
-        console.log(handleApiRequestError(error));
+        showApiRequestErrorNotification(handleApiRequestError(error));
       })
       .finally(() => closeAllModals());
   };
@@ -119,7 +122,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     dispatch(getSelfUserStatistics()).catch((error) => {
-      console.log(handleApiRequestError(error).errorType);
+      showApiRequestErrorNotification(handleApiRequestError(error));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
