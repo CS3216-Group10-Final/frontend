@@ -6,6 +6,7 @@ import { ApiRequestError, ErrorType } from "@api/error_handling";
 import axios from "axios";
 import axiosInstance from "../axios";
 import {
+  GOOGLE_LOGIN_PATH,
   LOGIN_PATH,
   LOGOUT_PATH,
   REFRESH_TOKEN_PATH,
@@ -128,4 +129,12 @@ export async function verifyAuthApi() {
     }
     throw err;
   }
+}
+
+/**
+ * Gets google auth link
+ */
+export async function getGoogleAuthLinkApi(): Promise<string> {
+  const response = await axiosInstance.get<{ url: string }>(GOOGLE_LOGIN_PATH);
+  return response.data.url;
 }

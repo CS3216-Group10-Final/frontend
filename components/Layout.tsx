@@ -1,5 +1,8 @@
 import TokenService from "@api/authentication/token_service";
-import { handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import { AppShell, Container } from "@mantine/core";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
@@ -14,7 +17,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
       TokenService.getLocalRefreshToken()
     ) {
       dispatch(getSelfUser()).catch((error) => {
-        console.log(handleApiRequestError(error).errorType);
+        showApiRequestErrorNotification(handleApiRequestError(error));
       });
     }
   }, [dispatch]);

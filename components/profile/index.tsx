@@ -1,4 +1,7 @@
-import { handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import ChartBarDistribution from "@components/profile/ChartBarDistribution";
 import GameSection from "@components/profile/GameSection";
 import {
@@ -7,17 +10,22 @@ import {
   Button,
   Divider,
   Group,
+  Space,
   Stack,
   Text,
+  TextInput,
   Title,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { closeAllModals, openModal } from "@mantine/modals";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   getSelfUserStatistics,
   selectUserStatistics,
 } from "@redux/slices/UserStatistics_slice";
-import { selectUser } from "@redux/slices/User_slice";
+import { selectUser, updateUsername } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
+import { showSuccessNotification } from "utils/notifications";
 import UploadProfileModal from "./UploadProfileModal";
 // import { GameEntryStatus, Genre, Platform } from "@api/types";
 
@@ -60,21 +68,72 @@ import UploadProfileModal from "./UploadProfileModal";
 //   2008: 14,
 // };
 
+const UsernameModalContent = () => {
+  interface UsernameForm {
+    username: string;
+  }
+  const dispatch = useAppDispatch();
+  const usernameForm = useForm<UsernameForm>({
+    initialValues: {
+      username: "",
+    },
+
+    validate: {
+      username: (value) => (value ? null : "Please enter a username"),
+    },
+  });
+
+  const handleUpdateUsername = ({ username }: UsernameForm) => {
+    dispatch(updateUsername(username))
+      .then(() => {
+        showSuccessNotification({
+          title: "Username updated",
+          message: "Awesome!",
+        });
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      })
+      .finally(() => closeAllModals());
+  };
+
+  return (
+    <form onSubmit={usernameForm.onSubmit(handleUpdateUsername)}>
+      <TextInput
+        label="Enter your username"
+        placeholder="Username"
+        withAsterisk
+        {...usernameForm.getInputProps("username")}
+      />
+      <Space h="md" />
+      <Button type="submit" fullWidth>
+        Change
+      </Button>
+    </form>
+  );
+};
+
 const ProfilePage = () => {
   const user = useAppSelector(selectUser);
   const userStatistics = useAppSelector(selectUserStatistics);
   const dispatch = useAppDispatch();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getSelfUserStatistics()).catch((error) => {
-      console.log(handleApiRequestError(error).errorType);
+      showApiRequestErrorNotification(handleApiRequestError(error));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(user && `${user.profile_picture_link}`);
+  const openChangeUserNameModal = () => {
+    openModal({
+      title: "Change username",
+      children: <UsernameModalContent />,
+    });
+  };
+
   return (
     <>
       <Stack>
@@ -89,7 +148,10 @@ const ProfilePage = () => {
             <Text size="xl" align="center" mb={8} color="white">
               {user?.username}
             </Text>
-            <Button onClick={() => setIsOpen(true)}>Upload</Button>
+            <Button onClick={openChangeUserNameModal}>Change Username</Button>
+            <Button onClick={() => setProfilePicModalIsOpen(true)}>
+              Upload Picture
+            </Button>
           </Stack>
           <Box sx={{ flex: 1 }}>
             <Title order={1} align="center">
@@ -122,7 +184,10 @@ const ProfilePage = () => {
           <GameSection />
         </Box>
       </Stack>
-      <UploadProfileModal opened={isOpen} onClose={() => setIsOpen(false)} />
+      <UploadProfileModal
+        opened={profilePicModalIsOpen}
+        onClose={() => setProfilePicModalIsOpen(false)}
+      />
     </>
   );
 };

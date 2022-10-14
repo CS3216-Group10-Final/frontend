@@ -20,3 +20,13 @@ export async function getUserApi(username: string): Promise<User> {
   });
   return response.data;
 }
+
+/**
+ * Change self user's username
+ */
+export async function updateSelfUsernameApi(username: string): Promise<User> {
+  const response = await axiosInstance.patch<User>(USER_PATH, {
+    username: username,
+  });
+  return response.data;
+}

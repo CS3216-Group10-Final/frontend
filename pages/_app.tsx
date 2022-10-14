@@ -44,7 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         // fontFamily: "Quicksand, sans-serif",
         // headings: {
         //   fontFamily: "Quicksand, sans-serif",
-        //   fontWeight: 700 
+        //   fontWeight: 700
         // },
         components: {
           Input: {
@@ -57,15 +57,15 @@ function MyApp({ Component, pageProps }: AppProps) {
         },
       }}
     >
-      <NotificationsProvider>
-        <ModalsProvider>
-          <Provider store={store}>
+      <Provider store={store}>
+        <NotificationsProvider>
+          <ModalsProvider>
             <Layout>
               <Component {...pageProps} />
             </Layout>
-          </Provider>
-        </ModalsProvider>
-      </NotificationsProvider>
+          </ModalsProvider>
+        </NotificationsProvider>
+      </Provider>
     </MantineProvider>
   );
 }

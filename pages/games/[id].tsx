@@ -1,4 +1,7 @@
-import { handleApiRequestError } from "@api/error_handling";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
 import {
   createGameEntryApi,
@@ -18,10 +21,13 @@ import {
   Group,
   Image,
   LoadingOverlay,
+  MultiSelect,
   Select,
+  Space,
   Stack,
   Text,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { openConfirmModal } from "@mantine/modals";
 import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
@@ -56,32 +62,45 @@ const GameDetailsSidebar = ({
   user,
 }: SidebarProps) => {
   const { classes } = useStyles();
-  const [status, setStatus] = useState<string>(
-    String(gameEntry?.status) || String(GameEntryStatus.WISHLIST)
-  );
-  const [rating, setRating] = useState<string>(
-    String(gameEntry?.rating) || "0"
-  );
-  const [platform, setPlatform] = useState<string>(game?.platforms[0] || '') //TODO update
+
+  interface FormValues {
+    status: string;
+    rating: string;
+    platforms: string[];
+  }
+
+  const form = useForm<FormValues>({
+    initialValues: {
+      status: String(gameEntry?.status) || String(GameEntryStatus.WISHLIST),
+      rating: String(gameEntry?.rating) || "0",
+      platforms: game?.platforms || [],
+    },
+
+    validate: {
+      status: (value) => (value ? null : "Status is required"),
+    },
+  });
 
   useEffect(() => {
     if (gameEntry) {
-      setStatus(String(gameEntry.status));
-      setRating(String(gameEntry.rating));
-      // TODO update platform
+      form.setValues({
+        status: String(gameEntry.status),
+        rating: String(gameEntry.rating),
+        platforms: gameEntry.platforms,
+      });
     }
   }, [gameEntry]);
 
-  const submitGameEntry = () => {
+  const submitGameEntry = (values: FormValues) => {
     if (!user || !game) {
       return;
     }
     const newGameEntry: GameEntry = gameEntry
-    //TODO update platforms
       ? {
           ...gameEntry,
-          status: Number(status),
-          rating: Number(rating),
+          status: Number(values.status),
+          rating: Number(values.rating),
+          platforms: values.platforms,
         }
       : {
           id: 0,
@@ -90,8 +109,9 @@ const GameDetailsSidebar = ({
           game_name: game.name,
           game_cover: game.cover,
           is_favourite: false,
-          status: Number(status),
-          rating: Number(rating),
+          platforms: values.platforms,
+          status: Number(values.status),
+          rating: Number(values.rating),
         };
     if (!gameEntry) {
       createGameEntryApi(newGameEntry)
@@ -104,8 +124,7 @@ const GameDetailsSidebar = ({
           });
         })
         .catch((error) => {
-          // TODO error handling
-          console.log(handleApiRequestError(error).errorType);
+          showApiRequestErrorNotification(handleApiRequestError(error));
         });
     } else {
       updateGameEntryApi(newGameEntry)
@@ -118,8 +137,7 @@ const GameDetailsSidebar = ({
           });
         })
         .catch((error) => {
-          // TODO error handling
-          console.log(handleApiRequestError(error).errorType);
+          showApiRequestErrorNotification(handleApiRequestError(error));
         });
     }
   };
@@ -131,29 +149,25 @@ const GameDetailsSidebar = ({
     deleteGameEntryApi(gameEntry.id)
       .then(() => {
         setGameEntry(undefined);
-        setStatus('')
-        setRating('')
+        form.reset();
         console.log("deleted");
       })
       .catch((error) => {
-        // TODO error handling
-        console.log(handleApiRequestError(error).errorType);
+        showApiRequestErrorNotification(handleApiRequestError(error));
       });
   };
 
   const handleDeleteClick = () => {
     openConfirmModal({
-      title: 'Delete entry',
+      title: "Delete entry",
       children: (
-        <Text size="sm">
-          Are you sure you want to delete this entry?
-        </Text>
+        <Text size="sm">Are you sure you want to delete this entry?</Text>
       ),
-      labels: { confirm: 'Delete', cancel: 'Cancel' },
-      confirmProps: { color: 'red' },
-      onConfirm: () => deleteGameEntry()
-    })
-  }
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: () => deleteGameEntry(),
+    });
+  };
 
   return (
     <div className={classes.box} style={{ minWidth: 250 }}>
@@ -175,45 +189,44 @@ const GameDetailsSidebar = ({
               <Text size="sm">Add this game to your display case!</Text>
             )}
             <Divider my="sm" color="dark.5" />
-            <Select
-              label="Status"
-              placeholder="Pick one"
-              value={status}
-              onChange={(value) => {
-                setStatus(value || "");
-              }}
-              data={[
-                { value: String(GameEntryStatus.WISHLIST), label: "Wishlist" },
-                { value: String(GameEntryStatus.BACKLOG), label: "Backlog" },
-                { value: String(GameEntryStatus.PLAYING), label: "Playing" },
-                {
-                  value: String(GameEntryStatus.COMPLETED),
-                  label: "Completed",
-                },
-                { value: String(GameEntryStatus.DROPPED), label: "Dropped" },
-              ]}
-            />
-            <Select
-              label="Rating"
-              placeholder="Out of 10"
-              value={rating}
-              onChange={(value) => {
-                setRating(value || "0");
-              }}
-              data={Array(11)
-                .fill(0)
-                .map((_, index) => `${index}`)}
-            />
-            <Select
-              label="Platform"
-              placeholder="Pick one"
-              value={platform}
-              onChange={(value) => {
-                setPlatform(value || "");
-              }}
-              data={game?.platforms || []}
-            />
-            <Button onClick={submitGameEntry}>Update</Button>
+            <form onSubmit={form.onSubmit(submitGameEntry)}>
+              <Select
+                label="Status"
+                placeholder="Pick one"
+                data={[
+                  {
+                    value: String(GameEntryStatus.WISHLIST),
+                    label: "Wishlist",
+                  },
+                  { value: String(GameEntryStatus.BACKLOG), label: "Backlog" },
+                  { value: String(GameEntryStatus.PLAYING), label: "Playing" },
+                  {
+                    value: String(GameEntryStatus.COMPLETED),
+                    label: "Completed",
+                  },
+                  { value: String(GameEntryStatus.DROPPED), label: "Dropped" },
+                ]}
+                {...form.getInputProps("status")}
+              />
+              <Select
+                label="Rating"
+                placeholder="Out of 10"
+                data={Array(11)
+                  .fill(0)
+                  .map((_, index) => `${index}`)}
+                {...form.getInputProps("rating")}
+              />
+              <MultiSelect
+                label="Platform"
+                placeholder="Pick any"
+                data={game?.platforms || []}
+                {...form.getInputProps("platforms")}
+              />
+              <Space h="md" />
+              <Button type="submit" fullWidth>
+                Update
+              </Button>
+            </form>
             {gameEntry && (
               <Button onClick={handleDeleteClick} color="red">
                 Delete
@@ -254,13 +267,12 @@ const Games: NextPage = () => {
         }
       })
       .catch((error) => {
-        // TODO error handling
-        console.log(handleApiRequestError(error).errorType);
+        showApiRequestErrorNotification(handleApiRequestError(error));
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [router.isReady]);
+  }, [id, router.isReady, user]);
 
   return (
     <>
