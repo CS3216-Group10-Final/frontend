@@ -1,4 +1,5 @@
 import {
+  getGoogleAuthLink,
   loginApi,
   registerUserApi,
 } from "@api/authentication/authentication_api";
@@ -20,7 +21,8 @@ import {
 import { useForm } from "@mantine/form";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
 import { FaceBookButton, GoogleButton, TwitterButton } from "./SocialButtons";
 
@@ -31,9 +33,21 @@ type Props = {
 
 const AuthModal = ({ isOpen, onClose }: Props) => {
   const [loading, setLoading] = useState(false);
+  const [googleAuthLink, setGoogleAuthLink] = useState<string>("");
 
   const [modalType, setModalType] = useState<"login" | "register">("login");
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    getGoogleAuthLink()
+      .then((link) => {
+        console.log(link);
+        setGoogleAuthLink(link);
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+  }, []);
 
   interface FormValues {
     email: string;
@@ -119,9 +133,11 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
         <Stack>
           {modalType === "login" && (
             <Stack>
-              <GoogleButton>Login with Google</GoogleButton>
-              <TwitterButton>Login with Twitter</TwitterButton>
-              <FaceBookButton>Login with Facebook</FaceBookButton>
+              <Link href={googleAuthLink}>
+                <GoogleButton>Login with Google</GoogleButton>
+              </Link>
+              {/* <TwitterButton>Login with Twitter</TwitterButton> */}
+              {/* <FaceBookButton>Login with Facebook</FaceBookButton> */}
               <Divider />
             </Stack>
           )}
