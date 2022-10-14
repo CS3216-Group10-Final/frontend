@@ -56,6 +56,7 @@ export interface GameEntry {
   review?: string;
   hours?: number;
   is_favourite: boolean;
+  platforms?: Platform[];
   status: GameEntryStatus;
   time_started?: Date;
   time_completed?: Date;
