@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { toProperCase } from "utils/helpers";
 import { useState } from "react";
+import { useMobile } from "utils/useMobile";
 
 type Props = {
   gameStatusDistribution: Partial<Record<GameEntryStatus, number>>;
@@ -40,6 +41,7 @@ const ChartBarDistribution = (props: Props) => {
   const [chartType, setChartType] = useState(ChartType.STATUS);
 
   const theme = useMantineTheme();
+  const isMobile = useMobile();
 
   const gameStatusData = Object.entries(gameStatusDistribution).map((entry) => {
     const [key, value] = entry;
@@ -111,17 +113,18 @@ const ChartBarDistribution = (props: Props) => {
   };
 
   return (
-    <Stack align="center">
+    <Stack align="center" sx={{ width: "100%" }}>
       <SegmentedControl
         value={chartType}
         onChange={handleChange}
         data={segmentedControlData}
+        size={isMobile ? "xs" : "sm"}
       />
-      <ResponsiveContainer height={256} width="80%">
+      <ResponsiveContainer height={256} width={isMobile ? "100%" : "80%"}>
         <BarChart data={chartData[chartType]}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="label" stroke={theme.colors.dark[0]} />
-          <YAxis stroke={theme.colors.dark[0]} />
+          <YAxis minTickGap={1} stroke={theme.colors.dark[0]} />
           <Tooltip
             cursor={{ fill: theme.fn.rgba(theme.colors.dark[0], 0.5) }}
           />
