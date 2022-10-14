@@ -134,7 +134,7 @@ export async function verifyAuthApi() {
 /**
  * Gets google auth link
  */
-export async function getGoogleAuthLink(): Promise<string> {
+export async function getGoogleAuthLinkApi(): Promise<string> {
   const response = await axiosInstance.get<{ url: string }>(GOOGLE_LOGIN_PATH);
   return response.data.url;
 }

@@ -1,5 +1,5 @@
 import {
-  getGoogleAuthLink,
+  getGoogleAuthLinkApi,
   loginApi,
   registerUserApi,
 } from "@api/authentication/authentication_api";
@@ -39,7 +39,7 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    getGoogleAuthLink()
+    getGoogleAuthLinkApi()
       .then((link) => {
         console.log(link);
         setGoogleAuthLink(link);
