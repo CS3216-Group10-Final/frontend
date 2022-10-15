@@ -4,11 +4,12 @@ import {
 } from "@api/error_handling";
 import ChartBarDistribution from "@components/profile/ChartBarDistribution";
 import GameSection from "@components/profile/GameSection";
+import { useForm } from "@mantine/form";
+import { closeAllModals, openModal } from "@mantine/modals";
 import {
   Avatar,
-  Box,
   Button,
-  Divider,
+  Grid,
   Group,
   Space,
   Stack,
@@ -16,8 +17,6 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { closeAllModals, openModal } from "@mantine/modals";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   getSelfUserStatistics,
@@ -136,9 +135,12 @@ const ProfilePage = () => {
 
   return (
     <>
-      <Stack>
-        <Group>
-          <Stack>
+      <Grid grow>
+        <Grid.Col md={3} sm={12}>
+          <Stack
+            sx={{ height: "100%", maxWidth: 200, margin: "auto" }}
+            justify="center"
+          >
             <Avatar
               src={user?.profile_picture_link}
               size={160}
@@ -153,37 +155,34 @@ const ProfilePage = () => {
               Upload Picture
             </Button>
           </Stack>
-          <Box sx={{ flex: 1 }}>
-            <Title order={1} align="center">
-              Statistics
-            </Title>
-            {userStatistics && (
-              <Text align="center">
-                Average rating: {userStatistics.average_rating.toFixed(1)}/10
-              </Text>
-            )}
-            {userStatistics && (
-              <Group mt={36} align="center" grow>
-                <ChartBarDistribution
-                  gameStatusDistribution={
-                    userStatistics.game_status_distribution
-                  }
-                  gameGenreDistribution={userStatistics.game_genre_distribution}
-                  platformDistribution={userStatistics.platform_distribution}
-                  releaseYearDistribution={
-                    userStatistics.release_year_distribution
-                  }
-                  playYearDistribution={userStatistics.play_year_distribution}
-                />
-              </Group>
-            )}
-          </Box>
-        </Group>
-        <Divider />
-        <Box>
+        </Grid.Col>
+        <Grid.Col md={9} sm={12} mt="md">
+          <Title order={1} align="center">
+            Statistics
+          </Title>
+          {userStatistics && (
+            <Text align="center">
+              Average rating: {userStatistics.average_rating.toFixed(1)}/10
+            </Text>
+          )}
+          {userStatistics && (
+            <Group mt={36} align="center" grow>
+              <ChartBarDistribution
+                gameStatusDistribution={userStatistics.game_status_distribution}
+                gameGenreDistribution={userStatistics.game_genre_distribution}
+                platformDistribution={userStatistics.platform_distribution}
+                releaseYearDistribution={
+                  userStatistics.release_year_distribution
+                }
+                playYearDistribution={userStatistics.play_year_distribution}
+              />
+            </Group>
+          )}
+        </Grid.Col>
+        <Grid.Col span={12} mt="md">
           <GameSection />
-        </Box>
-      </Stack>
+        </Grid.Col>
+      </Grid>
       <UploadProfileModal
         opened={profilePicModalIsOpen}
         onClose={() => setProfilePicModalIsOpen(false)}

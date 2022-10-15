@@ -1,17 +1,36 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { GameEntry, GameEntryStatus } from "@api/types";
-import { Card, Image, Text, Group, Stack, Badge } from "@mantine/core";
+import {
+  Card,
+  Image,
+  Text,
+  Group,
+  Stack,
+  Badge,
+  Grid,
+  ActionIcon,
+} from "@mantine/core";
 import { useHover } from "@mantine/hooks";
+import Link from "next/link";
+import { TbEdit } from "react-icons/tb";
+import { useMobile } from "utils/useMobile";
 
 type Props = {
   gameEntry: GameEntry;
-  onClick?: () => void;
+  onClickEdit?: (gameEntry: GameEntry) => void;
 };
 
 const GameEntryCard = (props: Props) => {
-  const { gameEntry, onClick } = props;
-  const { game_name: title, game_cover: cover, rating, status } = gameEntry;
-  const { hovered, ref } = useHover();
+  const { gameEntry, onClickEdit } = props;
+  const {
+    game_id,
+    game_name: title,
+    game_cover: cover,
+    rating,
+    status,
+  } = gameEntry;
+  const isMobile = useMobile();
+  const { ref, hovered } = useHover();
 
   const badgeColor = {
     [GameEntryStatus.DROPPED]: "red",
@@ -22,35 +41,57 @@ const GameEntryCard = (props: Props) => {
   };
 
   return (
-    <Card
-      sx={(theme) => ({
-        cursor: "pointer",
-        background: hovered ? theme.colors.dark[3] : theme.colors.dark[6],
-      })}
-      ref={ref}
-      onClick={onClick}
-    >
+    <Card>
       <Card.Section>
-        <Group position="apart">
-          <Group>
-            <Image width={180} height={80} src={cover} withPlaceholder />
+        <Grid>
+          <Grid.Col span={2} p={0}>
+            <Image
+              width="100%"
+              height="100%"
+              src={cover}
+              withPlaceholder
+              sx={{ maxHeight: 60 }}
+            />
+          </Grid.Col>
+          <Grid.Col span={isMobile ? 6 : 8} p={0} pl="sm">
             <Stack>
-              <Text mt="sm" size="md" weight={500}>
-                {title}
-              </Text>
+              <Link href={`/games/${game_id}`}>
+                <Text
+                  mt="sm"
+                  size="md"
+                  weight={500}
+                  sx={{ cursor: "pointer" }}
+                  ref={ref}
+                  underline={hovered}
+                >
+                  {title}
+                </Text>
+              </Link>
               <Group mb="sm">
                 <Badge color={badgeColor[status]}>
                   {GameEntryStatus[status]}
                 </Badge>
               </Group>
             </Stack>
-          </Group>
-          {rating && (
-            <Text size="md" mr={24} weight={500}>
-              {rating}/10
-            </Text>
-          )}
-        </Group>
+          </Grid.Col>
+          <Grid.Col span={isMobile ? 4 : 2} p={0}>
+            <Group sx={{ height: "100%" }} position="right" mr="sm">
+              {rating && (
+                <Text size="md" align="right" weight={500}>
+                  {rating}/10
+                </Text>
+              )}
+              <ActionIcon
+                mr="sm"
+                onClick={() => {
+                  onClickEdit && onClickEdit(gameEntry);
+                }}
+              >
+                <TbEdit size={18} />
+              </ActionIcon>
+            </Group>
+          </Grid.Col>
+        </Grid>
       </Card.Section>
     </Card>
   );
