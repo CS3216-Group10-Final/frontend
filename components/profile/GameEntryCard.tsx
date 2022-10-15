@@ -13,6 +13,7 @@ import {
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
 import { TbEdit } from "react-icons/tb";
+import { useMobile } from "utils/useMobile";
 
 type Props = {
   gameEntry: GameEntry;
@@ -28,6 +29,7 @@ const GameEntryCard = (props: Props) => {
     rating,
     status,
   } = gameEntry;
+  const isMobile = useMobile();
   const { ref, hovered } = useHover();
 
   const badgeColor = {
@@ -41,17 +43,17 @@ const GameEntryCard = (props: Props) => {
   return (
     <Card>
       <Card.Section>
-        <Grid grow>
+        <Grid>
           <Grid.Col span={2} p={0}>
             <Image
               width="100%"
               height="100%"
               src={cover}
               withPlaceholder
-              sx={{ maxHeight: 70 }}
+              sx={{ maxHeight: 60 }}
             />
           </Grid.Col>
-          <Grid.Col span={8} p={0} pl="sm">
+          <Grid.Col span={isMobile ? 6 : 8} p={0} pl="sm">
             <Stack>
               <Link href={`/games/${game_id}`}>
                 <Text
@@ -72,7 +74,7 @@ const GameEntryCard = (props: Props) => {
               </Group>
             </Stack>
           </Grid.Col>
-          <Grid.Col span="content" p={0}>
+          <Grid.Col span={isMobile ? 4 : 2} p={0}>
             <Group sx={{ height: "100%" }} position="right" mr="sm">
               {rating && (
                 <Text size="md" align="right" weight={500}>
