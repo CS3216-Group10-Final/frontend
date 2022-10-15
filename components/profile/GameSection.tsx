@@ -47,6 +47,26 @@ const GameSection = () => {
       <Title order={1} align="center" mb={24}>
         Games
       </Title>
+
+      <Link href="/games">
+        <Tooltip label="Add games">
+          <ActionIcon
+            color="primary"
+            variant="filled"
+            component="a"
+            mt="lg"
+            ml="auto"
+            mr={8}
+            sx={{
+              width: 28,
+              height: 28,
+            }}
+          >
+            <TbPlus size={24} />
+          </ActionIcon>
+        </Tooltip>
+      </Link>
+
       {gameEntries.map((value) => {
         const { game_id } = value;
 
@@ -58,21 +78,6 @@ const GameSection = () => {
           </Box>
         );
       })}
-
-      <Link href="/games">
-        <Tooltip label="Add games">
-          <ActionIcon
-            color="primary"
-            variant="filled"
-            component="a"
-            mt="lg"
-            ml="auto"
-            mr={8}
-          >
-            <TbPlus size={18} />
-          </ActionIcon>
-        </Tooltip>
-      </Link>
       {gameEntryModalData && (
         <GameEntryEditModal
           opened={isOpen}
