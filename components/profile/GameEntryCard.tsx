@@ -1,15 +1,26 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { GameEntry, GameEntryStatus } from "@api/types";
-import { Card, Image, Text, Group, Stack, Badge, Grid } from "@mantine/core";
+import {
+  Card,
+  Image,
+  Text,
+  Group,
+  Stack,
+  Badge,
+  Grid,
+  ActionIcon,
+} from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
+import { TbEdit } from "react-icons/tb";
 
 type Props = {
   gameEntry: GameEntry;
+  onClickEdit?: (gameEntry: GameEntry) => void;
 };
 
 const GameEntryCard = (props: Props) => {
-  const { gameEntry } = props;
+  const { gameEntry, onClickEdit } = props;
   const {
     game_id,
     game_name: title,
@@ -61,16 +72,23 @@ const GameEntryCard = (props: Props) => {
               </Group>
             </Stack>
           </Grid.Col>
-          {rating && (
-            <Grid.Col span="content" p={0}>
-              {/* Hacky way to align text in the middle vertically */}
-              <Group sx={{ height: "100%" }} position="right" mr="sm">
-                <Text size="md" align="right" mr="sm" weight={500}>
+          <Grid.Col span="content" p={0}>
+            <Group sx={{ height: "100%" }} position="right" mr="sm">
+              {rating && (
+                <Text size="md" align="right" weight={500}>
                   {rating}/10
                 </Text>
-              </Group>
-            </Grid.Col>
-          )}
+              )}
+              <ActionIcon
+                mr="sm"
+                onClick={() => {
+                  onClickEdit && onClickEdit(gameEntry);
+                }}
+              >
+                <TbEdit size={18} />
+              </ActionIcon>
+            </Group>
+          </Grid.Col>
         </Grid>
       </Card.Section>
     </Card>

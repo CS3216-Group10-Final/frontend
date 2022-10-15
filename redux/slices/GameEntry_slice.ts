@@ -36,21 +36,21 @@ const gameEntrySlice = createSlice({
       const newEntries: Record<number, GameEntry> = Object.create(
         state.gameEntries
       );
-      newEntries[action.payload.game_id] = action.payload;
+      newEntries[action.payload.id] = action.payload;
       state.gameEntries = newEntries;
     });
     builder.addCase(updateGameEntry.fulfilled, (state, action) => {
       const newEntries: Record<number, GameEntry> = Object.create(
         state.gameEntries
       );
-      newEntries[action.meta.arg.game_id] = action.meta.arg;
+      newEntries[action.meta.arg.id] = action.meta.arg;
       state.gameEntries = newEntries;
     });
     builder.addCase(changeGameEntryStatus.fulfilled, (state, action) => {
       const newEntries: Record<number, GameEntry> = Object.create(
         state.gameEntries
       );
-      newEntries[action.meta.arg.gameEntry.game_id] = action.meta.arg.gameEntry;
+      newEntries[action.meta.arg.gameEntry.id] = action.meta.arg.gameEntry;
       state.gameEntries = newEntries;
     });
     builder.addCase(deleteGameEntry.fulfilled, (state, action) => {

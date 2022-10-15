@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { GameEntry } from "@api/types";
 import { Title, Box, Tooltip, ActionIcon } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
@@ -6,13 +8,31 @@ import {
 } from "@redux/slices/GameEntry_slice";
 import { selectUserId } from "@redux/slices/User_slice";
 import Link from "next/link";
-import React, { useEffect } from "react";
 import { TbPlus } from "react-icons/tb";
 import GameEntryCard from "./GameEntryCard";
+import GameEntryEditModal from "./GameEntryEditModal";
 
 const GameSection = () => {
   const userId = useAppSelector(selectUserId);
   const dispatch = useAppDispatch();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [gameEntryModalData, setGameEntryModalData] =
+    useState<GameEntry | null>(null);
+
+  const handleClose = () => {
+    setGameEntryModalData(null);
+    setIsOpen(false);
+  };
+
+  const handleEdit = (gameEntry: GameEntry) => {
+    if (isOpen) {
+      return;
+    }
+
+    setGameEntryModalData(gameEntry);
+    setIsOpen(true);
+  };
 
   useEffect(() => {
     dispatch(getGameEntries({ user_id: userId }));
@@ -33,7 +53,7 @@ const GameSection = () => {
         return (
           <Box mt={12} key={game_id}>
             <Link href={`/games/${game_id}`}>
-              <GameEntryCard gameEntry={value} />
+              <GameEntryCard gameEntry={value} onClickEdit={handleEdit} />
             </Link>
           </Box>
         );
@@ -53,6 +73,13 @@ const GameSection = () => {
           </ActionIcon>
         </Tooltip>
       </Link>
+      {gameEntryModalData && (
+        <GameEntryEditModal
+          opened={isOpen}
+          gameEntry={gameEntryModalData}
+          onClose={handleClose}
+        />
+      )}
     </Box>
   );
 };
