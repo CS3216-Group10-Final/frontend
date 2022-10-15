@@ -1,6 +1,5 @@
 import { createGetInitialProps } from "@mantine/next";
 import Document, { Head, Html, Main, NextScript } from "next/document";
-import Script from "next/script";
 
 const getInitialProps = createGetInitialProps();
 
@@ -11,19 +10,6 @@ export default class _Document extends Document {
     return (
       <Html>
         <Head>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
-            strategy="afterInteractive"
-          />
-          <Script id="google-analytics" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){window.dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', ${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID});
-            `}
-          </Script>
           <meta name="theme-color" content="#2c2f33" />
           <link rel="manifest" href="/manifest.json" />
           {/* <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand&display=optional"/> */}
