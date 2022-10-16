@@ -64,7 +64,7 @@ const AppBar = () => {
     >
       <Group sx={{ height: "100%" }} position="apart">
         <Group>
-          <Link href="/">
+          <Link href={user ? `/user/${user.username}` : "/"}>
             <Image
               src="/logo-transparent.png"
               alt="Logo"
@@ -72,7 +72,7 @@ const AppBar = () => {
               style={{ cursor: "pointer" }}
             />
           </Link>
-          <Link href="/">
+          <Link href={user ? `/user/${user.username}` : "/"}>
             <Group spacing={0}>
               <Text
                 size="lg"
