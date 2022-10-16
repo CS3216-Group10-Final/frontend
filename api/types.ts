@@ -23,6 +23,7 @@ export interface User {
   username: string;
   profile_picture_link: string;
   is_following: boolean;
+  badges: BadgeEntry[];
 }
 
 export interface UserStatistics {
@@ -60,4 +61,12 @@ export interface GameEntry {
   status: GameEntryStatus;
   time_started?: Date;
   time_completed?: Date;
+}
+
+export interface BadgeEntry {
+  id: number;
+  badge_name: string;
+  badge_picture: string;
+  badge_description: string;
+  time_achieved: Date;
 }
