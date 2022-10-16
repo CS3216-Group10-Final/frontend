@@ -23,31 +23,12 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getSelfUser.fulfilled, (state, action) => {
       state.user = action.payload;
-      state.user.profile_picture_link = `${process.env.NEXT_PUBLIC_BE_ENDPOINT}${action.payload.profile_picture_link}`;
     });
     builder.addCase(updateProfilePic.fulfilled, (state, action) => {
-      if (state.user) {
-        const newUser: User = { ...state.user };
-        const { profile_picture_link } = action.payload;
-
-        state.user = {
-          ...action.payload,
-          ...newUser,
-          profile_picture_link: `${process.env.NEXT_PUBLIC_BE_ENDPOINT}${profile_picture_link}`,
-        };
-      }
+      state.user = action.payload;
     });
     builder.addCase(updateUsername.fulfilled, (state, action) => {
-      if (state.user) {
-        const newUser: User = { ...state.user };
-        const { username } = action.payload;
-
-        state.user = {
-          ...action.payload,
-          ...newUser,
-          username: username,
-        };
-      }
+      state.user = action.payload;
     });
   },
 });

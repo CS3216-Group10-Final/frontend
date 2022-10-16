@@ -18,10 +18,11 @@ import { useMobile } from "utils/useMobile";
 type Props = {
   gameEntry: GameEntry;
   onClickEdit?: (gameEntry: GameEntry) => void;
+  isEditable: boolean;
 };
 
 const GameEntryCard = (props: Props) => {
-  const { gameEntry, onClickEdit } = props;
+  const { gameEntry, onClickEdit, isEditable } = props;
   const {
     game_id,
     game_name: title,
@@ -77,18 +78,25 @@ const GameEntryCard = (props: Props) => {
           <Grid.Col span={isMobile ? 4 : 2} p={0}>
             <Group sx={{ height: "100%" }} position="right" mr="sm">
               {rating && (
-                <Text size="md" align="right" weight={500}>
+                <Text
+                  size="md"
+                  align="right"
+                  mr={isEditable ? 0 : "sm"}
+                  weight={500}
+                >
                   {rating}/10
                 </Text>
               )}
-              <ActionIcon
-                mr="sm"
-                onClick={() => {
-                  onClickEdit && onClickEdit(gameEntry);
-                }}
-              >
-                <TbEdit size={18} />
-              </ActionIcon>
+              {isEditable && (
+                <ActionIcon
+                  mr="sm"
+                  onClick={() => {
+                    onClickEdit && onClickEdit(gameEntry);
+                  }}
+                >
+                  <TbEdit size={18} />
+                </ActionIcon>
+              )}
             </Group>
           </Grid.Col>
         </Grid>

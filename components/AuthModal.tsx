@@ -22,6 +22,7 @@ import { useForm } from "@mantine/form";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
 import { FaceBookButton, GoogleButton, TwitterButton } from "./SocialButtons";
@@ -32,6 +33,7 @@ type Props = {
 };
 
 const AuthModal = ({ isOpen, onClose }: Props) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleAuthLink, setGoogleAuthLink] = useState<string>("");
 
@@ -86,9 +88,12 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
     if (modalType === "login") {
       loginApi({ email, password })
         .then(() => {
-          return dispatch(getSelfUser());
+          return dispatch(getSelfUser()).unwrap();
         })
-        .then(() => {
+        .then((user) => {
+          if (router.pathname === "/") {
+            router.push(`/user/${user.username}`);
+          }
           handleClose();
         })
         .catch((error) => {
@@ -101,9 +106,12 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
           return loginApi({ email, password });
         })
         .then(() => {
-          return dispatch(getSelfUser());
+          return dispatch(getSelfUser()).unwrap();
         })
-        .then(() => {
+        .then((user) => {
+          if (router.pathname === "/") {
+            router.push(`/user/${user.username}`);
+          }
           handleClose();
           showSuccessNotification({
             title: "Successfully registered!",
