@@ -124,7 +124,7 @@ const ChartBarDistribution = (props: Props) => {
         <BarChart data={chartData[chartType]}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="label" stroke={theme.colors.dark[0]} />
-          <YAxis minTickGap={1} stroke={theme.colors.dark[0]} />
+          <YAxis allowDecimals={false} stroke={theme.colors.dark[0]} />
           <Tooltip
             cursor={{ fill: theme.fn.rgba(theme.colors.dark[0], 0.5) }}
           />

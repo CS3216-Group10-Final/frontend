@@ -101,7 +101,7 @@ const AppBar = () => {
         </Group>
         <Group>
           {user && (
-            <Link href={"/"}>
+            <Link href={`/user/${user.username}`}>
               <Avatar
                 src={user?.profile_picture_link}
                 size={35}

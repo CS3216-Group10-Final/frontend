@@ -11,6 +11,7 @@ import {
   Button,
   Grid,
   Group,
+  LoadingOverlay,
   Space,
   Stack,
   Text,
@@ -18,14 +19,15 @@ import {
   Title,
 } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import {
-  getSelfUserStatistics,
-  selectUserStatistics,
-} from "@redux/slices/UserStatistics_slice";
+import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
+import { getUserApi } from "@api/users_api";
 import { selectUser, updateUsername } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
 import UploadProfileModal from "./UploadProfileModal";
+import { User, UserStatistics } from "@api/types";
+import { useRouter } from "next/router";
+import { getImage } from "utils/getImage";
 // import { GameEntryStatus, Genre, Platform } from "@api/types";
 
 // const game_status_distribution: Record<GameEntryStatus, number> = {
@@ -68,9 +70,12 @@ import UploadProfileModal from "./UploadProfileModal";
 // };
 
 const UsernameModalContent = () => {
+  const router = useRouter();
+
   interface UsernameForm {
     username: string;
   }
+
   const dispatch = useAppDispatch();
   const usernameForm = useForm<UsernameForm>({
     initialValues: {
@@ -89,6 +94,8 @@ const UsernameModalContent = () => {
           title: "Username updated",
           message: "Awesome!",
         });
+
+        router.replace(`/user/${username}`);
       })
       .catch((error) => {
         showApiRequestErrorNotification(handleApiRequestError(error));
@@ -112,19 +119,47 @@ const UsernameModalContent = () => {
   );
 };
 
-const ProfilePage = () => {
-  const user = useAppSelector(selectUser);
-  const userStatistics = useAppSelector(selectUserStatistics);
-  const dispatch = useAppDispatch();
+type Props = {
+  username: string;
+};
+
+const ProfilePage = (props: Props) => {
+  const { username } = props;
+
+  const selfUser = useAppSelector(selectUser);
+  const isSelfProfilePage = selfUser?.username === username;
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(
+    null
+  );
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(getSelfUserStatistics()).catch((error) => {
-      showApiRequestErrorNotification(handleApiRequestError(error));
+    setIsLoading(true);
+
+    const userPromise = getUserApi(username)
+      .then((apiUser) => {
+        setUser(apiUser);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    const userStatisticsPromise = getUserStatisticsByNameApi(username)
+      .then((apiUserStatistics) => {
+        setUserStatistics(apiUserStatistics);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    Promise.all([userPromise, userStatisticsPromise]).finally(() => {
+      setIsLoading(false);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [username]);
 
   const openChangeUserNameModal = () => {
     openModal({
@@ -132,6 +167,15 @@ const ProfilePage = () => {
       children: <UsernameModalContent />,
     });
   };
+
+  if (isLoading) {
+    return <LoadingOverlay visible={true} />;
+  }
+
+  if (!user) {
+    // TODO: return 404 Not Found Page
+    return <Text>404 Not Found</Text>;
+  }
 
   return (
     <>
@@ -142,7 +186,7 @@ const ProfilePage = () => {
             justify="center"
           >
             <Avatar
-              src={user?.profile_picture_link}
+              src={getImage(user?.profile_picture_link)}
               size={160}
               radius={18}
               mx="auto"
@@ -150,10 +194,16 @@ const ProfilePage = () => {
             <Text size="xl" align="center" mb={8} color="white">
               {user?.username}
             </Text>
-            <Button onClick={openChangeUserNameModal}>Change Username</Button>
-            <Button onClick={() => setProfilePicModalIsOpen(true)}>
-              Upload Picture
-            </Button>
+            {isSelfProfilePage && (
+              <>
+                <Button onClick={openChangeUserNameModal}>
+                  Change Username
+                </Button>
+                <Button onClick={() => setProfilePicModalIsOpen(true)}>
+                  Upload Picture
+                </Button>
+              </>
+            )}
           </Stack>
         </Grid.Col>
         <Grid.Col md={9} sm={12} mt="md">
@@ -180,7 +230,7 @@ const ProfilePage = () => {
           )}
         </Grid.Col>
         <Grid.Col span={12} mt="md">
-          <GameSection />
+          <GameSection user={user} isSelfUser={isSelfProfilePage} />
         </Grid.Col>
       </Grid>
       <UploadProfileModal

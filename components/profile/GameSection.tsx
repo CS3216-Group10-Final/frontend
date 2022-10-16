@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
-import { GameEntry } from "@api/types";
+import { GameEntry, User } from "@api/types";
 import { Title, Box, Tooltip, ActionIcon } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   getGameEntries,
   selectAllGameEntries,
 } from "@redux/slices/GameEntry_slice";
-import { selectUserId } from "@redux/slices/User_slice";
 import Link from "next/link";
 import { TbPlus } from "react-icons/tb";
 import GameEntryCard from "./GameEntryCard";
 import GameEntryEditModal from "./GameEntryEditModal";
 
-const GameSection = () => {
-  const userId = useAppSelector(selectUserId);
+type Props = {
+  user: User;
+  isSelfUser: boolean;
+};
+
+const GameSection = (props: Props) => {
+  const { user, isSelfUser } = props;
+  const userId = user.id;
   const dispatch = useAppDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -73,7 +78,11 @@ const GameSection = () => {
         return (
           <Box mt={12} key={game_id}>
             <Link href={`/games/${game_id}`}>
-              <GameEntryCard gameEntry={value} onClickEdit={handleEdit} />
+              <GameEntryCard
+                gameEntry={value}
+                onClickEdit={handleEdit}
+                isEditable={isSelfUser}
+              />
             </Link>
           </Box>
         );
