@@ -5,8 +5,11 @@ import { useDisclosure } from "@mantine/hooks";
 interface Props {
   badge: BadgeEntry;
 }
-const useStyles = createStyles(() => {
+const useStyles = createStyles((theme) => {
   return {
+    card: {
+      // borderColor: theme.colors.yellow[5]
+    },
     image: {
       position: "absolute",
       top: 0,
@@ -31,7 +34,13 @@ const Badge = ({ badge }: Props) => {
       opened={opened}
     >
       <Popover.Target>
-        <Card p="lg" shadow="lg" radius="md">
+        <Card
+          p="lg"
+          shadow="lg"
+          radius="md"
+          withBorder
+          className={classes.card}
+        >
           <div
             onMouseEnter={open}
             onMouseLeave={close}

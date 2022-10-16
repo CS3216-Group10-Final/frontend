@@ -230,7 +230,7 @@ const ProfilePage = (props: Props) => {
               </>
             )}
             <SimpleGrid cols={3} spacing="xs">
-              {(user.badges ?? []).map((badge) => {
+              {(user.badges ?? badges).map((badge) => {
                 return <Badge key={badge.id} badge={badge} />;
               })}
             </SimpleGrid>
