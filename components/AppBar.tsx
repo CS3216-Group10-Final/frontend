@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
 import { useState } from "react";
+import { getImage } from "utils/getImage";
 import AuthModal from "./AuthModal";
 
 const AppBar = () => {
@@ -25,7 +26,6 @@ const AppBar = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  console.log();
 
   const handleClose = () => {
     setAuthModalIsOpen(false);
@@ -103,7 +103,7 @@ const AppBar = () => {
           {user && (
             <Link href={`/user/${user.username}`}>
               <Avatar
-                src={user?.profile_picture_link}
+                src={getImage(user?.profile_picture_link)}
                 size={35}
                 radius={5}
                 style={{ cursor: "pointer" }}
