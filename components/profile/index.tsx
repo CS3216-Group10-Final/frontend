@@ -136,29 +136,6 @@ const ProfilePage = (props: Props) => {
   const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(
     null
   );
-  const [badges, setBadges] = useState<BadgeEntry[]>([
-    {
-      id: 1,
-      badge_name: "Test badge 1",
-      badge_picture: "https://assets.ppy.sh/medals/web/osu-skill-pass-1.png",
-      badge_description: "Test badge 1 description",
-      time_achieved: new Date(),
-    },
-    {
-      id: 2,
-      badge_name: "Test badge 2",
-      badge_picture: "https://assets.ppy.sh/medals/web/osu-skill-pass-2.png",
-      badge_description: "Test badge 2 description",
-      time_achieved: new Date(),
-    },
-    {
-      id: 3,
-      badge_name: "Test badge 3",
-      badge_picture: "https://assets.ppy.sh/medals/web/osu-skill-pass-3.png",
-      badge_description: "Test badge 3 description",
-      time_achieved: new Date(),
-    },
-  ]);
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
 
@@ -230,7 +207,7 @@ const ProfilePage = (props: Props) => {
               </>
             )}
             <SimpleGrid cols={3} spacing="xs">
-              {(user.badges ?? badges).map((badge) => {
+              {(user.badges ?? []).map((badge) => {
                 return <Badge key={badge.id} badge={badge} />;
               })}
             </SimpleGrid>

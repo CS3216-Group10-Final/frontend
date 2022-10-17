@@ -1,5 +1,12 @@
 import { BadgeEntry } from "@api/types";
-import { Card, createStyles, Popover, Stack, Text } from "@mantine/core";
+import {
+  AspectRatio,
+  Card,
+  createStyles,
+  Popover,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 interface Props {
@@ -8,7 +15,7 @@ interface Props {
 const useStyles = createStyles((theme) => {
   return {
     card: {
-      // borderColor: theme.colors.yellow[5]
+      borderColor: theme.colors.yellow[5],
     },
     image: {
       position: "absolute",
@@ -16,6 +23,7 @@ const useStyles = createStyles((theme) => {
       left: 0,
       right: 0,
       bottom: 0,
+      margin: 2,
       backgroundSize: "contain",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center center",
@@ -34,20 +42,18 @@ const Badge = ({ badge }: Props) => {
       opened={opened}
     >
       <Popover.Target>
-        <Card
-          p="lg"
-          shadow="lg"
-          radius="md"
-          withBorder
-          className={classes.card}
-        >
-          <div
-            onMouseEnter={open}
-            onMouseLeave={close}
-            className={classes.image}
-            style={{ backgroundImage: `url(${badge.badge_picture})` }}
-          />
-        </Card>
+        <AspectRatio ratio={1} sx={{ maxWidth: 45 }}>
+          <Card shadow="lg" radius="md" withBorder className={classes.card}>
+            <div
+              onMouseEnter={open}
+              onMouseLeave={close}
+              className={classes.image}
+              style={{
+                backgroundImage: `url(${badge.badge_picture})`,
+              }}
+            />
+          </Card>
+        </AspectRatio>
       </Popover.Target>
       <Popover.Dropdown sx={{ pointerEvents: "none" }}>
         <Stack>
