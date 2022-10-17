@@ -1,61 +1,153 @@
 import {
-  Box,
+  Button,
+  Card,
   Center,
+  createStyles,
   Group,
+  Image,
+  SimpleGrid,
+  Stack,
   Text,
+  ThemeIcon,
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import { CgGames } from "react-icons/cg";
+import { FaGamepad } from "react-icons/fa";
+import { GiConsoleController } from "react-icons/gi";
+import { IoGameControllerOutline } from "react-icons/io5";
 import { TbArchive, TbChartLine, TbUsers } from "react-icons/tb";
+const useStyles = createStyles((theme) => ({
+  inner: {
+    display: "flex",
+    justifyContent: "center",
+    paddingTop: theme.spacing.xl * 4,
+    paddingBottom: theme.spacing.xl * 4,
+  },
 
+  content: {
+    marginRight: theme.spacing.xl * 3,
+
+    [theme.fn.smallerThan("xs")]: {
+      maxWidth: "100%",
+      marginRight: 0,
+    },
+  },
+
+  featureContainer: {
+    backgroundColor: theme.colors.dark[3],
+    width: "100%",
+  },
+}));
 const OnboardingPage = () => {
   const theme = useMantineTheme();
+  const { classes } = useStyles();
+  const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+  const alignment = isScreenSmall ? "center" : "right";
 
   return (
-    <Center mt="xl" sx={{ width: "80%" }} m="auto">
-      <Box>
-        <Title size={40} weight={700} align="center">
-          Get your best personal
-          <br />
-          game archive with
-          <br />
-        </Title>
-        <Title
-          mt={40}
-          mb={40}
-          align="center"
-          size={80}
-          weight={800}
-          color={theme.fn.primaryColor()}
+    <>
+      <div className={classes.inner}>
+        <div className={classes.content}>
+          <Text color="dimmed" align={alignment} size={isScreenSmall ? 20 : 30}>
+            Show off your game collection with
+          </Text>
+          <Title
+            align="right"
+            variant="gradient"
+            gradient={{ from: "yellow", to: "orange" }}
+            size={isScreenSmall ? 44 : 80}
+            weight={900}
+          >
+            DisplayCase
+          </Title>
+          <Group position="right" mt={24}>
+            <Text size={isScreenSmall ? 14 : 20}>
+              Keep track of games you have played
+            </Text>
+            <ThemeIcon
+              variant="gradient"
+              gradient={{ from: "yellow", to: "orange" }}
+              size={isScreenSmall ? 18 : 30}
+            >
+              <TbArchive />
+            </ThemeIcon>
+          </Group>
+          <Group position="right" mt={24}>
+            <Text size={isScreenSmall ? 14 : 20}>
+              View personalised statistics
+            </Text>
+            <ThemeIcon
+              variant="gradient"
+              gradient={{ from: "yellow", to: "orange" }}
+              size={isScreenSmall ? 18 : 30}
+            >
+              <TbChartLine />
+            </ThemeIcon>
+          </Group>
+          <Group position="right" mt={24}>
+            <Text size={isScreenSmall ? 14 : 20}>
+              Share your profile with your friends
+            </Text>
+            <ThemeIcon
+              variant="gradient"
+              gradient={{ from: "yellow", to: "orange" }}
+              size={isScreenSmall ? 18 : 30}
+            >
+              <TbUsers />
+            </ThemeIcon>
+          </Group>
+
+          <Group position="right">
+            <Button
+              size={isScreenSmall ? "sm" : "md"}
+              mt={30}
+              fullWidth={isScreenSmall}
+              variant="gradient"
+              gradient={{ from: "yellow", to: "orange" }}
+            >
+              Get started
+            </Button>
+          </Group>
+        </div>
+        {!isScreenSmall && (
+          <Center>
+            <SimpleGrid cols={2} spacing={24} verticalSpacing="xs">
+              <Center>
+                <GiConsoleController size={120} />
+              </Center>
+              <Center>
+                <IoGameControllerOutline size={120} />
+              </Center>
+              <Center>
+                <CgGames size={120} />
+              </Center>
+              <Center>
+                <FaGamepad size={120} />
+              </Center>
+            </SimpleGrid>
+          </Center>
+        )}
+      </div>
+      <Stack
+        className={classes.featureContainer}
+        align="center"
+        p="lg"
+        mt={isScreenSmall ? 40 : 70}
+      >
+        <Card
+          p={0}
+          shadow={`15px 15px 5px ${theme.colors.dark[6]}`}
+          style={{ maxWidth: 1000 }}
         >
-          DisplayCase
+          <Image src={"/onboarding-demo.png"} alt="Demo image" />
+        </Card>
+        <Title mt={20} size={isScreenSmall ? 28 : 44} align="center">
+          All your games recorded in 1 convenient location
         </Title>
-
-        <Group mt="xl">
-          <TbArchive />
-
-          <Text align="center" size="xl">
-            Keep track of games that you have.
-          </Text>
-        </Group>
-
-        <Group mt="xl">
-          <TbChartLine />
-
-          <Text align="center" size="xl">
-            Personalised statistics of games you played.
-          </Text>
-        </Group>
-
-        <Group mt="xl">
-          <TbUsers />
-
-          <Text align="center" size="xl">
-            Share your profile with your friends.
-          </Text>
-        </Group>
-      </Box>
-    </Center>
+      </Stack>
+    </>
   );
 };
 
