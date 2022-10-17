@@ -77,18 +77,11 @@ const AppBar = () => {
               <Text
                 size="lg"
                 weight="bold"
-                color="yellow.5"
+                variant="gradient"
+                gradient={{ from: "yellow", to: "orange" }}
                 style={{ cursor: "pointer" }}
               >
-                Display
-              </Text>
-              <Text
-                size="lg"
-                weight="bold"
-                color="yellow.6"
-                style={{ cursor: "pointer" }}
-              >
-                Case
+                DisplayCase
               </Text>
             </Group>
           </Link>
