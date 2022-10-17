@@ -44,24 +44,34 @@ const OnboardingPage = () => {
   const theme = useMantineTheme();
   const { classes } = useStyles();
   const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+  const isScreenMedium = useMediaQuery(
+    `(max-width: ${theme.breakpoints.md}px)`
+  );
   const alignment = isScreenSmall ? "center" : "right";
 
   return (
     <>
       <div className={classes.inner}>
         <div className={classes.content}>
-          <Text color="dimmed" align={alignment} size={isScreenSmall ? 20 : 30}>
+          <Text color="dimmed" align={alignment} size={isScreenSmall ? 20 : 26}>
             Show off your game collection with
           </Text>
-          <Title
-            align="right"
-            variant="gradient"
-            gradient={{ from: "yellow", to: "orange" }}
-            size={isScreenSmall ? 44 : 80}
-            weight={900}
-          >
-            DisplayCase
-          </Title>
+          <Group position={alignment}>
+            <Image
+              mt={isScreenSmall ? 3 : 9}
+              width={isScreenSmall ? 44 : isScreenMedium ? 50 : 80}
+              src={"logo-transparent.png"}
+              alt="logo"
+            />
+            <Title
+              variant="gradient"
+              gradient={{ from: "yellow", to: "orange" }}
+              size={isScreenSmall ? 44 : isScreenMedium ? 50 : 80}
+              weight={900}
+            >
+              DisplayCase
+            </Title>
+          </Group>
           <Group position="right" mt={24}>
             <Text size={isScreenSmall ? 14 : 20}>
               Keep track of games you have played
