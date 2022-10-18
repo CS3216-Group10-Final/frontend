@@ -3,7 +3,6 @@
  */
 import axios from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
-import { handleDates } from "utils/date";
 import { refreshTokensApi } from "./authentication/authentication_api";
 import TokenService from "./authentication/token_service";
 
@@ -21,11 +20,6 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-});
-
-axiosInstance.interceptors.response.use((originalResponse) => {
-  handleDates(originalResponse.data);
-  return originalResponse;
 });
 
 axiosInstance.interceptors.request.use(

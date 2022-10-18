@@ -40,7 +40,7 @@ export interface Game {
   id: number;
   name: string;
   cover: string;
-  first_release_date: Date;
+  first_release_date: string;
   summary: string;
   franchis: string;
   genres: Genre[];
@@ -59,8 +59,8 @@ export interface GameEntry {
   is_favourite: boolean;
   platforms?: Platform[];
   status: GameEntryStatus;
-  time_started?: Date;
-  time_completed?: Date;
+  time_started?: string;
+  time_completed?: string;
 }
 
 export interface BadgeEntry {
@@ -68,5 +68,5 @@ export interface BadgeEntry {
   badge_name: string;
   badge_picture: string;
   badge_description: string;
-  time_achieved: Date;
+  time_achieved: string;
 }

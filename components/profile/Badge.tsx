@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { getImage } from "utils/getImage";
+import parseISO from "date-fns/parseISO";
 
 interface Props {
   badge: BadgeEntry;
@@ -65,7 +66,8 @@ const Badge = ({ badge }: Props) => {
             {badge.badge_description}
           </Text>
           <Text size="xs" align="center">
-            Achieved on {badge.time_achieved.toDateString()}
+            Achieved on{" "}
+            {parseISO(badge.time_achieved)?.toDateString() ?? "an unkown date"}
           </Text>
         </Stack>
       </Popover.Dropdown>
