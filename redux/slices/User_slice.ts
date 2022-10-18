@@ -1,4 +1,3 @@
-import { handleApiRequestError } from "@api/error_handling";
 import { updateUserProfilePictureApi } from "@api/pictures_api";
 import { getSelfUserApi, updateSelfUsernameApi } from "@api/users_api";
 import {
