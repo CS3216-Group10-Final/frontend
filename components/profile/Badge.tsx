@@ -8,7 +8,6 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { getImage } from "utils/getImage";
 import parseISO from "date-fns/parseISO";
 
 interface Props {
@@ -32,6 +31,7 @@ const useStyles = createStyles((theme) => {
     },
   };
 });
+
 const Badge = ({ badge }: Props) => {
   const { classes } = useStyles();
   const [opened, { close, open }] = useDisclosure(false);
@@ -51,7 +51,7 @@ const Badge = ({ badge }: Props) => {
               onMouseLeave={close}
               className={classes.image}
               style={{
-                backgroundImage: `url(${getImage(badge.badge_picture)})`,
+                backgroundImage: `url(${badge.badge_picture})`,
               }}
             />
           </Card>

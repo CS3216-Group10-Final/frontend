@@ -26,7 +26,6 @@ import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import { selectUser, updateUsername } from "@redux/slices/User_slice";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getImage } from "utils/getImage";
 import { showSuccessNotification } from "utils/notifications";
 import Badge from "./Badge";
 import UploadProfileModal from "./UploadProfileModal";
@@ -189,7 +188,7 @@ const ProfilePage = (props: Props) => {
             justify="center"
           >
             <Avatar
-              src={getImage(user?.profile_picture_link)}
+              src={user?.profile_picture_link}
               size={160}
               radius={18}
               mx="auto"
