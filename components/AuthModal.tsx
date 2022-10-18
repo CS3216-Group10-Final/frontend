@@ -47,7 +47,6 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
   useEffect(() => {
     getGoogleAuthLinkApi()
       .then((link) => {
-        console.log(link);
         setGoogleAuthLink(link);
       })
       .catch((error) => {

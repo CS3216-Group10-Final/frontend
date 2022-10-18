@@ -2,7 +2,7 @@ import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
-import { BadgeEntry, User, UserStatistics } from "@api/types";
+import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import ChartBarDistribution from "@components/profile/ChartBarDistribution";
