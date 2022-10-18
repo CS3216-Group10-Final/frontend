@@ -71,13 +71,13 @@ const AppFooter = () => {
           <SocialIcon
             Icon={AiOutlineTwitter}
             description={"Twitter"}
-            gradient={{ from: "yellow", to: "orange" }}
+            gradient={{ from: "blue", to: "yellow" }}
             link="https://twitter.com/displaycaseme"
           />
           <SocialIcon
             Icon={AiOutlineInstagram}
             description={"Instagram"}
-            gradient={{ from: "yellow", to: "orange" }}
+            gradient={{ from: "red", to: "yellow" }}
             link="https://twitter.com/displaycaseme"
           />
           <SocialIcon
