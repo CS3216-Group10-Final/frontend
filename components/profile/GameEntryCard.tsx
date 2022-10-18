@@ -9,6 +9,8 @@ import {
   Badge,
   Grid,
   ActionIcon,
+  BackgroundImage,
+  Box,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
@@ -44,17 +46,18 @@ const GameEntryCard = (props: Props) => {
   return (
     <Card>
       <Card.Section>
-        <Grid>
-          <Grid.Col span={2} p={0}>
+        <Grid align="center">
+          <Grid.Col span={3} p={0}>
             <Image
               width="100%"
-              height="100%"
-              src={cover}
+              height="auto"
+              fit="fill"
               withPlaceholder
-              sx={{ maxHeight: 60 }}
+              src={cover}
+              sx={{ maxHeight: 80 }}
             />
           </Grid.Col>
-          <Grid.Col span={isMobile ? 6 : 8} p={0} pl="sm">
+          <Grid.Col span={isMobile ? 5 : 7} p={0} pl="sm">
             <Stack>
               <Link href={`/games/${game_id}`}>
                 <Text
