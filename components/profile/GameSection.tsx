@@ -91,7 +91,9 @@ const GameSection = (props: Props) => {
       })}
       {gameEntries.length === 0 && (
         <>
-          <Title align="center">You have no games added yet</Title>
+          <Title align="center" size={22}>
+            You have no games added yet
+          </Title>
           <Link href="/games">
             <Center mt={20}>
               <Button>Add a game</Button>
