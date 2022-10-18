@@ -3,6 +3,7 @@ import {
   Card,
   Center,
   createStyles,
+  Divider,
   Group,
   Image,
   SimpleGrid,
@@ -12,12 +13,20 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import {
+  AiFillFacebook,
+  AiOutlineInstagram,
+  AiOutlineSearch,
+  AiOutlineStar,
+  AiOutlineTwitter,
+} from "react-icons/ai";
 import { CgGames } from "react-icons/cg";
 import { FaGamepad } from "react-icons/fa";
 import { GiConsoleController } from "react-icons/gi";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { TbArchive, TbChartLine, TbUsers } from "react-icons/tb";
+import AuthModal from "./AuthModal";
 const useStyles = createStyles((theme) => ({
   inner: {
     display: "flex",
@@ -35,14 +44,39 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
-  featureContainer: {
+  featureSectionContainer: {
     backgroundColor: theme.colors.dark[3],
     width: "100%",
+  },
+
+  featureCardContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    padding: theme.spacing.xl,
+
+    [theme.fn.smallerThan("md")]: {
+      flexDirection: "column",
+    },
+  },
+
+  featureCard: {
+    height: 200,
+    width: 300,
+    maxWidth: 300,
+    borderWidth: 2,
+
+    [theme.fn.smallerThan("md")]: {
+      marginTop: 10,
+    },
   },
 }));
 const OnboardingPage = () => {
   const theme = useMantineTheme();
   const { classes } = useStyles();
+  const [isAuthModalOpen, { open, close }] = useDisclosure(false);
   const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
   const isScreenMedium = useMediaQuery(
     `(max-width: ${theme.breakpoints.md}px)`
@@ -116,6 +150,7 @@ const OnboardingPage = () => {
               fullWidth={isScreenSmall}
               variant="gradient"
               gradient={{ from: "yellow", to: "orange" }}
+              onClick={open}
             >
               Get started
             </Button>
@@ -141,22 +176,119 @@ const OnboardingPage = () => {
         )}
       </div>
       <Stack
-        className={classes.featureContainer}
+        className={classes.featureSectionContainer}
         align="center"
         p="lg"
         mt={isScreenSmall ? 40 : 70}
       >
         <Card
           p={0}
-          shadow={`15px 15px 5px ${theme.colors.dark[6]}`}
+          shadow={`15px 15px 10px ${theme.colors.dark[6]}`}
           style={{ maxWidth: 1000 }}
         >
           <Image src={"/onboarding-demo.png"} alt="Demo image" />
         </Card>
-        <Title mt={20} size={isScreenSmall ? 28 : 44} align="center">
+        <Title mt={20} size={isScreenSmall ? 28 : 38} align="center">
           All your games recorded in 1 convenient location
         </Title>
+        <div className={classes.featureCardContainer}>
+          <Card
+            className={classes.featureCard}
+            shadow="lg"
+            withBorder
+            radius="md"
+          >
+            <Center>
+              <AiOutlineSearch size={50} />
+            </Center>
+            <Divider mt={10}></Divider>
+            <Text align="center" mt={20} size={18}>
+              <Text
+                component="span"
+                variant="gradient"
+                gradient={{ from: "yellow", to: "orange" }}
+                inherit
+              >
+                Browse
+              </Text>{" "}
+              from over 200,000 games to add to your display case!
+            </Text>
+          </Card>
+          <Card
+            className={classes.featureCard}
+            shadow="lg"
+            withBorder
+            radius="md"
+          >
+            <Center>
+              <AiOutlineStar size={50} />
+            </Center>
+            <Divider mt={10}></Divider>
+            <Text align="center" mt={20} size={18}>
+              Keep track of which games you have completed and give them a{" "}
+              <Text
+                component="span"
+                variant="gradient"
+                gradient={{ from: "yellow", to: "orange" }}
+                inherit
+              >
+                rating!
+              </Text>
+            </Text>
+          </Card>
+          <Card
+            className={classes.featureCard}
+            shadow="lg"
+            withBorder
+            radius="md"
+          >
+            <Center>
+              <TbUsers size={50} />
+            </Center>
+            <Divider mt={10}></Divider>
+            <Text align="center" mt={20} size={18}>
+              Show off your display case by sending it to your{" "}
+              <Text
+                component="span"
+                variant="gradient"
+                gradient={{ from: "yellow", to: "orange" }}
+                inherit
+              >
+                friends!
+              </Text>
+            </Text>
+          </Card>
+        </div>
+        <Text size={isScreenSmall ? 20 : 26}>And much more coming soon!</Text>
       </Stack>
+
+      <Text align="center" mt={20} size={isScreenSmall ? 20 : 26}>
+        Follow us for updates
+      </Text>
+      <Group position="center" mt={20}>
+        <ThemeIcon
+          variant="gradient"
+          gradient={{ from: "yellow", to: "orange" }}
+          size={isScreenSmall ? 28 : 45}
+        >
+          <AiOutlineTwitter size={isScreenSmall ? 20 : 26} />
+        </ThemeIcon>
+        <ThemeIcon
+          variant="gradient"
+          gradient={{ from: "yellow", to: "orange" }}
+          size={isScreenSmall ? 28 : 45}
+        >
+          <AiFillFacebook size={isScreenSmall ? 20 : 26} />
+        </ThemeIcon>
+        <ThemeIcon
+          variant="gradient"
+          gradient={{ from: "yellow", to: "orange" }}
+          size={isScreenSmall ? 28 : 45}
+        >
+          <AiOutlineInstagram size={isScreenSmall ? 20 : 26} />
+        </ThemeIcon>
+      </Group>
+      <AuthModal isOpen={isAuthModalOpen} onClose={close} />
     </>
   );
 };

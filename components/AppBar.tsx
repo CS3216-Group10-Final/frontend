@@ -79,7 +79,7 @@ const AppBar = () => {
                 weight="bold"
                 variant="gradient"
                 gradient={{ from: "yellow", to: "orange" }}
-                style={{ cursor: "pointer" }}
+                style={{ fontFamily: "Quicksand", cursor: "pointer" }}
               >
                 DisplayCase
               </Text>

@@ -17,8 +17,10 @@ import {
   Space,
   Stack,
   TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
 import Link from "next/link";
@@ -36,6 +38,8 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleAuthLink, setGoogleAuthLink] = useState<string>("");
+  const theme = useMantineTheme();
+  const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
 
   const [modalType, setModalType] = useState<"login" | "register">("login");
   const dispatch = useAppDispatch();
@@ -135,6 +139,7 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
       centered
       opened={isOpen}
       onClose={handleClose}
+      size={isScreenSmall ? "sm" : "md"}
       title={modalType == "register" ? "Register an account" : "Welcome Back!"}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
