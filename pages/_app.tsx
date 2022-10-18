@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps, ...appProps }: AppProps) {
           colorScheme: "dark",
           primaryColor: "yellow",
           primaryShade: 6,
-          // fontFamily: "Quicksand, sans-serif",
+          fontFamily: "Quicksand, sans-serif",
           headings: {
             fontFamily: "Quicksand, sans-serif",
             fontWeight: 700,

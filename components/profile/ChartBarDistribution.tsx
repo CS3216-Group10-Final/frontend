@@ -7,7 +7,6 @@ import {
   Bar,
   ResponsiveContainer,
   Tooltip,
-  CartesianGrid,
 } from "recharts";
 import { toProperCase } from "utils/helpers";
 import { useState } from "react";
@@ -112,6 +111,8 @@ const ChartBarDistribution = (props: Props) => {
     setChartType(value);
   };
 
+  console.log(theme.fontFamily);
+
   return (
     <Stack align="center" sx={{ width: "100%" }}>
       <SegmentedControl
@@ -121,10 +122,21 @@ const ChartBarDistribution = (props: Props) => {
         size={isMobile ? "xs" : "sm"}
       />
       <ResponsiveContainer height={256} width={isMobile ? "100%" : "80%"}>
-        <BarChart data={chartData[chartType]}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="label" stroke={theme.colors.dark[0]} />
-          <YAxis allowDecimals={false} stroke={theme.colors.dark[0]} />
+        <BarChart
+          data={chartData[chartType]}
+          margin={isMobile ? { left: -30, right: 10 } : {}}
+        >
+          <XAxis
+            dataKey="label"
+            stroke={theme.colors.dark[0]}
+            fontSize={isMobile ? "0.7rem" : "1rem"}
+            fontFamily={theme.fontFamily}
+          />
+          <YAxis
+            allowDecimals={false}
+            stroke={theme.colors.dark[0]}
+            fontFamily={theme.fontFamily}
+          />
           <Tooltip
             cursor={{ fill: theme.fn.rgba(theme.colors.dark[0], 0.5) }}
           />
