@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
 import { GameEntry, User } from "@api/types";
-import { Title, Box, Tooltip, ActionIcon } from "@mantine/core";
+import { ActionIcon, Box, Button, Center, Title, Tooltip } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   getGameEntries,
   selectAllGameEntries,
 } from "@redux/slices/GameEntry_slice";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import GameEntryCard from "./GameEntryCard";
 import GameEntryEditModal from "./GameEntryEditModal";
@@ -53,24 +53,26 @@ const GameSection = (props: Props) => {
         Games
       </Title>
 
-      <Link href="/games">
-        <Tooltip label="Add games">
-          <ActionIcon
-            color="primary"
-            variant="filled"
-            component="a"
-            mt="lg"
-            ml="auto"
-            mr={8}
-            sx={{
-              width: 28,
-              height: 28,
-            }}
-          >
-            <TbPlus size={24} />
-          </ActionIcon>
-        </Tooltip>
-      </Link>
+      {gameEntries.length > 0 && (
+        <Link href="/games">
+          <Tooltip label="Add games">
+            <ActionIcon
+              color="primary"
+              variant="filled"
+              component="a"
+              mt="lg"
+              ml="auto"
+              mr={8}
+              sx={{
+                width: 28,
+                height: 28,
+              }}
+            >
+              <TbPlus size={24} />
+            </ActionIcon>
+          </Tooltip>
+        </Link>
+      )}
 
       {gameEntries.map((value) => {
         const { game_id } = value;
@@ -87,6 +89,16 @@ const GameSection = (props: Props) => {
           </Box>
         );
       })}
+      {gameEntries.length === 0 && (
+        <>
+          <Title align="center">You have no games added yet</Title>
+          <Link href="/games">
+            <Center mt={20}>
+              <Button>Add a game</Button>
+            </Center>
+          </Link>
+        </>
+      )}
       {gameEntryModalData && (
         <GameEntryEditModal
           opened={isOpen}
