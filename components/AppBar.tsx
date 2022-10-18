@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
 import { useState } from "react";
+import { useMobile } from "utils/useMobile";
 import AuthModal from "./AuthModal";
 
 const AppBar = () => {
@@ -25,7 +26,7 @@ const AppBar = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
-  console.log();
+  const isMobile = useMobile();
 
   const handleClose = () => {
     setAuthModalIsOpen(false);
@@ -72,26 +73,28 @@ const AppBar = () => {
               style={{ cursor: "pointer" }}
             />
           </Link>
-          <Link href={user ? `/user/${user.username}` : "/"}>
-            <Group spacing={0}>
-              <Text
-                size="lg"
-                weight="bold"
-                color="yellow.5"
-                style={{ cursor: "pointer" }}
-              >
-                Display
-              </Text>
-              <Text
-                size="lg"
-                weight="bold"
-                color="yellow.6"
-                style={{ cursor: "pointer" }}
-              >
-                Case
-              </Text>
-            </Group>
-          </Link>
+          {isMobile || (
+            <Link href={user ? `/user/${user.username}` : "/"}>
+              <Group spacing={0}>
+                <Text
+                  size="lg"
+                  weight="bold"
+                  color="yellow.5"
+                  style={{ cursor: "pointer" }}
+                >
+                  Display
+                </Text>
+                <Text
+                  size="lg"
+                  weight="bold"
+                  color="yellow.6"
+                  style={{ cursor: "pointer" }}
+                >
+                  Case
+                </Text>
+              </Group>
+            </Link>
+          )}
           <Space h="lg" />
           <Link href="/games">
             <Text style={{ cursor: "pointer" }} weight="bold">
