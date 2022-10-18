@@ -19,6 +19,7 @@ import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
 import { useState } from "react";
 import { getImage } from "utils/getImage";
+import { useMobile } from "utils/useMobile";
 import AuthModal from "./AuthModal";
 
 const AppBar = () => {
@@ -26,6 +27,7 @@ const AppBar = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const theme = useMantineTheme();
+  const isMobile = useMobile();
 
   const handleClose = () => {
     setAuthModalIsOpen(false);
@@ -72,9 +74,10 @@ const AppBar = () => {
               style={{ cursor: "pointer" }}
             />
           </Link>
-          <Link href={user ? `/user/${user.username}` : "/"}>
-            <Group spacing={0}>
-              <Text
+          {isMobile || (
+            <Link href={user ? `/user/${user.username}` : "/"}>
+              <Group spacing={0}>
+                <Text
                 size="lg"
                 weight="bold"
                 variant="gradient"
@@ -83,8 +86,9 @@ const AppBar = () => {
               >
                 DisplayCase
               </Text>
-            </Group>
-          </Link>
+              </Group>
+            </Link>
+          )}
           <Space h="lg" />
           <Link href="/games">
             <Text style={{ cursor: "pointer" }} weight="bold">
