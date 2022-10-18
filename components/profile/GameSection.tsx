@@ -1,3 +1,8 @@
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
+import { getGameEntryListApi } from "@api/game_entries_api";
 import { GameEntry, User } from "@api/types";
 import { ActionIcon, Box, Button, Center, Title, Tooltip } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
@@ -17,9 +22,14 @@ type Props = {
 };
 
 const GameSection = (props: Props) => {
+  const dispatch = useAppDispatch();
+
   const { user, isSelfUser } = props;
   const userId = user.id;
-  const dispatch = useAppDispatch();
+  const selfGameEntries = useAppSelector((state) =>
+    Object.values(selectAllGameEntries(state))
+  );
+  const [otherGameEntries, setOtherGameEntries] = useState<GameEntry[]>([]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [gameEntryModalData, setGameEntryModalData] =
@@ -40,12 +50,22 @@ const GameSection = (props: Props) => {
   };
 
   useEffect(() => {
-    dispatch(getGameEntries({ user_id: userId }));
-  }, [dispatch, userId]);
-
-  const gameEntries = useAppSelector((state) =>
-    Object.values(selectAllGameEntries(state))
-  );
+    if (isSelfUser) {
+      dispatch(getGameEntries({ user_id: userId }))
+        .unwrap()
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+        });
+    } else {
+      getGameEntryListApi({ user_id: userId })
+        .then((entries) => {
+          setOtherGameEntries(entries);
+        })
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+        });
+    }
+  }, [dispatch, userId, isSelfUser]);
 
   return (
     <Box>
@@ -53,7 +73,8 @@ const GameSection = (props: Props) => {
         Games
       </Title>
 
-      {gameEntries.length > 0 && (
+      {((isSelfUser && selfGameEntries.length > 0) ||
+        (!isSelfUser && otherGameEntries.length > 0)) && (
         <Link href="/games">
           <Tooltip label="Add games">
             <ActionIcon
@@ -74,7 +95,7 @@ const GameSection = (props: Props) => {
         </Link>
       )}
 
-      {gameEntries.map((value) => {
+      {(isSelfUser ? selfGameEntries : otherGameEntries).map((value) => {
         const { game_id } = value;
 
         return (
@@ -89,7 +110,8 @@ const GameSection = (props: Props) => {
           </Box>
         );
       })}
-      {gameEntries.length === 0 && (
+      {((isSelfUser && selfGameEntries.length === 0) ||
+        (!isSelfUser && otherGameEntries.length === 0)) && (
         <>
           <Title align="center" size={22}>
             You have no games added yet
