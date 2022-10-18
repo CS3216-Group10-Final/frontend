@@ -1,3 +1,4 @@
+import { handleApiRequestError } from "@api/error_handling";
 import { updateUserProfilePictureApi } from "@api/pictures_api";
 import { getSelfUserApi, updateSelfUsernameApi } from "@api/users_api";
 import {
@@ -46,9 +47,13 @@ export const updateUsername = createAsyncThunk<
   User,
   string,
   { state: RootState }
->("user/updateUsername", async (username) => {
-  const response = await updateSelfUsernameApi(username);
-  return response;
+>("user/updateUsername", async (username, { rejectWithValue }) => {
+  try {
+    const response = await updateSelfUsernameApi(username);
+    return response;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
 });
 
 export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(

@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
 import { useState } from "react";
+import { getImage } from "utils/getImage";
 import { useMobile } from "utils/useMobile";
 import AuthModal from "./AuthModal";
 
@@ -77,21 +78,14 @@ const AppBar = () => {
             <Link href={user ? `/user/${user.username}` : "/"}>
               <Group spacing={0}>
                 <Text
-                  size="lg"
-                  weight="bold"
-                  color="yellow.5"
-                  style={{ cursor: "pointer" }}
-                >
-                  Display
-                </Text>
-                <Text
-                  size="lg"
-                  weight="bold"
-                  color="yellow.6"
-                  style={{ cursor: "pointer" }}
-                >
-                  Case
-                </Text>
+                size="lg"
+                weight="bold"
+                variant="gradient"
+                gradient={{ from: "yellow", to: "orange" }}
+                style={{ fontFamily: "Quicksand", cursor: "pointer" }}
+              >
+                DisplayCase
+              </Text>
               </Group>
             </Link>
           )}
@@ -106,7 +100,7 @@ const AppBar = () => {
           {user && (
             <Link href={`/user/${user.username}`}>
               <Avatar
-                src={user?.profile_picture_link}
+                src={getImage(user?.profile_picture_link)}
                 size={35}
                 radius={5}
                 style={{ cursor: "pointer" }}

@@ -7,7 +7,8 @@ import type { AppProps } from "next/app";
 import { GoogleAnalytics } from "nextjs-google-analytics";
 import { Provider } from "react-redux";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps, ...appProps }: AppProps) {
+  const fullWidth = [`/`].includes(appProps.router.pathname);
   return (
     <>
       <GoogleAnalytics trackPageViews />
@@ -45,10 +46,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           primaryColor: "yellow",
           primaryShade: 6,
           // fontFamily: "Quicksand, sans-serif",
-          // headings: {
-          //   fontFamily: "Quicksand, sans-serif",
-          //   fontWeight: 700
-          // },
+          headings: {
+            fontFamily: "Quicksand, sans-serif",
+            fontWeight: 700,
+          },
           components: {
             Input: {
               styles: (theme) => ({
@@ -63,7 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Provider store={store}>
           <NotificationsProvider>
             <ModalsProvider>
-              <Layout>
+              <Layout fullWidth={fullWidth}>
                 <Component {...pageProps} />
               </Layout>
             </ModalsProvider>

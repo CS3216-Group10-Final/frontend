@@ -2,32 +2,34 @@ import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
+import { User, UserStatistics } from "@api/types";
+import { getUserApi } from "@api/users_api";
+import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import ChartBarDistribution from "@components/profile/ChartBarDistribution";
 import GameSection from "@components/profile/GameSection";
-import { useForm } from "@mantine/form";
-import { closeAllModals, openModal } from "@mantine/modals";
 import {
   Avatar,
   Button,
   Grid,
   Group,
   LoadingOverlay,
+  SimpleGrid,
   Space,
   Stack,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { closeAllModals, openModal } from "@mantine/modals";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
-import { getUserApi } from "@api/users_api";
 import { selectUser, updateUsername } from "@redux/slices/User_slice";
-import { useEffect, useState } from "react";
-import { showSuccessNotification } from "utils/notifications";
-import UploadProfileModal from "./UploadProfileModal";
-import { User, UserStatistics } from "@api/types";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { getImage } from "utils/getImage";
+import { showSuccessNotification } from "utils/notifications";
+import Badge from "./Badge";
+import UploadProfileModal from "./UploadProfileModal";
 // import { GameEntryStatus, Genre, Platform } from "@api/types";
 
 // const game_status_distribution: Record<GameEntryStatus, number> = {
@@ -89,6 +91,7 @@ const UsernameModalContent = () => {
 
   const handleUpdateUsername = ({ username }: UsernameForm) => {
     dispatch(updateUsername(username))
+      .unwrap()
       .then(() => {
         showSuccessNotification({
           title: "Username updated",
@@ -204,6 +207,11 @@ const ProfilePage = (props: Props) => {
                 </Button>
               </>
             )}
+            <SimpleGrid cols={3} spacing="xs">
+              {(user.badges ?? []).map((badge) => {
+                return <Badge key={badge.id} badge={badge} />;
+              })}
+            </SimpleGrid>
           </Stack>
         </Grid.Col>
         <Grid.Col md={9} sm={12} mt="md">

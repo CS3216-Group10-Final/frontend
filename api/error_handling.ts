@@ -26,40 +26,37 @@ interface UnauthorizedError {
  */
 const ERROR_CODE_INVALID_TOKEN = "token_not_valid";
 
-export class ApiRequestError extends Error {
+export type ApiRequestError = {
   errorType: ErrorType;
-  constructor(errorType: number, errorMessage?: string) {
-    super(errorMessage);
-    this.errorType = errorType;
-  }
-}
+  errorMessage?: string;
+};
 
 export function handleApiRequestError(error: unknown): ApiRequestError {
-  if (error instanceof ApiRequestError) {
-    return error;
+  if ((error as ApiRequestError).errorType) {
+    return error as ApiRequestError;
   }
   if (axios.isAxiosError(error)) {
     if (error.response) {
       if (error.response.status == 401) {
         const unauthorizedError = error.response.data as UnauthorizedError;
         if (unauthorizedError.code == ERROR_CODE_INVALID_TOKEN) {
-          return new ApiRequestError(ErrorType.TOKEN_NOT_VALID);
+          return { errorType: ErrorType.TOKEN_NOT_VALID };
         }
       }
       console.log("API request error: ", error.message);
-      return new ApiRequestError(ErrorType.UNKNOWN);
+      return { errorType: ErrorType.UNKNOWN };
     } else if (error.request) {
-      return new ApiRequestError(ErrorType.SERVER_CONNECTION_FAILED);
+      return { errorType: ErrorType.UNKNOWN };
     } else {
       console.log("API Request error:", error.message);
-      return new ApiRequestError(ErrorType.UNKNOWN);
+      return { errorType: ErrorType.UNKNOWN };
     }
   } else if (error instanceof Error) {
     console.log("API request error: ", error.message);
-    return new ApiRequestError(ErrorType.UNKNOWN);
+    return { errorType: ErrorType.UNKNOWN };
   } else {
     console.log("API request error: ", error);
-    return new ApiRequestError(ErrorType.UNKNOWN);
+    return { errorType: ErrorType.UNKNOWN };
   }
 }
 

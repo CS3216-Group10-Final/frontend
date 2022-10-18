@@ -74,6 +74,7 @@ const GameEntryEditModal = (props: Props) => {
     };
 
     dispatch(updateGameEntry(newGameEntry))
+      .unwrap()
       .then(() => {
         onClose();
         showSuccessNotification({

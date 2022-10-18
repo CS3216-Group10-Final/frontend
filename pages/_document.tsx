@@ -12,7 +12,10 @@ export default class _Document extends Document {
         <Head>
           <meta name="theme-color" content="#2c2f33" />
           <link rel="manifest" href="/manifest.json" />
-          {/* <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand&display=optional"/> */}
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Quicksand&display=optional"
+          />
           <link
             rel="icon"
             type="image/png"
