@@ -8,6 +8,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { getImage } from "utils/getImage";
 
 interface Props {
   badge: BadgeEntry;
@@ -49,7 +50,7 @@ const Badge = ({ badge }: Props) => {
               onMouseLeave={close}
               className={classes.image}
               style={{
-                backgroundImage: `url(${badge.badge_picture})`,
+                backgroundImage: `url(${getImage(badge.badge_picture)})`,
               }}
             />
           </Card>
