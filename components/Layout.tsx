@@ -8,6 +8,7 @@ import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
 import React from "react";
 import AppBar from "./AppBar";
+import AppFooter from "./AppFooter";
 
 interface Props {
   children: React.ReactNode;
@@ -33,6 +34,7 @@ const Layout = ({ children, fullWidth }: Props) => {
     <AppShell
       padding={fullWidth ? 0 : "md"}
       header={<AppBar />}
+      footer={<AppFooter />}
       styles={(theme) => ({
         main: { backgroundColor: theme.colors.dark[5] },
       })}

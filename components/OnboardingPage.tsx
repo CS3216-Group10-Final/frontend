@@ -14,13 +14,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import {
-  AiFillFacebook,
-  AiOutlineInstagram,
-  AiOutlineSearch,
-  AiOutlineStar,
-  AiOutlineTwitter,
-} from "react-icons/ai";
+import { AiOutlineSearch, AiOutlineStar } from "react-icons/ai";
 import { CgGames } from "react-icons/cg";
 import { FaGamepad } from "react-icons/fa";
 import { GiConsoleController } from "react-icons/gi";
@@ -262,32 +256,6 @@ const OnboardingPage = () => {
         <Text size={isScreenSmall ? 20 : 26}>And much more coming soon!</Text>
       </Stack>
 
-      <Text align="center" mt={20} size={isScreenSmall ? 20 : 26}>
-        Follow us for updates
-      </Text>
-      <Group position="center" mt={20}>
-        <ThemeIcon
-          variant="gradient"
-          gradient={{ from: "yellow", to: "orange" }}
-          size={isScreenSmall ? 28 : 45}
-        >
-          <AiOutlineTwitter size={isScreenSmall ? 20 : 26} />
-        </ThemeIcon>
-        <ThemeIcon
-          variant="gradient"
-          gradient={{ from: "yellow", to: "orange" }}
-          size={isScreenSmall ? 28 : 45}
-        >
-          <AiFillFacebook size={isScreenSmall ? 20 : 26} />
-        </ThemeIcon>
-        <ThemeIcon
-          variant="gradient"
-          gradient={{ from: "yellow", to: "orange" }}
-          size={isScreenSmall ? 28 : 45}
-        >
-          <AiOutlineInstagram size={isScreenSmall ? 20 : 26} />
-        </ThemeIcon>
-      </Group>
       <AuthModal isOpen={isAuthModalOpen} onClose={close} />
     </>
   );
