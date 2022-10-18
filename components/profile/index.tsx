@@ -91,6 +91,7 @@ const UsernameModalContent = () => {
 
   const handleUpdateUsername = ({ username }: UsernameForm) => {
     dispatch(updateUsername(username))
+      .unwrap()
       .then(() => {
         showSuccessNotification({
           title: "Username updated",

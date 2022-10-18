@@ -27,6 +27,7 @@ const GoogleAuthRedirect: NextPage = () => {
     if (typeof refresh == "string" && typeof access == "string") {
       TokenService.setTokens({ refreshToken: refresh, accessToken: access });
       dispatch(getSelfUser())
+        .unwrap()
         .then(() => {
           router.push("/");
         })
@@ -36,11 +37,10 @@ const GoogleAuthRedirect: NextPage = () => {
     } else {
       showApiRequestErrorNotification({
         errorType: ErrorType.TOKEN_NOT_VALID,
-        name: "",
-        message: "",
       });
       router.push("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
   return <Text>Redirecting...</Text>;

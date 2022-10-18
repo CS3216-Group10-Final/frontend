@@ -21,9 +21,11 @@ const Layout = ({ children, fullWidth }: Props) => {
       TokenService.getLocalAccessToken() &&
       TokenService.getLocalRefreshToken()
     ) {
-      dispatch(getSelfUser()).catch((error) => {
-        showApiRequestErrorNotification(handleApiRequestError(error));
-      });
+      dispatch(getSelfUser())
+        .unwrap()
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+        });
     }
   }, [dispatch]);
 

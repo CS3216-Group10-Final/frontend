@@ -89,6 +89,7 @@ const GameDetailsSidebar = ({
         platforms: gameEntry.platforms,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameEntry]);
 
   const submitGameEntry = (values: FormValues) => {

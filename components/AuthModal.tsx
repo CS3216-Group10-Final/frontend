@@ -27,7 +27,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
-import { FaceBookButton, GoogleButton, TwitterButton } from "./SocialButtons";
+import { GoogleButton } from "./SocialButtons";
 
 type Props = {
   isOpen: boolean;

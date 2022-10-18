@@ -2,7 +2,7 @@
  * API call handlers for authentication.
  */
 
-import { ApiRequestError, ErrorType } from "@api/error_handling";
+import { ErrorType } from "@api/error_handling";
 import axios from "axios";
 import axiosInstance from "../axios";
 import {
@@ -20,7 +20,7 @@ interface TokenResponseData {
   refresh: string;
 }
 
-interface AuthExpectedError {
+export interface AuthExpectedError {
   error_code: number;
   error_message: string;
 }
@@ -55,16 +55,16 @@ export async function registerUserApi(
   }
   const authExpectedError = response.data as AuthExpectedError;
   if (authExpectedError.error_code == 1) {
-    throw new ApiRequestError(
-      ErrorType.USERNAME_IN_USE,
-      authExpectedError.error_message
-    );
+    throw {
+      errorType: ErrorType.USERNAME_IN_USE,
+      errorMessage: authExpectedError.error_message,
+    };
   }
   if (authExpectedError.error_code == 2) {
-    throw new ApiRequestError(
-      ErrorType.EMAIL_IN_USE,
-      authExpectedError.error_message
-    );
+    throw {
+      errorType: ErrorType.EMAIL_IN_USE,
+      errorMessage: authExpectedError.error_message,
+    };
   }
 }
 
@@ -82,10 +82,10 @@ export async function loginApi(userLoginDetails: UserLoginDetails) {
   }
   const authExpectedError = response.data as AuthExpectedError;
   if (authExpectedError.error_code == 1) {
-    throw new ApiRequestError(
-      ErrorType.INCORRECT_LOGIN_DETAILS,
-      authExpectedError.error_message
-    );
+    throw {
+      errorType: ErrorType.INCORRECT_LOGIN_DETAILS,
+      errorMessage: authExpectedError.error_message,
+    };
   }
 }
 
