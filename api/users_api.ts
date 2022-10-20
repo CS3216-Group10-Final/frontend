@@ -40,6 +40,11 @@ export async function updateSelfUsernameApi(username: string): Promise<User> {
       errorType: ErrorType.USERNAME_IN_USE,
       errorMessage: authExpectedError.error_message,
     };
+  } else if (authExpectedError.error_code == 2) {
+    throw {
+      errorType: ErrorType.INVALID_USERNAME,
+      errorMessage: authExpectedError.error_message,
+    };
   } else if (authExpectedError.error_code) {
     throw {
       errorType: ErrorType.UNKNOWN,
