@@ -23,7 +23,6 @@ import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { useAppDispatch } from "@redux/hooks";
 import { getSelfUser } from "@redux/slices/User_slice";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
@@ -145,9 +144,9 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
         <Stack>
           {modalType === "login" && (
             <Stack>
-              <Link href={googleAuthLink}>
-                <GoogleButton>Login with Google</GoogleButton>
-              </Link>
+              <GoogleButton link={googleAuthLink}>
+                Login with Google
+              </GoogleButton>
               {/* <TwitterButton>Login with Twitter</TwitterButton> */}
               {/* <FaceBookButton>Login with Facebook</FaceBookButton> */}
               <Divider />
