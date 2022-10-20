@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NotificationProps, showErrorNotification } from "utils/notifications";
+import TokenService from "./authentication/token_service";
 
 /**
  * Defines the types of possible errors
@@ -33,6 +34,9 @@ export type ApiRequestError = {
 
 export function handleApiRequestError(error: unknown): ApiRequestError {
   if ((error as ApiRequestError).errorType) {
+    if ((error as ApiRequestError).errorType == ErrorType.TOKEN_NOT_VALID) {
+      TokenService.removeTokens();
+    }
     return error as ApiRequestError;
   }
   if (axios.isAxiosError(error)) {
@@ -40,6 +44,7 @@ export function handleApiRequestError(error: unknown): ApiRequestError {
       if (error.response.status == 401) {
         const unauthorizedError = error.response.data as UnauthorizedError;
         if (unauthorizedError.code == ERROR_CODE_INVALID_TOKEN) {
+          TokenService.removeTokens();
           return { errorType: ErrorType.TOKEN_NOT_VALID };
         }
       }
