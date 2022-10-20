@@ -1,3 +1,4 @@
+import PageHeader from "@components/PageHeader";
 import ProfilePage from "@components/profile";
 import { LoadingOverlay } from "@mantine/core";
 import { NextPage } from "next";
@@ -7,11 +8,16 @@ const UserProfilePage: NextPage = () => {
   const router = useRouter();
   const { username } = router.query;
 
-  if (!router.isReady) {
-    return <LoadingOverlay visible={true} />;
-  }
-
-  return <ProfilePage username={username as string} />;
+  return (
+    <>
+      <PageHeader
+        title={`${String(username)}'s Profile`}
+        description={`View ${String(username)}'s Game Collection `}
+      />
+      <LoadingOverlay visible={!router.isReady} />
+      <ProfilePage username={username as string} />
+    </>
+  );
 };
 
 export default UserProfilePage;
