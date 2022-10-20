@@ -65,6 +65,10 @@ export async function registerUserApi(
       errorType: ErrorType.EMAIL_IN_USE,
       errorMessage: authExpectedError.error_message,
     };
+  } else if (authExpectedError.error_code) {
+    throw {
+      errorType: ErrorType.UNKNOWN,
+    };
   }
 }
 
@@ -85,6 +89,15 @@ export async function loginApi(userLoginDetails: UserLoginDetails) {
     throw {
       errorType: ErrorType.INCORRECT_LOGIN_DETAILS,
       errorMessage: authExpectedError.error_message,
+    };
+  } else if (authExpectedError.error_code == 2) {
+    throw {
+      errorType: ErrorType.INVALID_USERNAME,
+      errorMessage: authExpectedError.error_message,
+    };
+  } else if (authExpectedError.error_code) {
+    throw {
+      errorType: ErrorType.UNKNOWN,
     };
   }
 }

@@ -12,6 +12,7 @@ export enum ErrorType {
   EMAIL_IN_USE,
   INCORRECT_LOGIN_DETAILS,
   TOKEN_NOT_VALID,
+  INVALID_USERNAME,
 }
 
 /**
@@ -86,6 +87,10 @@ const ERROR_DETAILS: Record<ErrorType, NotificationProps> = {
   [ErrorType.TOKEN_NOT_VALID]: {
     title: "Authentication Error",
     message: "Please login again",
+  },
+  [ErrorType.INVALID_USERNAME]: {
+    title: "Invalid Username",
+    message: "Names can only contain alphanumeric characters",
   },
 };
 
