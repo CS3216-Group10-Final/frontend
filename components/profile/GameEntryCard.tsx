@@ -138,7 +138,15 @@ const GameEntryCard = (props: Props) => {
           <Title align="center" size={30}>
             {gameEntry.game_name}
           </Title>
-          <Blockquote cite={`- ${username}`}>{gameEntry.review}</Blockquote>
+          <Blockquote
+            cite={`- ${username}${
+              !isNaN(Number(gameEntry.rating))
+                ? `, who gave this game ${rating}/10`
+                : ""
+            }`}
+          >
+            {gameEntry.review}
+          </Blockquote>
         </>
       </Modal>
     </Card>
