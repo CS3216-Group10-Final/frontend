@@ -19,12 +19,13 @@ import GameEntryEditModal from "./GameEntryEditModal";
 type Props = {
   user: User;
   isSelfUser: boolean;
+  updateUserStatistics: (_: string) => Promise<void>;
 };
 
 const GameSection = (props: Props) => {
   const dispatch = useAppDispatch();
 
-  const { user, isSelfUser } = props;
+  const { user, isSelfUser, updateUserStatistics } = props;
   const userId = user.id;
   const selfGameEntries = useAppSelector((state) =>
     Object.values(selectAllGameEntries(state))
@@ -37,6 +38,7 @@ const GameSection = (props: Props) => {
 
   const handleClose = () => {
     setGameEntryModalData(null);
+    updateUserStatistics(user.username);
     setIsOpen(false);
   };
 
