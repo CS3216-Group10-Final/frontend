@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { GameEntry, GameEntryStatus } from "@api/types";
 import {
-  Card,
-  Image,
-  Text,
-  Group,
-  Stack,
-  Badge,
-  Grid,
   ActionIcon,
+  Badge,
+  Card,
+  Grid,
+  Group,
+  Image,
+  Stack,
+  Text,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
@@ -77,7 +77,7 @@ const GameEntryCard = (props: Props) => {
         </Grid.Col>
         <Grid.Col span={isMobile ? 4 : 2} p={0}>
           <Group sx={{ height: "100%" }} position="right" mr="sm">
-            {rating && (
+            {rating !== null && (
               <Text
                 size="md"
                 align="right"

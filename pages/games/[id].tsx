@@ -74,13 +74,14 @@ const GameDetailsSidebar = ({
 
   const form = useForm<FormValues>({
     initialValues: {
-      status: String(gameEntry?.status) || String(GameEntryStatus.WISHLIST),
-      rating: String(gameEntry?.rating) || "0",
+      status: String(gameEntry?.status),
+      rating: String(gameEntry?.rating),
       platforms: game?.platforms || [],
     },
 
     validate: {
-      status: (value) => (value ? null : "Status is required"),
+      status: (value: string | undefined) =>
+        value && value !== "undefined" ? null : "Status is required",
     },
   });
 
