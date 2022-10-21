@@ -16,6 +16,13 @@ export const USER_COLLECTION_PATH = "/users";
 export function getPathForGetUser(username: string) {
   return USER_COLLECTION_PATH + "/" + username;
 }
+
+// Follow user
+export const FOLLOW_PATH = "/follows";
+export function getPathForFollowUser(username: string) {
+  return FOLLOW_PATH + "/" + username;
+}
+
 // User Statistics
 export function getPathForUserStatisticsWithName(username: string) {
   return getPathForGetUser(username) + "/stats";
