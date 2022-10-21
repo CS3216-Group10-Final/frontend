@@ -26,14 +26,17 @@ import {
   Space,
   Stack,
   Text,
+  Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { openConfirmModal } from "@mantine/modals";
 import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import { NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { AiOutlineLeft } from "react-icons/ai";
 import { showSuccessNotification } from "utils/notifications";
 
 interface SidebarProps {
@@ -278,8 +281,20 @@ const Games: NextPage = () => {
   return (
     <>
       <LoadingOverlay visible={isLoading} overlayBlur={3} zIndex="1" />
+      <Link href="/games">
+        <Button
+          variant="subtle"
+          leftIcon={<AiOutlineLeft size={14} style={{ marginTop: 2 }} />}
+          style={{ fontSize: 16 }}
+          pb={1}
+        >
+          Back
+        </Button>
+      </Link>
       <Center>
-        <Text size={35}>{game?.name}</Text>
+        <Title size={35} mb={8}>
+          {game?.name}
+        </Title>
       </Center>
       <Grid grow>
         <Grid.Col span={2}>

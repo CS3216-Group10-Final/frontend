@@ -35,9 +35,11 @@ const GoogleAuthRedirect: NextPage = () => {
           showApiRequestErrorNotification(handleApiRequestError(error));
         });
     } else {
-      showApiRequestErrorNotification({
-        errorType: ErrorType.TOKEN_NOT_VALID,
-      });
+      showApiRequestErrorNotification(
+        handleApiRequestError({
+          errorType: ErrorType.TOKEN_NOT_VALID,
+        })
+      );
       router.push("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

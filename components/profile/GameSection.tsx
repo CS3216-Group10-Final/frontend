@@ -73,8 +73,7 @@ const GameSection = (props: Props) => {
         Games
       </Title>
 
-      {((isSelfUser && selfGameEntries.length > 0) ||
-        (!isSelfUser && otherGameEntries.length > 0)) && (
+      {isSelfUser && selfGameEntries.length > 0 && (
         <Link href="/games">
           <Tooltip label="Add games">
             <ActionIcon

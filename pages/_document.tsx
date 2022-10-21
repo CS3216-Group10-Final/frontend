@@ -14,7 +14,7 @@ export default class _Document extends Document {
           <link rel="manifest" href="/manifest.json" />
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Quicksand&display=optional"
+            href="https://fonts.googleapis.com/css?family=Quicksand&display=swap"
           />
           <link
             rel="icon"
