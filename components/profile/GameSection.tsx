@@ -105,6 +105,7 @@ const GameSection = (props: Props) => {
                 gameEntry={value}
                 onClickEdit={handleEdit}
                 isEditable={isSelfUser}
+                username={user.username}
               />
             </Link>
           </Box>

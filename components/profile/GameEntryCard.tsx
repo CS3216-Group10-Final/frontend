@@ -1,28 +1,34 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { GameEntry, GameEntryStatus } from "@api/types";
 import {
-  Card,
-  Image,
-  Text,
-  Group,
-  Stack,
-  Badge,
-  Grid,
   ActionIcon,
+  Badge,
+  Blockquote,
+  Card,
+  Grid,
+  Group,
+  HoverCard,
+  Image,
+  Modal,
+  Stack,
+  Text,
+  useMantineTheme,
 } from "@mantine/core";
-import { useHover } from "@mantine/hooks";
+import { useHover, useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
-import { TbEdit } from "react-icons/tb";
+import { useState } from "react";
+import { TbEdit, TbFileText } from "react-icons/tb";
 import { useMobile } from "utils/useMobile";
 
 type Props = {
   gameEntry: GameEntry;
+  username: string;
   onClickEdit?: (gameEntry: GameEntry) => void;
   isEditable: boolean;
 };
 
 const GameEntryCard = (props: Props) => {
-  const { gameEntry, onClickEdit, isEditable } = props;
+  const { gameEntry, onClickEdit, isEditable, username } = props;
   const {
     game_id,
     game_name: title,
@@ -32,6 +38,9 @@ const GameEntryCard = (props: Props) => {
   } = gameEntry;
   const isMobile = useMobile();
   const { ref, hovered } = useHover();
+  const [reviewModalIsOpen, setReviewModalIsOpen] = useState<boolean>(false);
+  const theme = useMantineTheme();
+  const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
 
   const badgeColor = {
     [GameEntryStatus.DROPPED]: "red",
@@ -68,7 +77,25 @@ const GameEntryCard = (props: Props) => {
                 {title}
               </Text>
             </Link>
-            <Group mb="sm">
+            <Group>
+              {gameEntry.review && (
+                <HoverCard width={100} shadow="md">
+                  <HoverCard.Target>
+                    <ActionIcon
+                      onClick={() => {
+                        setReviewModalIsOpen(true);
+                      }}
+                    >
+                      <TbFileText size={20} />
+                    </ActionIcon>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown p={6}>
+                    <Text size="xs" align="center">
+                      Read review
+                    </Text>
+                  </HoverCard.Dropdown>
+                </HoverCard>
+              )}
               <Badge color={badgeColor[status]}>
                 {GameEntryStatus[status]}
               </Badge>
@@ -100,6 +127,14 @@ const GameEntryCard = (props: Props) => {
           </Group>
         </Grid.Col>
       </Grid>
+      <Modal
+        opened={reviewModalIsOpen}
+        onClose={() => setReviewModalIsOpen(false)}
+        size={isScreenSmall ? "sm" : "lg"}
+        withCloseButton={false}
+      >
+        <Blockquote cite={`- ${username}`}>{gameEntry.review}</Blockquote>
+      </Modal>
     </Card>
   );
 };
