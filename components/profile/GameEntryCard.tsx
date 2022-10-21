@@ -12,6 +12,7 @@ import {
   Modal,
   Stack,
   Text,
+  Title,
   useMantineTheme,
 } from "@mantine/core";
 import { useHover, useMediaQuery } from "@mantine/hooks";
@@ -133,7 +134,12 @@ const GameEntryCard = (props: Props) => {
         size={isScreenSmall ? "sm" : "lg"}
         withCloseButton={false}
       >
-        <Blockquote cite={`- ${username}`}>{gameEntry.review}</Blockquote>
+        <>
+          <Title align="center" size={30}>
+            {gameEntry.game_name}
+          </Title>
+          <Blockquote cite={`- ${username}`}>{gameEntry.review}</Blockquote>
+        </>
       </Modal>
     </Card>
   );
