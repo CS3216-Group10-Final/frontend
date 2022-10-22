@@ -18,6 +18,11 @@ import { useHover, useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
 import { useState } from "react";
 import { TbEdit, TbFileText } from "react-icons/tb";
+import {
+  allPlatformCategories,
+  categorizePlatforms,
+  getPlatformCategoryIcon,
+} from "utils/platform_categories";
 import { useMobile } from "utils/useMobile";
 
 type Props = {
@@ -34,6 +39,7 @@ const GameEntryCard = (props: Props) => {
     game_name: title,
     game_cover: cover,
     rating,
+    platforms,
     status,
   } = gameEntry;
   const isMobile = useMobile();
@@ -41,6 +47,7 @@ const GameEntryCard = (props: Props) => {
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState<boolean>(false);
   const theme = useMantineTheme();
   const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+  const categorizedPlatforms = categorizePlatforms(platforms ?? []);
 
   const badgeColor = {
     [GameEntryStatus.DROPPED]: theme.colors.red[5],
@@ -100,6 +107,32 @@ const GameEntryCard = (props: Props) => {
                     </HoverCard.Dropdown>
                   </HoverCard>
                 )}
+                <Group>
+                  {allPlatformCategories.map((platformCategory) => {
+                    if (categorizedPlatforms[platformCategory].length === 0) {
+                      return <></>;
+                    } else {
+                      return (
+                        <>
+                          <HoverCard shadow="md">
+                            <HoverCard.Target>
+                              <ActionIcon>
+                                {getPlatformCategoryIcon(platformCategory)}
+                              </ActionIcon>
+                            </HoverCard.Target>
+                            <HoverCard.Dropdown p={6}>
+                              <Text size="xs" align="center">
+                                {categorizedPlatforms[platformCategory].join(
+                                  ", "
+                                )}
+                              </Text>
+                            </HoverCard.Dropdown>
+                          </HoverCard>
+                        </>
+                      );
+                    }
+                  })}
+                </Group>
               </Group>
             </Stack>
           </Grid.Col>
