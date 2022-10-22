@@ -140,9 +140,9 @@ const GameEntryCard = (props: Props) => {
           </Title>
           <Blockquote
             cite={`- ${username}${
-              !isNaN(Number(gameEntry.rating))
-                ? `, who gave this game ${rating}/10`
-                : ""
+              gameEntry.rating === null || gameEntry.rating === undefined
+                ? ""
+                : `, who gave this game ${rating}/10`
             }`}
           >
             {gameEntry.review}
