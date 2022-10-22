@@ -228,7 +228,7 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
               />
               <Space h="md" />
               <Button type="submit" fullWidth>
-                {gameEntry ? "Add" : "Update"}
+                {gameEntry ? "Update" : "Add"}
               </Button>
             </form>
             {gameEntry && (
