@@ -139,6 +139,16 @@ const ProfilePage = (props: Props) => {
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
 
+  async function updateUserStatistics(username: string) {
+    getUserStatisticsByNameApi(username)
+      .then((apiUserStatistics) => {
+        setUserStatistics(apiUserStatistics);
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+  }
+
   useEffect(() => {
     setIsLoading(true);
 
@@ -147,16 +157,10 @@ const ProfilePage = (props: Props) => {
         setUser(apiUser);
       })
       .catch((error) => {
-        console.log(error);
+        showApiRequestErrorNotification(handleApiRequestError(error));
       });
 
-    const userStatisticsPromise = getUserStatisticsByNameApi(username)
-      .then((apiUserStatistics) => {
-        setUserStatistics(apiUserStatistics);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const userStatisticsPromise = updateUserStatistics(username);
 
     Promise.all([userPromise, userStatisticsPromise]).finally(() => {
       setIsLoading(false);
@@ -237,7 +241,11 @@ const ProfilePage = (props: Props) => {
           )}
         </Grid.Col>
         <Grid.Col span={12} mt="md">
-          <GameSection user={user} isSelfUser={isSelfProfilePage} />
+          <GameSection
+            user={user}
+            isSelfUser={isSelfProfilePage}
+            updateUserStatistics={updateUserStatistics}
+          />
         </Grid.Col>
       </Grid>
       <UploadProfileModal
