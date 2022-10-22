@@ -151,6 +151,9 @@ const ProfilePage = (props: Props) => {
   }
 
   useEffect(() => {
+    if (username === undefined) {
+      return;
+    }
     setIsLoading(true);
 
     const userPromise = getUserApi(username, selfUser === undefined)
