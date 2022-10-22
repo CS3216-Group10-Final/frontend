@@ -15,11 +15,19 @@ export async function getSelfUserApi(): Promise<User> {
 /**
  * Gets User object by user id
  */
-export async function getUserApi(username: string): Promise<User> {
+export async function getUserApi(
+  username: string,
+  authNotRequired: boolean
+): Promise<User> {
   const pathForGetUser = getPathForGetUser(username);
-  const response = await axiosInstance.get<User>(pathForGetUser, {
-    authNotRequired: true,
-  });
+  const response = await axiosInstance.get<User>(
+    pathForGetUser,
+    authNotRequired
+      ? {
+          authNotRequired: true,
+        }
+      : {}
+  );
   return response.data;
 }
 
