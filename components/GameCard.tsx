@@ -1,6 +1,21 @@
-import { Game } from "@api/types";
-import { Card, createStyles, Text } from "@mantine/core";
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
+import { Game, GameEntryStatus } from "@api/types";
+import { ActionIcon, Card, createStyles, Text } from "@mantine/core";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import {
+  createGameEntry,
+  selectGameEntryByGameId,
+} from "@redux/slices/GameEntry_slice";
+import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
+import { useState } from "react";
+import { BsPlus } from "react-icons/bs";
+import { TbFileText } from "react-icons/tb";
+import { showSuccessNotification } from "utils/notifications";
+import GameEntryEditModal from "./profile/GameEntryEditModal";
 
 type Props = {
   game: Game;
@@ -40,6 +55,13 @@ const useStyles = createStyles((theme, _params, getRef) => {
         "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)",
     },
 
+    quickButton: {
+      position: "absolute",
+      top: 8,
+      left: 8,
+      zIndex: 10,
+    },
+
     content: {
       height: "100%",
       position: "relative",
@@ -53,21 +75,96 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
 const GameCard = ({ game }: Props) => {
   const { classes } = useStyles();
+  const gameEntry = useAppSelector((state) =>
+    selectGameEntryByGameId(state, game.id)
+  );
+  const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const selfUser = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
+
+  const handleEditModalClose = () => {
+    setEditModalOpen(false);
+  };
+
+  const quickAddGameEntry = () => {
+    if (!selfUser) {
+      return;
+    }
+    const newGameEntry = {
+      id: 0,
+      user_id: selfUser.id,
+      game_id: game.id,
+      game_name: game.name,
+      game_cover: game.cover,
+      is_favourite: false,
+      status: GameEntryStatus.WISHLIST,
+    };
+    dispatch(createGameEntry(newGameEntry))
+      .unwrap()
+      .then((gameEntry) => {
+        console.log("created");
+        showSuccessNotification({
+          title: "Game added to display case",
+          message: `${gameEntry.game_name}`,
+        });
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+  };
 
   return (
-    <Link href={"/games/" + game.id}>
-      <Card p="lg" shadow="lg" className={classes.card} radius="md">
-        <div
-          className={classes.image}
-          style={{ backgroundImage: `url(${game.cover})` }}
-        />
-        <div className={classes.overlay} />
+    <div className={classes.card}>
+      {!gameEntry && selfUser && (
+        <ActionIcon
+          className={classes.quickButton}
+          variant="filled"
+          color="red"
+          size={30}
+          onClick={quickAddGameEntry}
+        >
+          <BsPlus size={28} />
+        </ActionIcon>
+      )}
 
-        <div className={classes.content}>
-          <Text size="lg">{game.name}</Text>
-        </div>
-      </Card>
-    </Link>
+      {gameEntry && selfUser && (
+        <ActionIcon
+          className={classes.quickButton}
+          variant="filled"
+          color="green"
+          size={30}
+          onClick={() => setEditModalOpen(true)}
+        >
+          <TbFileText size={20} />
+        </ActionIcon>
+      )}
+
+      <Link href={"/games/" + game.id}>
+        <Card
+          p="lg"
+          shadow="lg"
+          radius="md"
+          style={{ width: "100%", height: "100%" }}
+        >
+          <div
+            className={classes.image}
+            style={{ backgroundImage: `url(${game.cover})` }}
+          />
+          <div className={classes.overlay} />
+
+          <div className={classes.content}>
+            <Text size="lg">{game.name}</Text>
+          </div>
+        </Card>
+      </Link>
+      {gameEntry && (
+        <GameEntryEditModal
+          opened={isEditModalOpen}
+          gameEntry={gameEntry}
+          onClose={handleEditModalClose}
+        />
+      )}
+    </div>
   );
 };
 

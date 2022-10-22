@@ -153,4 +153,12 @@ export const selectSelfHasGames = (state: RootState) => {
   return Object.values(state.gameEntry.gameEntries).length > 0;
 };
 
+export const selectGameEntryByGameId = (state: RootState, id: number) => {
+  const gameEntries = Object.values(state.gameEntry.gameEntries).filter(
+    (gameEntry) => gameEntry.game_id === id
+  );
+
+  return gameEntries.length > 0 ? gameEntries[0] : undefined;
+};
+
 export default gameEntrySlice.reducer;
