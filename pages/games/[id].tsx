@@ -76,7 +76,8 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
     },
 
     validate: {
-      status: (value) => (value ? null : "Status is required"),
+      status: (value: string | undefined) =>
+        value && value !== "undefined" ? null : "Status is required",
     },
   });
 
