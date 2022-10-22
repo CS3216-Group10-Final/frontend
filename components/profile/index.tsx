@@ -5,21 +5,18 @@ import {
 import { followUserApi, unfollowUserApi } from "@api/follow_api";
 import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
-import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
-import ChartBarDistribution from "@components/profile/ChartBarDistribution";
 import GameSection from "@components/profile/GameSection";
 import {
   Avatar,
   Button,
   Grid,
-  Group,
   LoadingOverlay,
+  SegmentedControl,
   SimpleGrid,
   Space,
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { closeAllModals, openModal } from "@mantine/modals";
@@ -29,7 +26,10 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
 import Badge from "./Badge";
+import ActivitySection from "./ActivitySection";
 import UploadProfileModal from "./UploadProfileModal";
+import StatisticsSection from "./StatisticsSection";
+import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 // import { GameEntryStatus, Genre, Platform } from "@api/types";
 
 // const game_status_distribution: Record<GameEntryStatus, number> = {
@@ -126,6 +126,12 @@ type Props = {
   username: string;
 };
 
+enum Section {
+  STATISTICS = "Statistics",
+  GAMES = "Games",
+  ACTIVITY = "Activity",
+}
+
 const ProfilePage = (props: Props) => {
   const { username } = props;
 
@@ -134,9 +140,12 @@ const ProfilePage = (props: Props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+
+  // TODO: refactor to context
   const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(
     null
   );
+  const [activeSection, setActiveSection] = useState(Section.STATISTICS);
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
 
@@ -149,6 +158,11 @@ const ProfilePage = (props: Props) => {
         showApiRequestErrorNotification(handleApiRequestError(error));
       });
   }
+  const segmentedControlData = (
+    Object.keys(Section) as (keyof typeof Section)[]
+  ).map((key) => {
+    return { label: Section[key], value: Section[key] };
+  });
 
   useEffect(() => {
     if (username === undefined) {
@@ -195,6 +209,20 @@ const ProfilePage = (props: Props) => {
       followUserApi(user.username);
       setUser({ ...user, is_following: true });
     }
+  };
+
+  const SectionComponent = {
+    [Section.STATISTICS]: (
+      <StatisticsSection user={user} userStatistics={userStatistics} />
+    ),
+    [Section.GAMES]: (
+      <GameSection
+        user={user}
+        isSelfUser={isSelfProfilePage}
+        updateUserStatistics={updateUserStatistics}
+      />
+    ),
+    [Section.ACTIVITY]: <ActivitySection user={user} />,
   };
 
   return (
@@ -248,35 +276,17 @@ const ProfilePage = (props: Props) => {
             </SimpleGrid>
           </Stack>
         </Grid.Col>
-        <Grid.Col md={9} sm={12} mt="md">
-          <Title order={1} align="center">
-            Statistics
-          </Title>
-          {userStatistics && (
-            <Text align="center">
-              Average rating: {userStatistics.average_rating.toFixed(1)}/10
-            </Text>
-          )}
-          {userStatistics && (
-            <Group mt={36} align="center" grow>
-              <ChartBarDistribution
-                gameStatusDistribution={userStatistics.game_status_distribution}
-                gameGenreDistribution={userStatistics.game_genre_distribution}
-                platformDistribution={userStatistics.platform_distribution}
-                releaseYearDistribution={
-                  userStatistics.release_year_distribution
-                }
-                playYearDistribution={userStatistics.play_year_distribution}
-              />
-            </Group>
-          )}
+        <Grid.Col span={12} mt="md">
+          <Stack align="center">
+            <SegmentedControl
+              value={activeSection}
+              onChange={(value) => setActiveSection(value as Section)}
+              data={segmentedControlData}
+            />
+          </Stack>
         </Grid.Col>
         <Grid.Col span={12} mt="md">
-          <GameSection
-            user={user}
-            isSelfUser={isSelfProfilePage}
-            updateUserStatistics={updateUserStatistics}
-          />
+          {SectionComponent[activeSection]}
         </Grid.Col>
       </Grid>
       <UploadProfileModal
