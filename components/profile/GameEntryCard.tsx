@@ -138,7 +138,7 @@ const GameEntryCard = (props: Props) => {
           </Grid.Col>
           <Grid.Col span={isMobile ? 4 : 2} p={0}>
             <Group sx={{ height: "100%" }} position="right" mr="sm">
-              {!isNaN(Number(gameEntry.rating)) && (
+              {gameEntry.rating !== undefined && gameEntry.rating !== null && (
                 <Text
                   size="md"
                   align="right"
