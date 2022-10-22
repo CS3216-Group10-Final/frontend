@@ -2,7 +2,6 @@
 import { GameEntry, GameEntryStatus } from "@api/types";
 import {
   ActionIcon,
-  Badge,
   Blockquote,
   Card,
   Grid,
@@ -44,112 +43,114 @@ const GameEntryCard = (props: Props) => {
   const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
 
   const badgeColor = {
-    [GameEntryStatus.DROPPED]: "red",
-    [GameEntryStatus.COMPLETED]: "green",
-    [GameEntryStatus.PLAYING]: "yellow",
-    [GameEntryStatus.BACKLOG]: "blue",
-    [GameEntryStatus.WISHLIST]: "dark",
+    [GameEntryStatus.DROPPED]: theme.colors.red[5],
+    [GameEntryStatus.COMPLETED]: theme.colors.green[5],
+    [GameEntryStatus.PLAYING]: theme.colors.yellow[5],
+    [GameEntryStatus.BACKLOG]: theme.colors.blue[5],
+    [GameEntryStatus.WISHLIST]: theme.colors.dark[3],
   };
 
   return (
-    <Card p={0}>
-      <Grid align="center">
-        <Grid.Col span={3} p={0}>
-          <Image
-            width="100%"
-            height="auto"
-            fit="fill"
-            withPlaceholder
-            src={cover}
-            sx={{ maxHeight: 120 }}
-          />
-        </Grid.Col>
-        <Grid.Col span={isMobile ? 5 : 7} p={0} pl="sm">
-          <Stack>
-            <Link href={`/games/${game_id}`}>
-              <Text
-                mt="sm"
-                size="md"
-                weight={500}
-                sx={{ cursor: "pointer" }}
-                ref={ref}
-                underline={hovered}
-              >
-                {title}
-              </Text>
-            </Link>
-            <Group>
-              {gameEntry.review && (
-                <HoverCard width={100} shadow="md">
-                  <HoverCard.Target>
-                    <ActionIcon
-                      onClick={() => {
-                        setReviewModalIsOpen(true);
-                      }}
-                    >
-                      <TbFileText size={20} />
-                    </ActionIcon>
-                  </HoverCard.Target>
-                  <HoverCard.Dropdown p={6}>
-                    <Text size="xs" align="center">
-                      Read review
-                    </Text>
-                  </HoverCard.Dropdown>
-                </HoverCard>
-              )}
-              <Badge color={badgeColor[status]}>
-                {GameEntryStatus[status]}
-              </Badge>
-            </Group>
-          </Stack>
-        </Grid.Col>
-        <Grid.Col span={isMobile ? 4 : 2} p={0}>
-          <Group sx={{ height: "100%" }} position="right" mr="sm">
-            {rating && (
-              <Text
-                size="md"
-                align="right"
-                mr={isEditable ? 0 : "sm"}
-                weight={500}
-              >
-                {rating}/10
-              </Text>
-            )}
-            {isEditable && (
-              <ActionIcon
-                mr="sm"
-                onClick={() => {
-                  onClickEdit && onClickEdit(gameEntry);
-                }}
-              >
-                <TbEdit size={18} />
-              </ActionIcon>
-            )}
-          </Group>
-        </Grid.Col>
-      </Grid>
-      <Modal
-        opened={reviewModalIsOpen}
-        onClose={() => setReviewModalIsOpen(false)}
-        size={isScreenSmall ? "sm" : "lg"}
-        withCloseButton={false}
+    <div>
+      <Card
+        p={0}
+        style={{ borderLeft: "10px solid", borderColor: badgeColor[status] }}
       >
-        <>
-          <Title align="center" size={30}>
-            {gameEntry.game_name}
-          </Title>
-          <Blockquote
-            cite={`- ${username}${
-              gameEntry.rating === null || gameEntry.rating === undefined
-                ? ""
-                : `, who gave this game ${rating}/10`
-            }`}
-          >
-            {gameEntry.review}
-          </Blockquote>
-        </>
-      </Modal>
-    </Card>
+        <Grid align="center">
+          <Grid.Col span={3} p={0}>
+            <Image
+              width="100%"
+              height="auto"
+              fit="fill"
+              withPlaceholder
+              src={cover}
+              sx={{ maxHeight: 120 }}
+            />
+          </Grid.Col>
+          <Grid.Col span={isMobile ? 5 : 7} p={0} pl="sm">
+            <Stack>
+              <Link href={`/games/${game_id}`}>
+                <Text
+                  mt="sm"
+                  size="md"
+                  weight={500}
+                  sx={{ cursor: "pointer" }}
+                  ref={ref}
+                  underline={hovered}
+                >
+                  {title}
+                </Text>
+              </Link>
+              <Group>
+                {gameEntry.review && (
+                  <HoverCard width={100} shadow="md">
+                    <HoverCard.Target>
+                      <ActionIcon
+                        onClick={() => {
+                          setReviewModalIsOpen(true);
+                        }}
+                      >
+                        <TbFileText size={30} />
+                      </ActionIcon>
+                    </HoverCard.Target>
+                    <HoverCard.Dropdown p={6}>
+                      <Text size="xs" align="center">
+                        Read review
+                      </Text>
+                    </HoverCard.Dropdown>
+                  </HoverCard>
+                )}
+              </Group>
+            </Stack>
+          </Grid.Col>
+          <Grid.Col span={isMobile ? 4 : 2} p={0}>
+            <Group sx={{ height: "100%" }} position="right" mr="sm">
+              {rating && (
+                <Text
+                  size="md"
+                  align="right"
+                  mr={isEditable ? 0 : "sm"}
+                  weight={500}
+                >
+                  {rating}/10
+                </Text>
+              )}
+              {isEditable && (
+                <ActionIcon
+                  mr="sm"
+                  onClick={() => {
+                    onClickEdit && onClickEdit(gameEntry);
+                  }}
+                >
+                  <TbEdit size={18} />
+                </ActionIcon>
+              )}
+            </Group>
+          </Grid.Col>
+        </Grid>
+        <Modal
+          opened={reviewModalIsOpen}
+          onClose={() => setReviewModalIsOpen(false)}
+          size={isScreenSmall ? "sm" : "lg"}
+          withCloseButton={false}
+        >
+          <>
+            <Title align="center" size={30}>
+              {gameEntry.game_name}
+            </Title>
+            <Blockquote
+              cite={`- ${username}${
+                gameEntry.rating === null || gameEntry.rating === undefined
+                  ? ""
+                  : `, who gave this game ${rating}/10`
+              }`}
+            >
+              {gameEntry.review}
+            </Blockquote>
+          </>
+        </Modal>
+      </Card>
+    </div>
   );
 };
 
