@@ -72,7 +72,7 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
     initialValues: {
       status: String(gameEntry?.status) || String(GameEntryStatus.WISHLIST),
       rating: String(gameEntry?.rating) || "0",
-      platforms: game?.platforms || [],
+      platforms: [],
     },
 
     validate: {
@@ -228,7 +228,7 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
               />
               <Space h="md" />
               <Button type="submit" fullWidth>
-                Update
+                {gameEntry ? "Add" : "Update"}
               </Button>
             </form>
             {gameEntry && (
