@@ -1,27 +1,31 @@
 import {
-  Modal,
-  Select,
-  MultiSelect,
-  Button,
-  Group,
-  LoadingOverlay,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { Game, GameEntry, GameEntryStatus } from "@api/types";
-import { useEffect, useState } from "react";
-import { getGameByIdApi } from "@api/games_api";
-import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
-import { updateGameEntry } from "@redux/slices/GameEntry_slice";
-import { showSuccessNotification } from "utils/notifications";
+import { getGameByIdApi } from "@api/games_api";
+import { Game, GameEntry, GameEntryStatus } from "@api/types";
+import {
+  Button,
+  Group,
+  LoadingOverlay,
+  Modal,
+  MultiSelect,
+  Select,
+  Textarea,
+  useMantineTheme,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
 import { useAppDispatch } from "@redux/hooks";
+import { updateGameEntry } from "@redux/slices/GameEntry_slice";
+import { useEffect, useState } from "react";
+import { showSuccessNotification } from "utils/notifications";
 
 interface FormValues {
   status: string;
   rating: string;
   platforms: string[];
+  review: string;
 }
 
 type Props = {
@@ -35,6 +39,9 @@ const GameEntryEditModal = (props: Props) => {
 
   const [game, setGame] = useState<Game | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const theme = useMantineTheme();
+  const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
 
   const dispatch = useAppDispatch();
 
@@ -58,10 +65,12 @@ const GameEntryEditModal = (props: Props) => {
       status: String(gameEntry.status),
       rating: String(gameEntry.rating),
       platforms: gameEntry.platforms || [],
+      review: String(gameEntry.review),
     },
 
     validate: {
-      status: (value) => (value ? null : "Status is required"),
+      status: (value) =>
+        value && value !== "undefined" ? null : "Status is required",
     },
   });
 
@@ -71,6 +80,7 @@ const GameEntryEditModal = (props: Props) => {
       platforms: values.platforms,
       status: Number(values.status),
       rating: Number(values.rating),
+      review: values.review,
     };
 
     dispatch(updateGameEntry(newGameEntry))
@@ -85,24 +95,15 @@ const GameEntryEditModal = (props: Props) => {
       .catch((error) => {
         showApiRequestErrorNotification(handleApiRequestError(error));
       });
-
-    // updateGameEntryApi(newGameEntry)
-    //   .then(() => {
-    //     onClose();
-    //     showSuccessNotification({
-    //       title: "Entry updated",
-    //       message: gameEntry.game_name,
-    //     });
-
-    //     dispatch(getGameEntries({ user_id: gameEntry.user_id }));
-    //   })
-    //   .catch((error) => {
-    //     showApiRequestErrorNotification(handleApiRequestError(error));
-    //   });
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title={gameEntry.game_name}>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={gameEntry.game_name}
+      size={isScreenSmall ? "md" : "lg"}
+    >
       <LoadingOverlay visible={isLoading} />
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Select
@@ -136,6 +137,14 @@ const GameEntryEditModal = (props: Props) => {
           placeholder="Pick any"
           data={game?.platforms || []}
           {...form.getInputProps("platforms")}
+        />
+        <Textarea
+          label="Review"
+          placeholder="Write a Review"
+          autosize
+          minRows={2}
+          maxRows={6}
+          {...form.getInputProps("review")}
         />
 
         <Group position="right">

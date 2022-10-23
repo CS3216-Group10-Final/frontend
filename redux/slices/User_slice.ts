@@ -1,11 +1,11 @@
 import { updateUserProfilePictureApi } from "@api/pictures_api";
+import { User } from "@api/types";
 import { getSelfUserApi, updateSelfUsernameApi } from "@api/users_api";
 import {
   createAsyncThunk,
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { User } from "../../api/types";
 import { RootState } from "../store";
 
 interface UserState {

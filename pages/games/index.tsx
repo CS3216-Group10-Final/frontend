@@ -16,8 +16,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDebouncedValue, useIsomorphicEffect } from "@mantine/hooks";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import { getGameEntries } from "@redux/slices/GameEntry_slice";
+import { selectUser } from "@redux/slices/User_slice";
 import type { NextPage } from "next";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 
 const GamesList: NextPage = () => {
@@ -27,6 +30,20 @@ const GamesList: NextPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearchTerm] = useDebouncedValue(searchTerm, 300);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const selfUser = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (selfUser) {
+      dispatch(getGameEntries({ user_id: selfUser.id }))
+        .unwrap()
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selfUser]);
 
   useIsomorphicEffect(() => {
     setIsLoading(true);

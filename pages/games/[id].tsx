@@ -3,12 +3,6 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
-import {
-  createGameEntryApi,
-  deleteGameEntryApi,
-  getGameEntryListApi,
-  updateGameEntryApi,
-} from "@api/game_entries_api";
 import { Game, GameEntry, GameEntryStatus, User } from "@api/types";
 import PageHeader from "@components/PageHeader";
 import {
@@ -30,7 +24,14 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { openConfirmModal } from "@mantine/modals";
-import { useAppSelector } from "@redux/hooks";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import {
+  createGameEntry,
+  deleteGameEntry,
+  getGameEntries,
+  selectGameEntryByGameId,
+  updateGameEntry,
+} from "@redux/slices/GameEntry_slice";
 import { selectUser } from "@redux/slices/User_slice";
 import { NextPage } from "next";
 import Link from "next/link";
@@ -42,7 +43,6 @@ import { showSuccessNotification } from "utils/notifications";
 interface SidebarProps {
   game?: Game;
   gameEntry?: GameEntry;
-  setGameEntry: React.Dispatch<React.SetStateAction<GameEntry | undefined>>;
   user?: User;
 }
 const useStyles = createStyles((theme) => ({
@@ -58,13 +58,9 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const GameDetailsSidebar = ({
-  game,
-  gameEntry,
-  setGameEntry,
-  user,
-}: SidebarProps) => {
+const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
   const { classes } = useStyles();
+  const dispatch = useAppDispatch();
 
   interface FormValues {
     status: string;
@@ -74,9 +70,9 @@ const GameDetailsSidebar = ({
 
   const form = useForm<FormValues>({
     initialValues: {
-      status: String(gameEntry?.status),
-      rating: String(gameEntry?.rating),
-      platforms: game?.platforms || [],
+      status: String(gameEntry?.status) || String(GameEntryStatus.WISHLIST),
+      rating: String(gameEntry?.rating) || "0",
+      platforms: [],
     },
 
     validate: {
@@ -119,9 +115,9 @@ const GameDetailsSidebar = ({
           rating: Number(values.rating),
         };
     if (!gameEntry) {
-      createGameEntryApi(newGameEntry)
+      dispatch(createGameEntry(newGameEntry))
+        .unwrap()
         .then((gameEntry) => {
-          setGameEntry(gameEntry);
           console.log("created");
           showSuccessNotification({
             title: "Game added to display case",
@@ -132,9 +128,9 @@ const GameDetailsSidebar = ({
           showApiRequestErrorNotification(handleApiRequestError(error));
         });
     } else {
-      updateGameEntryApi(newGameEntry)
+      dispatch(updateGameEntry(newGameEntry))
+        .unwrap()
         .then(() => {
-          setGameEntry(newGameEntry);
           console.log("updated");
           showSuccessNotification({
             title: "Entry updated",
@@ -147,15 +143,19 @@ const GameDetailsSidebar = ({
     }
   };
 
-  const deleteGameEntry = () => {
+  const deleteCurrentGameEntry = () => {
     if (!gameEntry) {
       return;
     }
-    deleteGameEntryApi(gameEntry.id)
+    dispatch(deleteGameEntry(gameEntry.id))
+      .unwrap()
       .then(() => {
-        setGameEntry(undefined);
         form.reset();
         console.log("deleted");
+        showSuccessNotification({
+          title: "Game deleted from display case",
+          message: `${gameEntry.game_name}`,
+        });
       })
       .catch((error) => {
         showApiRequestErrorNotification(handleApiRequestError(error));
@@ -170,7 +170,7 @@ const GameDetailsSidebar = ({
       ),
       labels: { confirm: "Delete", cancel: "Cancel" },
       confirmProps: { color: "red" },
-      onConfirm: () => deleteGameEntry(),
+      onConfirm: () => deleteCurrentGameEntry(),
     });
   };
 
@@ -229,7 +229,7 @@ const GameDetailsSidebar = ({
               />
               <Space h="md" />
               <Button type="submit" fullWidth>
-                Update
+                {gameEntry ? "Update" : "Add"}
               </Button>
             </form>
             {gameEntry && (
@@ -249,9 +249,12 @@ const Games: NextPage = () => {
   const { classes } = useStyles();
   const { id } = router.query;
   const [game, setGame] = useState<Game>();
-  const [gameEntry, setGameEntry] = useState<GameEntry>();
+  const gameEntry = useAppSelector((state) =>
+    selectGameEntryByGameId(state, game?.id ?? -1)
+  );
   const user = useAppSelector(selectUser);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!router.isReady) {
@@ -262,13 +265,7 @@ const Games: NextPage = () => {
       .then((game) => {
         setGame(game);
         if (user) {
-          getGameEntryListApi({ user_id: user.id, game_id: game.id }).then(
-            (gameEntryList) => {
-              if (gameEntryList.length == 1) {
-                setGameEntry(gameEntryList[0]);
-              }
-            }
-          );
+          dispatch(getGameEntries({ user_id: user.id, game_id: game.id }));
         }
       })
       .catch((error) => {
@@ -277,7 +274,8 @@ const Games: NextPage = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [id, router.isReady, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
 
   return (
     <>
@@ -299,12 +297,7 @@ const Games: NextPage = () => {
       </Center>
       <Grid grow>
         <Grid.Col span={2}>
-          <GameDetailsSidebar
-            game={game}
-            gameEntry={gameEntry}
-            setGameEntry={setGameEntry}
-            user={user}
-          />
+          <GameDetailsSidebar game={game} gameEntry={gameEntry} user={user} />
         </Grid.Col>
         <Grid.Col span={6}>
           <div className={classes.box}>

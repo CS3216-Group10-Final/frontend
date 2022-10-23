@@ -6,6 +6,17 @@ export enum GameEntryStatus {
   DROPPED = 4,
 }
 
+export function gameEntryStatusToString(status: GameEntryStatus): string {
+  const mapping: Record<GameEntryStatus, string> = {
+    [GameEntryStatus.WISHLIST]: "Wishlist",
+    [GameEntryStatus.BACKLOG]: "Backlog",
+    [GameEntryStatus.PLAYING]: "Playing",
+    [GameEntryStatus.COMPLETED]: "Completed",
+    [GameEntryStatus.DROPPED]: "Dropped",
+  };
+  return mapping[status];
+}
+
 export enum ActivityType {
   CHANGED_STATUS = 0,
   UPDATED_RATING = 1,

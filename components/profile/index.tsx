@@ -2,6 +2,7 @@ import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
+import { followUserApi, unfollowUserApi } from "@api/follow_api";
 import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
@@ -150,9 +151,12 @@ const ProfilePage = (props: Props) => {
   }
 
   useEffect(() => {
+    if (username === undefined) {
+      return;
+    }
     setIsLoading(true);
 
-    const userPromise = getUserApi(username)
+    const userPromise = getUserApi(username, selfUser === undefined)
       .then((apiUser) => {
         setUser(apiUser);
       })
@@ -165,7 +169,7 @@ const ProfilePage = (props: Props) => {
     Promise.all([userPromise, userStatisticsPromise]).finally(() => {
       setIsLoading(false);
     });
-  }, [username]);
+  }, [username, selfUser]);
 
   const openChangeUserNameModal = () => {
     openModal({
@@ -182,6 +186,16 @@ const ProfilePage = (props: Props) => {
     // TODO: return 404 Not Found Page
     return <Text>404 Not Found</Text>;
   }
+
+  const toggleFollowing = () => {
+    if (user.is_following) {
+      unfollowUserApi(user.username);
+      setUser({ ...user, is_following: false });
+    } else {
+      followUserApi(user.username);
+      setUser({ ...user, is_following: true });
+    }
+  };
 
   return (
     <>
@@ -209,6 +223,23 @@ const ProfilePage = (props: Props) => {
                   Upload Picture
                 </Button>
               </>
+            )}
+            {!isSelfProfilePage && selfUser && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  variant={user.is_following ? "filled" : "outline"}
+                  style={{ width: "70%" }}
+                  onClick={toggleFollowing}
+                >
+                  {user.is_following ? "Following" : "+ Follow"}
+                </Button>
+              </div>
             )}
             <SimpleGrid cols={3} spacing="xs">
               {(user.badges ?? []).map((badge) => {

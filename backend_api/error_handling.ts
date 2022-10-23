@@ -67,7 +67,7 @@ export function handleApiRequestError(error: unknown): ApiRequestError {
 }
 
 const ERROR_DETAILS: Record<ErrorType, NotificationProps> = {
-  [ErrorType.UNKNOWN]: { title: "Oops!", message: "An unkown error occurred" },
+  [ErrorType.UNKNOWN]: { title: "Oops!", message: "An unknown error occurred" },
   [ErrorType.SERVER_CONNECTION_FAILED]: {
     title: "Server error",
     message: "Could not contact server",
