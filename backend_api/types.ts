@@ -53,7 +53,7 @@ export interface Game {
   cover: string;
   first_release_date: string;
   summary: string;
-  franchis: string;
+  franchise: string;
   genres: Genre[];
   platforms: Platform[];
 }
@@ -72,6 +72,17 @@ export interface GameEntry {
   status: GameEntryStatus;
   time_started?: string;
   time_completed?: string;
+}
+
+export interface Activity {
+  id: number;
+  user: User;
+  time_created: string;
+  new_status?: GameEntryStatus;
+  new_rating?: number;
+  new_review?: string;
+  game: Game;
+  activity_type: ActivityType;
 }
 
 export interface BadgeEntry {

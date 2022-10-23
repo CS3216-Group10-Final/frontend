@@ -39,3 +39,9 @@ export const GAME_ENTRIES_PATH = "/game-entries";
 export function getPathForGameEntryWithId(id: number) {
   return GAME_ENTRIES_PATH + "/" + id;
 }
+
+// Activity
+export const ACTIVITY_PATH = "/activities";
+export function getPathForUserActivityWithId(id: number) {
+  return ACTIVITY_PATH + "/" + id;
+}
