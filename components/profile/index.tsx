@@ -5,6 +5,7 @@ import {
 import { followUserApi, unfollowUserApi } from "@api/follow_api";
 import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
+import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import GameSection from "@components/profile/GameSection";
 import {
   Avatar,
@@ -25,11 +26,10 @@ import { selectUser, updateUsername } from "@redux/slices/User_slice";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
-import Badge from "./Badge";
 import ActivitySection from "./ActivitySection";
-import UploadProfileModal from "./UploadProfileModal";
+import Badge from "./Badge";
 import StatisticsSection from "./StatisticsSection";
-import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
+import UploadProfileModal from "./UploadProfileModal";
 // import { GameEntryStatus, Genre, Platform } from "@api/types";
 
 // const game_status_distribution: Record<GameEntryStatus, number> = {
@@ -145,7 +145,7 @@ const ProfilePage = (props: Props) => {
   const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(
     null
   );
-  const [activeSection, setActiveSection] = useState(Section.STATISTICS);
+  const [activeSection, setActiveSection] = useState(Section.GAMES);
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
 
@@ -279,13 +279,14 @@ const ProfilePage = (props: Props) => {
         <Grid.Col span={12} mt="md">
           <Stack align="center">
             <SegmentedControl
+              size="md"
               value={activeSection}
               onChange={(value) => setActiveSection(value as Section)}
               data={segmentedControlData}
             />
           </Stack>
         </Grid.Col>
-        <Grid.Col span={12} mt="md">
+        <Grid.Col span={12} mt="xs">
           {SectionComponent[activeSection]}
         </Grid.Col>
       </Grid>

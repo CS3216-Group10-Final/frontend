@@ -89,10 +89,6 @@ const GameSection = (props: Props) => {
 
   return (
     <Box>
-      <Title order={1} align="center" mb={24}>
-        Games
-      </Title>
-
       {isSelfUser && selfHasGames && (
         <Link href="/games">
           <Tooltip label="Add games">
@@ -100,7 +96,6 @@ const GameSection = (props: Props) => {
               color="primary"
               variant="filled"
               component="a"
-              mt="lg"
               ml="auto"
               mr={8}
               sx={{

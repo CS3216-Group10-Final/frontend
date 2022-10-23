@@ -1,7 +1,5 @@
 import { User, UserStatistics } from "@api/types";
-import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
-import { Box, Group, Text, Title } from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import { Box, Group, Text } from "@mantine/core";
 import ChartBarDistribution from "./ChartBarDistribution";
 
 type Props = {
@@ -24,9 +22,6 @@ const StatisticsSection = (props: Props) => {
 
   return (
     <Box>
-      <Title order={1} align="center">
-        Statistics
-      </Title>
       {userStatistics && (
         <Text align="center">
           Average rating: {userStatistics.average_rating.toFixed(1)}/10

@@ -4,9 +4,9 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { Activity, User } from "@api/types";
-import { Box, Divider, LoadingOverlay, Title } from "@mantine/core";
-import { format, parseISO, differenceInDays } from "date-fns";
-import React, { useEffect, useState } from "react";
+import { Box, Divider, LoadingOverlay } from "@mantine/core";
+import { differenceInDays, format, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
 import ActivityCard from "./ActivityCard";
 
 type Props = {
@@ -50,7 +50,6 @@ const ActivitySection = (props: Props) => {
 
   return (
     <Box>
-      <Title align="center">Activity</Title>
       <Box sx={{ position: "relative", height: isLoading ? 300 : "auto" }}>
         {isLoading && <LoadingOverlay visible={isLoading} mt="md" />}
         {isLoading ||
