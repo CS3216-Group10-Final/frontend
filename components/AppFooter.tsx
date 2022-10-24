@@ -78,7 +78,7 @@ const AppFooter = () => {
             Icon={AiOutlineInstagram}
             description={"Instagram"}
             gradient={{ from: "red", to: "yellow" }}
-            link="https://twitter.com/displaycaseme"
+            link="https://www.instagram.com/displaycase.me/"
           />
           <SocialIcon
             Icon={TbClipboardList}
