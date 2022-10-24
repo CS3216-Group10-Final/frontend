@@ -15,17 +15,9 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TbPlus } from "react-icons/tb";
-import { gameEntryStatusToString } from "utils/status";
+import { gameEntryStatusToString, GAME_SECTION_ORDER } from "utils/status";
 import GameEntryCard from "./GameEntryCard";
 import GameEntryEditModal from "./GameEntryEditModal";
-
-const GAME_SECTION_ORDER = [
-  GameEntryStatus.PLAYING,
-  GameEntryStatus.COMPLETED,
-  GameEntryStatus.BACKLOG,
-  GameEntryStatus.DROPPED,
-  GameEntryStatus.WISHLIST,
-];
 
 type Props = {
   user: User;

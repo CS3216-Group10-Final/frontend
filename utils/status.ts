@@ -19,6 +19,15 @@ export const LIST_OF_STATUSES = [
   GameEntryStatus.DROPPED,
 ];
 
+// Order in which sections appear on profile page
+export const GAME_SECTION_ORDER = [
+  GameEntryStatus.PLAYING,
+  GameEntryStatus.COMPLETED,
+  GameEntryStatus.BACKLOG,
+  GameEntryStatus.DROPPED,
+  GameEntryStatus.WISHLIST,
+];
+
 export const STATUS_DATA = LIST_OF_STATUSES.map((status) => {
   return {
     value: String(status),
