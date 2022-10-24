@@ -3,12 +3,7 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameEntryListApi } from "@api/game_entries_api";
-import {
-  GameEntry,
-  GameEntryStatus,
-  gameEntryStatusToString,
-  User,
-} from "@api/types";
+import { GameEntry, GameEntryStatus, User } from "@api/types";
 import { ActionIcon, Box, Button, Center, Title, Tooltip } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
@@ -20,6 +15,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TbPlus } from "react-icons/tb";
+import { gameEntryStatusToString } from "utils/status";
 import GameEntryCard from "./GameEntryCard";
 import GameEntryEditModal from "./GameEntryEditModal";
 

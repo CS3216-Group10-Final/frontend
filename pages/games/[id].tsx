@@ -39,6 +39,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AiOutlineLeft } from "react-icons/ai";
 import { showSuccessNotification } from "utils/notifications";
+import { STATUS_DATA } from "utils/status";
 
 interface SidebarProps {
   game?: Game;
@@ -198,19 +199,7 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
               <Select
                 label="Status"
                 placeholder="Pick one"
-                data={[
-                  {
-                    value: String(GameEntryStatus.WISHLIST),
-                    label: "Wishlist",
-                  },
-                  { value: String(GameEntryStatus.BACKLOG), label: "Backlog" },
-                  { value: String(GameEntryStatus.PLAYING), label: "Playing" },
-                  {
-                    value: String(GameEntryStatus.COMPLETED),
-                    label: "Completed",
-                  },
-                  { value: String(GameEntryStatus.DROPPED), label: "Dropped" },
-                ]}
+                data={STATUS_DATA}
                 {...form.getInputProps("status")}
               />
               <Select
