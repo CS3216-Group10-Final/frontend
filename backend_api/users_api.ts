@@ -60,3 +60,10 @@ export async function updateSelfUsernameApi(username: string): Promise<User> {
   }
   return response.data as User;
 }
+
+export async function updateSelfBioApi(bio: string): Promise<User> {
+  const response = await axiosInstance.patch<User>(USER_PATH, {
+    bio: bio,
+  });
+  return response.data;
+}

@@ -8,119 +8,34 @@ import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import GameSection from "@components/profile/GameSection";
 import {
+  ActionIcon,
   Avatar,
   Button,
+  Card,
   Grid,
+  Group,
   LoadingOverlay,
+  ScrollArea,
   SegmentedControl,
   SimpleGrid,
-  Space,
   Stack,
   Text,
-  TextInput,
+  Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { closeAllModals, openModal } from "@mantine/modals";
-import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import { selectUser, updateUsername } from "@redux/slices/User_slice";
-import { useRouter } from "next/router";
+import { openModal } from "@mantine/modals";
+import { useAppSelector } from "@redux/hooks";
+import { selectUser } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
-import { showSuccessNotification } from "utils/notifications";
+import { AiOutlineCamera, AiOutlineEdit } from "react-icons/ai";
+import { useMobile } from "utils/useMobile";
 import ActivitySection from "./ActivitySection";
 import Badge from "./Badge";
+import {
+  BioModalContent,
+  UploadProfileModal,
+  UsernameModalContent,
+} from "./ProfilePageModals";
 import StatisticsSection from "./StatisticsSection";
-import UploadProfileModal from "./UploadProfileModal";
-// import { GameEntryStatus, Genre, Platform } from "@api/types";
-
-// const game_status_distribution: Record<GameEntryStatus, number> = {
-//   [GameEntryStatus.WISHLIST]: 10,
-//   [GameEntryStatus.BACKLOG]: 15,
-//   [GameEntryStatus.PLAYING]: 12,
-//   [GameEntryStatus.COMPLETED]: 100,
-//   [GameEntryStatus.DROPPED]: 50,
-// };
-
-// const game_genre_distribution: Partial<Record<Genre, number>> = {
-//   FPS: 12,
-//   MMORPG: 11,
-//   MOBA: 3,
-//   OTHERS: 40,
-// };
-
-// const platform_distribution: Partial<Record<Platform, number>> = {
-//   PC: 100,
-//   Playstation: 5,
-// };
-
-// const play_year_distribution: Record<number, number> = {
-//   2001: 10,
-//   2002: 15,
-//   2003: 12,
-//   2004: 11,
-//   2005: 21,
-// };
-
-// const release_year_distribution: Record<number, number> = {
-//   2001: 5,
-//   2002: 21,
-//   2003: 13,
-//   2004: 43,
-//   2005: 11,
-//   2006: 12,
-//   2007: 11,
-//   2008: 14,
-// };
-
-const UsernameModalContent = () => {
-  const router = useRouter();
-
-  interface UsernameForm {
-    username: string;
-  }
-
-  const dispatch = useAppDispatch();
-  const usernameForm = useForm<UsernameForm>({
-    initialValues: {
-      username: "",
-    },
-
-    validate: {
-      username: (value) => (value ? null : "Please enter a username"),
-    },
-  });
-
-  const handleUpdateUsername = ({ username }: UsernameForm) => {
-    dispatch(updateUsername(username))
-      .unwrap()
-      .then(() => {
-        showSuccessNotification({
-          title: "Username updated",
-          message: "Awesome!",
-        });
-
-        router.replace(`/user/${username}`);
-      })
-      .catch((error) => {
-        showApiRequestErrorNotification(handleApiRequestError(error));
-      })
-      .finally(() => closeAllModals());
-  };
-
-  return (
-    <form onSubmit={usernameForm.onSubmit(handleUpdateUsername)}>
-      <TextInput
-        label="Enter your username"
-        placeholder="Username"
-        withAsterisk
-        {...usernameForm.getInputProps("username")}
-      />
-      <Space h="md" />
-      <Button type="submit" fullWidth>
-        Change
-      </Button>
-    </form>
-  );
-};
 
 type Props = {
   username: string;
@@ -140,6 +55,7 @@ const ProfilePage = (props: Props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const isMobile = useMobile();
 
   // TODO: refactor to context
   const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(
@@ -191,6 +107,12 @@ const ProfilePage = (props: Props) => {
       children: <UsernameModalContent />,
     });
   };
+  const openChangeBioModal = () => {
+    openModal({
+      title: "Change bio",
+      children: <BioModalContent />,
+    });
+  };
 
   if (isLoading) {
     return <LoadingOverlay visible={true} />;
@@ -229,52 +151,93 @@ const ProfilePage = (props: Props) => {
     <>
       <Grid grow>
         <Grid.Col md={3} sm={12}>
-          <Stack
-            sx={{ height: "100%", maxWidth: 200, margin: "auto" }}
-            justify="center"
-          >
-            <Avatar
-              src={user?.profile_picture_link}
-              size={160}
-              radius={18}
-              mx="auto"
-            />
-            <Text size="xl" align="center" mb={8} color="white">
-              {user?.username}
-            </Text>
-            {isSelfProfilePage && (
-              <>
-                <Button onClick={openChangeUserNameModal}>
-                  Change Username
-                </Button>
-                <Button onClick={() => setProfilePicModalIsOpen(true)}>
-                  Upload Picture
-                </Button>
-              </>
-            )}
-            {!isSelfProfilePage && selfUser && (
-              <div
+          <Grid grow>
+            <Grid.Col sm={4}>
+              <Stack
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                 }}
               >
-                <Button
-                  variant={user.is_following ? "filled" : "outline"}
-                  style={{ width: "70%" }}
-                  onClick={toggleFollowing}
-                >
-                  {user.is_following ? "Following" : "+ Follow"}
-                </Button>
-              </div>
-            )}
-            <SimpleGrid cols={3} spacing="xs">
-              {(user.badges ?? []).map((badge) => {
-                return <Badge key={badge.id} badge={badge} />;
-              })}
-            </SimpleGrid>
-          </Stack>
+                <Avatar
+                  src={user?.profile_picture_link}
+                  size={160}
+                  radius={18}
+                  mx="auto"
+                />
+                <Text size="xl" align="center" mb={8} color="white">
+                  {user?.username}
+                </Text>
+                {!isSelfProfilePage && selfUser && (
+                  <Button
+                    variant={user.is_following ? "filled" : "outline"}
+                    style={{ width: "70%" }}
+                    onClick={toggleFollowing}
+                  >
+                    {user.is_following ? "Following" : "+ Follow"}
+                  </Button>
+                )}
+                <SimpleGrid cols={3} spacing="xs" style={{ width: "70%" }}>
+                  {(user.badges ?? []).map((badge) => {
+                    return <Badge key={badge.id} badge={badge} />;
+                  })}
+                </SimpleGrid>
+              </Stack>
+            </Grid.Col>
+            <Grid.Col
+              sm={8}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <Card style={{ flex: 1, position: "relative" }}>
+                {isSelfProfilePage && (
+                  <ActionIcon
+                    style={{ position: "absolute", top: 8, right: 8 }}
+                    color="primary"
+                    variant="filled"
+                    component="a"
+                    onClick={openChangeBioModal}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      zIndex: 2,
+                    }}
+                  >
+                    <AiOutlineEdit size={22} />
+                  </ActionIcon>
+                )}
+                <Title size={24} mb={5}>
+                  Bio
+                </Title>
+                {!user.bio && (
+                  <Text color="dimmed" italic>
+                    No bio added yet.
+                  </Text>
+                )}
+                {user.bio && (
+                  <ScrollArea style={{ height: "100%" }}>
+                    <Text>{user.bio}</Text>
+                  </ScrollArea>
+                )}
+              </Card>
+              {isSelfProfilePage && (
+                <Group position={isMobile ? "center" : "right"} mt={12}>
+                  <Button
+                    onClick={openChangeUserNameModal}
+                    leftIcon={<AiOutlineEdit />}
+                  >
+                    Change Username
+                  </Button>
+                  <Button
+                    onClick={() => setProfilePicModalIsOpen(true)}
+                    leftIcon={<AiOutlineCamera />}
+                  >
+                    Upload Picture
+                  </Button>
+                </Group>
+              )}
+            </Grid.Col>
+          </Grid>
         </Grid.Col>
         <Grid.Col span={12} mt="md">
           <Stack align="center">

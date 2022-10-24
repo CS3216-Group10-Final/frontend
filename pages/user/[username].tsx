@@ -11,7 +11,7 @@ const UserProfilePage: NextPage = () => {
   return (
     <>
       <PageHeader
-        title={`${String(username)}'s Profile`}
+        title={username ? `${String(username)}'s Profile` : "Loading..."}
         description={`View ${String(username)}'s Game Collection `}
       />
       <LoadingOverlay visible={!router.isReady} />
