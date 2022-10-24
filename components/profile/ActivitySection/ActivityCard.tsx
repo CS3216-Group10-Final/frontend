@@ -1,8 +1,9 @@
 import { Activity, ActivityType, GameEntryStatus } from "@api/types";
-import { Anchor, Box, Card, Image, Text } from "@mantine/core";
+import { Anchor, Box, Card, Image, Text, ThemeIcon } from "@mantine/core";
 import { openModal } from "@mantine/modals";
 import Link from "next/link";
-import React from "react";
+import { AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
+import { TbFileText } from "react-icons/tb";
 import { toProperCase } from "utils/helpers";
 
 type Props = {
@@ -55,6 +56,18 @@ const ActivityCard = (props: Props) => {
     ),
   };
 
+  const activityIcons: Record<ActivityType, JSX.Element> = {
+    [ActivityType.CHANGED_STATUS]: <AiOutlineInfoCircle />,
+    [ActivityType.CREATED_REVIEW]: <TbFileText />,
+    [ActivityType.UPDATED_RATING]: <AiOutlineStar />,
+  };
+
+  const activityIconColors: Record<ActivityType, string> = {
+    [ActivityType.CHANGED_STATUS]: "blue",
+    [ActivityType.CREATED_REVIEW]: "green",
+    [ActivityType.UPDATED_RATING]: "yellow",
+  };
+
   return (
     <Card shadow="md" radius="lg" pl="xl" mt="sm">
       <Box
@@ -64,6 +77,9 @@ const ActivityCard = (props: Props) => {
           alignItems: "center",
         })}
       >
+        <ThemeIcon color={activityIconColors[activity_type]}>
+          {activityIcons[activity_type]}
+        </ThemeIcon>
         <Image
           width={48}
           height={48}
