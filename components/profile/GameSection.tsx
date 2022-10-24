@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import { gameEntryStatusToString, GAME_SECTION_ORDER } from "utils/status";
+import { useMobile } from "utils/useMobile";
 import GameEntryCard from "./GameEntryCard";
 import GameEntryEditModal from "./GameEntryEditModal";
 
@@ -40,6 +41,7 @@ const GameSection = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [gameEntryModalData, setGameEntryModalData] =
     useState<GameEntry | null>(null);
+  const isMobile = useMobile();
 
   const handleClose = () => {
     setGameEntryModalData(null);
@@ -137,7 +139,7 @@ const GameSection = (props: Props) => {
 
       {((isSelfUser && !selfHasGames) || (!isSelfUser && !otherHasGames)) && (
         <>
-          <Title align="center" size={22}>
+          <Title align="center" size={isMobile ? 24 : 32}>
             You have no games added yet
           </Title>
           <Link href="/games">

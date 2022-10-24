@@ -1,31 +1,42 @@
 import { Activity, ActivityType, GameEntryStatus } from "@api/types";
+import ReviewModal from "@components/ReviewModal";
 import { Anchor, Box, Card, Image, Text, ThemeIcon } from "@mantine/core";
-import { openModal } from "@mantine/modals";
 import Link from "next/link";
+import { useState } from "react";
 import { AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
 import { TbFileText } from "react-icons/tb";
 import { toProperCase } from "utils/helpers";
 
 type Props = {
   activity: Activity;
+  isTimeline: boolean;
 };
 
 const ActivityCard = (props: Props) => {
-  const { activity } = props;
+  const { activity, isTimeline } = props;
   const { user, new_status, new_rating, new_review, game, activity_type } =
     activity;
+  const [reviewModalIsOpen, setReviewModalIsOpen] = useState<boolean>(false);
 
-  const handleReviewModal = () => {
-    openModal({
-      title: `${user.username} review on ${game.name}`,
-      children: <Text>{new_review}</Text>,
-    });
+  const Username = () => {
+    return (
+      <>
+        {isTimeline && (
+          <Link href={`/user/${user.username}`} passHref>
+            <Anchor component="a" style={{ color: "white" }}>
+              <b>{user.username}</b>
+            </Anchor>
+          </Link>
+        )}
+        {!isTimeline && <b>{user.username}</b>}
+      </>
+    );
   };
 
   const activityContent = {
     [ActivityType.CHANGED_STATUS]: (
       <Text>
-        <b>{user.username}</b> updated{" "}
+        <Username /> updated{" "}
         <Link href={`/games/${game.id}`} passHref>
           <Anchor component="a">{game.name}</Anchor>
         </Link>{" "}
@@ -34,20 +45,34 @@ const ActivityCard = (props: Props) => {
       </Text>
     ),
     [ActivityType.CREATED_REVIEW]: (
-      <Text>
-        <b>{user.username}</b> left a{" "}
-        <Anchor component="span" onClick={handleReviewModal}>
-          review
-        </Anchor>{" "}
-        for{" "}
-        <Link href={`/games/${game.id}`} passHref>
-          <Anchor component="a">{game.name}</Anchor>
-        </Link>
-      </Text>
+      <>
+        <Text>
+          <Username /> left a{" "}
+          <Anchor
+            component="span"
+            onClick={() => {
+              setReviewModalIsOpen(true);
+            }}
+          >
+            review
+          </Anchor>{" "}
+          for{" "}
+          <Link href={`/games/${game.id}`} passHref>
+            <Anchor component="a">{game.name}</Anchor>
+          </Link>
+        </Text>
+        <ReviewModal
+          isOpen={reviewModalIsOpen}
+          onClose={() => setReviewModalIsOpen(false)}
+          game_name={game.name}
+          review={new_review ?? ""}
+          username={user.username}
+        />
+      </>
     ),
     [ActivityType.UPDATED_RATING]: (
       <Text>
-        <b>{user.username}</b> has updated{" "}
+        <Username /> has updated{" "}
         <Link href={`/games/${game.id}`} passHref>
           <Anchor component="a">{game.name}</Anchor>
         </Link>{" "}

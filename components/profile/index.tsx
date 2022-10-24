@@ -222,7 +222,7 @@ const ProfilePage = (props: Props) => {
         updateUserStatistics={updateUserStatistics}
       />
     ),
-    [Section.ACTIVITY]: <ActivitySection user={user} />,
+    [Section.ACTIVITY]: <ActivitySection user={user} isTimeline={false} />,
   };
 
   return (

@@ -1,20 +1,18 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { GameEntry, GameEntryStatus } from "@api/types";
+import ReviewModal from "@components/ReviewModal";
 import {
   ActionIcon,
-  Blockquote,
   Card,
   Grid,
   Group,
   HoverCard,
   Image,
-  Modal,
   Stack,
   Text,
-  Title,
   useMantineTheme,
 } from "@mantine/core";
-import { useHover, useMediaQuery } from "@mantine/hooks";
+import { useHover } from "@mantine/hooks";
 import Link from "next/link";
 import { useState } from "react";
 import { TbEdit, TbFileText } from "react-icons/tb";
@@ -39,6 +37,7 @@ const GameEntryCard = (props: Props) => {
     game_name: title,
     game_cover: cover,
     rating,
+    review,
     platforms,
     status,
   } = gameEntry;
@@ -46,7 +45,6 @@ const GameEntryCard = (props: Props) => {
   const { ref, hovered } = useHover();
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState<boolean>(false);
   const theme = useMantineTheme();
-  const isScreenSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
   const categorizedPlatforms = categorizePlatforms(platforms ?? []);
 
   const badgeColor = {
@@ -89,7 +87,7 @@ const GameEntryCard = (props: Props) => {
                 </Text>
               </Link>
               <Group>
-                {gameEntry.review && (
+                {review && (
                   <HoverCard width={100} shadow="md">
                     <HoverCard.Target>
                       <ActionIcon
@@ -138,7 +136,7 @@ const GameEntryCard = (props: Props) => {
           </Grid.Col>
           <Grid.Col span={isMobile ? 4 : 2} p={0}>
             <Group sx={{ height: "100%" }} position="right" mr="sm">
-              {gameEntry.rating !== undefined && gameEntry.rating !== null && (
+              {rating !== undefined && rating !== null && (
                 <Text
                   size="md"
                   align="right"
@@ -161,27 +159,14 @@ const GameEntryCard = (props: Props) => {
             </Group>
           </Grid.Col>
         </Grid>
-        <Modal
-          opened={reviewModalIsOpen}
+        <ReviewModal
+          isOpen={reviewModalIsOpen}
           onClose={() => setReviewModalIsOpen(false)}
-          size={isScreenSmall ? "sm" : "lg"}
-          withCloseButton={false}
-        >
-          <>
-            <Title align="center" size={30}>
-              {gameEntry.game_name}
-            </Title>
-            <Blockquote
-              cite={`- ${username}${
-                gameEntry.rating === null || gameEntry.rating === undefined
-                  ? ""
-                  : `, who gave this game ${rating}/10`
-              }`}
-            >
-              {gameEntry.review}
-            </Blockquote>
-          </>
-        </Modal>
+          game_name={title}
+          rating={rating}
+          review={review ?? ""}
+          username={username}
+        />
       </Card>
     </div>
   );
