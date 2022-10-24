@@ -137,7 +137,7 @@ const GameSection = (props: Props) => {
           );
         })}
 
-      {((isSelfUser && !selfHasGames) || (!isSelfUser && !otherHasGames)) && (
+      {isSelfUser && !selfHasGames && (
         <>
           <Title align="center" size={isMobile ? 24 : 32}>
             You have no games added yet
@@ -147,6 +147,13 @@ const GameSection = (props: Props) => {
               <Button>Add a game</Button>
             </Center>
           </Link>
+        </>
+      )}
+      {!isSelfUser && !otherHasGames && (
+        <>
+          <Title align="center" size={isMobile ? 24 : 32}>
+            This user has no games added yet
+          </Title>
         </>
       )}
       {gameEntryModalData && (
