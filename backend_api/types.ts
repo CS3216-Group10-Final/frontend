@@ -6,21 +6,11 @@ export enum GameEntryStatus {
   DROPPED = 4,
 }
 
-export function gameEntryStatusToString(status: GameEntryStatus): string {
-  const mapping: Record<GameEntryStatus, string> = {
-    [GameEntryStatus.WISHLIST]: "Wishlist",
-    [GameEntryStatus.BACKLOG]: "Backlog",
-    [GameEntryStatus.PLAYING]: "Playing",
-    [GameEntryStatus.COMPLETED]: "Completed",
-    [GameEntryStatus.DROPPED]: "Dropped",
-  };
-  return mapping[status];
-}
-
 export enum ActivityType {
   CHANGED_STATUS = 0,
   UPDATED_RATING = 1,
   CREATED_REVIEW = 2,
+  ADDED_GAME = 3,
 }
 
 // In Progress
@@ -32,6 +22,7 @@ export type Platform = string;
 export interface User {
   id: number;
   username: string;
+  bio?: string;
   profile_picture_link: string;
   is_following: boolean;
   badges: BadgeEntry[];

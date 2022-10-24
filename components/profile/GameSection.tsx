@@ -3,12 +3,7 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameEntryListApi } from "@api/game_entries_api";
-import {
-  GameEntry,
-  GameEntryStatus,
-  gameEntryStatusToString,
-  User,
-} from "@api/types";
+import { GameEntry, GameEntryStatus, User } from "@api/types";
 import { ActionIcon, Box, Button, Center, Title, Tooltip } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
@@ -20,16 +15,10 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TbPlus } from "react-icons/tb";
+import { gameEntryStatusToString, GAME_SECTION_ORDER } from "utils/status";
+import { useMobile } from "utils/useMobile";
 import GameEntryCard from "./GameEntryCard";
 import GameEntryEditModal from "./GameEntryEditModal";
-
-const GAME_SECTION_ORDER = [
-  GameEntryStatus.PLAYING,
-  GameEntryStatus.COMPLETED,
-  GameEntryStatus.BACKLOG,
-  GameEntryStatus.DROPPED,
-  GameEntryStatus.WISHLIST,
-];
 
 type Props = {
   user: User;
@@ -52,6 +41,7 @@ const GameSection = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [gameEntryModalData, setGameEntryModalData] =
     useState<GameEntry | null>(null);
+  const isMobile = useMobile();
 
   const handleClose = () => {
     setGameEntryModalData(null);
@@ -147,9 +137,9 @@ const GameSection = (props: Props) => {
           );
         })}
 
-      {((isSelfUser && !selfHasGames) || (!isSelfUser && !otherHasGames)) && (
+      {isSelfUser && !selfHasGames && (
         <>
-          <Title align="center" size={22}>
+          <Title align="center" size={isMobile ? 24 : 32}>
             You have no games added yet
           </Title>
           <Link href="/games">
@@ -157,6 +147,13 @@ const GameSection = (props: Props) => {
               <Button>Add a game</Button>
             </Center>
           </Link>
+        </>
+      )}
+      {!isSelfUser && !otherHasGames && (
+        <>
+          <Title align="center" size={isMobile ? 24 : 32}>
+            This user has no games added yet
+          </Title>
         </>
       )}
       {gameEntryModalData && (

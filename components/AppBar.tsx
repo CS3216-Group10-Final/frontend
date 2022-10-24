@@ -94,6 +94,13 @@ const AppBar = () => {
               Games
             </Text>
           </Link>
+          {user && (
+            <Link href="/timeline">
+              <Text style={{ cursor: "pointer" }} weight="bold">
+                Timeline
+              </Text>
+            </Link>
+          )}
         </Group>
         <Group>
           {user && (

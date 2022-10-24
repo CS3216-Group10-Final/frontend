@@ -45,3 +45,6 @@ export const ACTIVITY_PATH = "/activities";
 export function getPathForUserActivityWithId(id: number) {
   return ACTIVITY_PATH + "/" + id;
 }
+
+// Timeline
+export const TIMELINE_PATH = "/timeline";

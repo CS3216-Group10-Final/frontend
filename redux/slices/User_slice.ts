@@ -1,6 +1,10 @@
 import { updateUserProfilePictureApi } from "@api/pictures_api";
 import { User } from "@api/types";
-import { getSelfUserApi, updateSelfUsernameApi } from "@api/users_api";
+import {
+  getSelfUserApi,
+  updateSelfBioApi,
+  updateSelfUsernameApi,
+} from "@api/users_api";
 import {
   createAsyncThunk,
   createSelector,
@@ -30,6 +34,9 @@ const userSlice = createSlice({
     builder.addCase(updateUsername.fulfilled, (state, action) => {
       state.user = action.payload;
     });
+    builder.addCase(updateBio.fulfilled, (state, action) => {
+      state.user = action.payload;
+    });
   },
 });
 
@@ -55,6 +62,14 @@ export const updateUsername = createAsyncThunk<
   }
 });
 
+export const updateBio = createAsyncThunk<User, string, { state: RootState }>(
+  "user/updateBio",
+  async (bio) => {
+    const response = await updateSelfBioApi(bio);
+    return response;
+  }
+);
+
 export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
   "user/getSelfUser",
   async () => {
@@ -66,6 +81,9 @@ export const getSelfUser = createAsyncThunk<User, void, { state: RootState }>(
 export const selectUser = (state: RootState) => state.user.user;
 export const selectUserId = createSelector(selectUser, (user) =>
   user ? user.id : -1
+);
+export const selectUserBio = createSelector(selectUser, (user) =>
+  user?.bio ? user.bio : ""
 );
 
 export default userSlice.reducer;

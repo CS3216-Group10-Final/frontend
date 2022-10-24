@@ -3,7 +3,7 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
-import { Game, GameEntry, GameEntryStatus } from "@api/types";
+import { Game, GameEntry } from "@api/types";
 import {
   Button,
   Group,
@@ -20,6 +20,7 @@ import { useAppDispatch } from "@redux/hooks";
 import { updateGameEntry } from "@redux/slices/GameEntry_slice";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
+import { STATUS_DATA } from "utils/status";
 
 interface FormValues {
   status: string;
@@ -109,19 +110,7 @@ const GameEntryEditModal = (props: Props) => {
         <Select
           label="Status"
           placeholder="Pick one"
-          data={[
-            {
-              value: String(GameEntryStatus.WISHLIST),
-              label: "Wishlist",
-            },
-            { value: String(GameEntryStatus.BACKLOG), label: "Backlog" },
-            { value: String(GameEntryStatus.PLAYING), label: "Playing" },
-            {
-              value: String(GameEntryStatus.COMPLETED),
-              label: "Completed",
-            },
-            { value: String(GameEntryStatus.DROPPED), label: "Dropped" },
-          ]}
+          data={STATUS_DATA}
           {...form.getInputProps("status")}
         />
         <Select
