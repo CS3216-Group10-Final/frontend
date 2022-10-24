@@ -4,6 +4,7 @@ import { Anchor, Box, Card, Image, Text, ThemeIcon } from "@mantine/core";
 import Link from "next/link";
 import { useState } from "react";
 import { AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
+import { BsPlus } from "react-icons/bs";
 import { TbFileText } from "react-icons/tb";
 import { toProperCase } from "utils/helpers";
 
@@ -72,11 +73,20 @@ const ActivityCard = (props: Props) => {
     ),
     [ActivityType.UPDATED_RATING]: (
       <Text>
-        <Username /> has updated{" "}
+        <Username /> has updated the rating of{" "}
         <Link href={`/games/${game.id}`} passHref>
           <Anchor component="a">{game.name}</Anchor>
         </Link>{" "}
-        rating to <b>{new_rating}</b>
+        to <b>{new_rating}</b>
+      </Text>
+    ),
+    [ActivityType.ADDED_GAME]: (
+      <Text>
+        <Username /> has added{" "}
+        <Link href={`/games/${game.id}`} passHref>
+          <Anchor component="a">{game.name}</Anchor>
+        </Link>{" "}
+        to their display case
       </Text>
     ),
   };
@@ -85,12 +95,14 @@ const ActivityCard = (props: Props) => {
     [ActivityType.CHANGED_STATUS]: <AiOutlineInfoCircle />,
     [ActivityType.CREATED_REVIEW]: <TbFileText />,
     [ActivityType.UPDATED_RATING]: <AiOutlineStar />,
+    [ActivityType.ADDED_GAME]: <BsPlus size={28} />,
   };
 
   const activityIconColors: Record<ActivityType, string> = {
     [ActivityType.CHANGED_STATUS]: "blue",
     [ActivityType.CREATED_REVIEW]: "green",
     [ActivityType.UPDATED_RATING]: "yellow",
+    [ActivityType.ADDED_GAME]: "orange",
   };
 
   return (
