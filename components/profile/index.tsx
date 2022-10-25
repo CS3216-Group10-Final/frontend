@@ -215,7 +215,9 @@ const ProfilePage = (props: Props) => {
                   </Text>
                 )}
                 {user.bio && (
-                  <ScrollArea style={{ height: 180 }}>
+                  <ScrollArea
+                    style={{ height: 180, maxWidth: isMobile ? 300 : 550 }}
+                  >
                     <Text>{user.bio}</Text>
                   </ScrollArea>
                 )}
