@@ -9,13 +9,13 @@ import {
   Badge,
   Button,
   Center,
+  Chip,
   createStyles,
   Divider,
   Grid,
   Group,
   Image,
   LoadingOverlay,
-  MultiSelect,
   Select,
   Space,
   Stack,
@@ -210,12 +210,18 @@ const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
                   .map((_, index) => `${index}`)}
                 {...form.getInputProps("rating")}
               />
-              <MultiSelect
-                label="Platform"
-                placeholder="Pick any"
-                data={game?.platforms || []}
-                {...form.getInputProps("platforms")}
-              />
+              <Text mt={10} size="sm">
+                {game?.platforms.length === 1 ? "Platform" : "Platforms"}
+              </Text>
+              <Chip.Group {...form.getInputProps("platforms")} mt={10} multiple>
+                {game?.platforms.map((platform) => {
+                  return (
+                    <Chip value={platform} key={platform}>
+                      {platform}
+                    </Chip>
+                  );
+                })}
+              </Chip.Group>
               <Space h="md" />
               <Button type="submit" fullWidth>
                 {gameEntry ? "Update" : "Add"}

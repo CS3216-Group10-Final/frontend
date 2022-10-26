@@ -161,6 +161,7 @@ const GameSection = (props: Props) => {
           opened={isOpen}
           gameEntry={gameEntryModalData}
           onClose={handleClose}
+          isAddingGame={false}
         />
       )}
     </Box>
