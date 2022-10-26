@@ -1,4 +1,4 @@
-import { Game, GameEntryStatus } from "@api/types";
+import { Game, GameEntry, GameEntryStatus } from "@api/types";
 import { ActionIcon, Card, createStyles, Text } from "@mantine/core";
 import { useAppSelector } from "@redux/hooks";
 import { selectGameEntryByGameId } from "@redux/slices/GameEntry_slice";
@@ -71,6 +71,9 @@ const GameCard = ({ game }: Props) => {
     selectGameEntryByGameId(state, game.id)
   );
   const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [gameEntryModalData, setGameEntryModalData] = useState<
+    GameEntry | undefined
+  >(undefined);
   const selfUser = useAppSelector(selectUser);
   const newGameEntry = {
     id: 0,
@@ -81,6 +84,14 @@ const GameCard = ({ game }: Props) => {
     review: "",
     is_favourite: false,
     status: GameEntryStatus.WISHLIST,
+  };
+  const handleEditModalOpen = (isAdding: boolean) => {
+    if (isAdding) {
+      setGameEntryModalData(newGameEntry);
+    } else {
+      setGameEntryModalData(gameEntry);
+    }
+    setEditModalOpen(true);
   };
   const handleEditModalClose = () => {
     setEditModalOpen(false);
@@ -94,7 +105,7 @@ const GameCard = ({ game }: Props) => {
           variant="filled"
           color="red"
           size={30}
-          onClick={() => setEditModalOpen(true)}
+          onClick={() => handleEditModalOpen(true)}
         >
           <BsPlus size={28} />
         </ActionIcon>
@@ -105,7 +116,7 @@ const GameCard = ({ game }: Props) => {
           variant="filled"
           color="green"
           size={30}
-          onClick={() => setEditModalOpen(true)}
+          onClick={() => handleEditModalOpen(false)}
         >
           <TbFileText size={20} />
         </ActionIcon>
@@ -128,12 +139,14 @@ const GameCard = ({ game }: Props) => {
           </div>
         </Card>
       </Link>
-      <GameEntryEditModal
-        opened={isEditModalOpen}
-        gameEntry={gameEntry ?? newGameEntry}
-        onClose={handleEditModalClose}
-        isAddingGame={gameEntry === undefined}
-      />
+      {gameEntryModalData && (
+        <GameEntryEditModal
+          opened={isEditModalOpen}
+          gameEntry={gameEntryModalData}
+          onClose={handleEditModalClose}
+          isAddingGame={gameEntry === undefined}
+        />
+      )}
     </div>
   );
 };

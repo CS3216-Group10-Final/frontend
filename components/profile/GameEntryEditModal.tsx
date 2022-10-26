@@ -17,9 +17,11 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
+import { openConfirmModal } from "@mantine/modals";
 import { useAppDispatch } from "@redux/hooks";
 import {
   createGameEntry,
+  deleteGameEntry,
   updateGameEntry,
 } from "@redux/slices/GameEntry_slice";
 import { useEffect, useState } from "react";
@@ -53,6 +55,7 @@ const GameEntryEditModal = (props: Props) => {
 
   useEffect(() => {
     if (opened) {
+      console.log(gameEntry);
       setIsLoading(true);
 
       getGameByIdApi(gameEntry.game_id)
@@ -121,6 +124,38 @@ const GameEntryEditModal = (props: Props) => {
     }
   };
 
+  const handleDeleteClick = () => {
+    openConfirmModal({
+      title: "Delete entry",
+      children: (
+        <Text size="sm">Are you sure you want to delete this entry?</Text>
+      ),
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: deleteCurrentGameEntry,
+    });
+    onClose();
+  };
+
+  const deleteCurrentGameEntry = () => {
+    if (!gameEntry) {
+      return;
+    }
+    dispatch(deleteGameEntry(gameEntry.id))
+      .unwrap()
+      .then(() => {
+        form.reset();
+        console.log("deleted");
+        showSuccessNotification({
+          title: "Game deleted from display case",
+          message: `${gameEntry.game_name}`,
+        });
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+  };
+
   return (
     <Modal
       opened={opened}
@@ -165,10 +200,13 @@ const GameEntryEditModal = (props: Props) => {
           })}
         </Chip.Group>
 
-        <Group position="right">
-          <Button type="submit" mt="md">
-            {isAddingGame ? "Add" : "Update"}
-          </Button>
+        <Group position="right" mt="md">
+          {!isAddingGame && (
+            <Button color="red" onClick={handleDeleteClick}>
+              Delete
+            </Button>
+          )}
+          <Button type="submit">{isAddingGame ? "Add" : "Update"}</Button>
         </Group>
       </form>
     </Modal>

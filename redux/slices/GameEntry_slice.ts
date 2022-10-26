@@ -5,7 +5,7 @@ import {
   updateGameEntryApi,
 } from "@api/game_entries_api";
 import { GameEntry, GameEntryStatus } from "@api/types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 interface GameEntryState {
@@ -29,31 +29,50 @@ const gameEntrySlice = createSlice({
       state.gameEntries = newEntries;
     });
     builder.addCase(createGameEntry.fulfilled, (state, action) => {
-      const newEntries: Record<number, GameEntry> = Object.create(
-        state.gameEntries
-      );
-      newEntries[action.payload.id] = action.payload;
+      const newEntries: Record<number, GameEntry> = {};
+      const currentEntries = current(state.gameEntries);
+      for (const id of Object.keys(currentEntries)) {
+        if (Number(id) == action.payload.id) {
+          newEntries[Number(id)] = action.payload;
+          continue;
+        }
+        newEntries[Number(id)] = currentEntries[Number(id)];
+      }
       state.gameEntries = newEntries;
     });
     builder.addCase(updateGameEntry.fulfilled, (state, action) => {
-      const newEntries: Record<number, GameEntry> = Object.create(
-        state.gameEntries
-      );
-      newEntries[action.meta.arg.id] = action.meta.arg;
+      const newEntries: Record<number, GameEntry> = {};
+      const currentEntries = current(state.gameEntries);
+      for (const id of Object.keys(currentEntries)) {
+        if (Number(id) == action.meta.arg.id) {
+          newEntries[Number(id)] = action.meta.arg;
+          continue;
+        }
+        newEntries[Number(id)] = currentEntries[Number(id)];
+      }
       state.gameEntries = newEntries;
     });
     builder.addCase(changeGameEntryStatus.fulfilled, (state, action) => {
-      const newEntries: Record<number, GameEntry> = Object.create(
-        state.gameEntries
-      );
-      newEntries[action.meta.arg.gameEntry.id] = action.meta.arg.gameEntry;
+      const newEntries: Record<number, GameEntry> = {};
+      const currentEntries = current(state.gameEntries);
+      for (const id of Object.keys(currentEntries)) {
+        if (Number(id) == action.meta.arg.gameEntry.id) {
+          newEntries[Number(id)] = action.meta.arg.gameEntry;
+          continue;
+        }
+        newEntries[Number(id)] = currentEntries[Number(id)];
+      }
       state.gameEntries = newEntries;
     });
     builder.addCase(deleteGameEntry.fulfilled, (state, action) => {
-      const newEntries: Record<number, GameEntry> = Object.create(
-        state.gameEntries
-      );
-      delete newEntries[action.meta.arg];
+      const newEntries: Record<number, GameEntry> = {};
+      const currentEntries = current(state.gameEntries);
+      for (const id of Object.keys(currentEntries)) {
+        if (Number(id) == action.meta.arg) {
+          continue;
+        }
+        newEntries[Number(id)] = currentEntries[Number(id)];
+      }
       state.gameEntries = newEntries;
     });
   },
