@@ -3,35 +3,26 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
-import { Game, GameEntry, GameEntryStatus, User } from "@api/types";
-import PageHeader from "@components/PageHeader";
+import { Game, GameEntry, GameEntryStatus } from "@api/types";
 import GameEntryEditModal from "@components/profile/GameEntryEditModal";
 import {
+  ActionIcon,
   Badge,
   Button,
   Center,
-  Chip,
   createStyles,
   Divider,
   Grid,
   Group,
-  Image,
   LoadingOverlay,
-  Select,
-  Space,
   Stack,
   Text,
   Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { openConfirmModal } from "@mantine/modals";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
-  createGameEntry,
-  deleteGameEntry,
   getGameEntries,
   selectGameEntryByGameId,
-  updateGameEntry,
 } from "@redux/slices/GameEntry_slice";
 import { selectUser } from "@redux/slices/User_slice";
 import { NextPage } from "next";
@@ -39,14 +30,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AiOutlineLeft } from "react-icons/ai";
-import { showSuccessNotification } from "utils/notifications";
-import { STATUS_DATA } from "utils/status";
+import { BsPlus } from "react-icons/bs";
+import { TbFileText } from "react-icons/tb";
 
-interface SidebarProps {
-  game?: Game;
-  gameEntry?: GameEntry;
-  user?: User;
-}
 const useStyles = createStyles((theme) => ({
   box: {
     boxSizing: "border-box",
@@ -58,187 +44,26 @@ const useStyles = createStyles((theme) => ({
     padding: theme.spacing.lg,
     marginBottom: theme.spacing.lg,
   },
+  quickButton: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    zIndex: 10,
+  },
+  image: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    borderRadius: 10,
+    padding: 20,
+    marginRight: 8,
+    height: 400,
+  },
 }));
-
-const GameDetailsSidebar = ({ game, gameEntry, user }: SidebarProps) => {
-  const { classes } = useStyles();
-  const dispatch = useAppDispatch();
-
-  interface FormValues {
-    status: string;
-    rating: string;
-    platforms: string[];
-  }
-
-  const form = useForm<FormValues>({
-    initialValues: {
-      status: String(gameEntry?.status) || String(GameEntryStatus.WISHLIST),
-      rating: String(gameEntry?.rating) || "0",
-      platforms: [],
-    },
-
-    validate: {
-      status: (value: string | undefined) =>
-        value && value !== "undefined" ? null : "Status is required",
-    },
-  });
-
-  useEffect(() => {
-    if (gameEntry) {
-      form.setValues({
-        status: String(gameEntry.status),
-        rating: String(gameEntry.rating),
-        platforms: gameEntry.platforms,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameEntry]);
-
-  const submitGameEntry = (values: FormValues) => {
-    if (!user || !game) {
-      return;
-    }
-    const newGameEntry: GameEntry = gameEntry
-      ? {
-          ...gameEntry,
-          status: Number(values.status),
-          rating: Number(values.rating),
-          platforms: values.platforms,
-        }
-      : {
-          id: 0,
-          user_id: user.id,
-          game_id: game.id,
-          game_name: game.name,
-          game_cover: game.cover,
-          is_favourite: false,
-          platforms: values.platforms,
-          status: Number(values.status),
-          rating: Number(values.rating),
-        };
-    if (!gameEntry) {
-      dispatch(createGameEntry(newGameEntry))
-        .unwrap()
-        .then((gameEntry) => {
-          console.log("created");
-          showSuccessNotification({
-            title: "Game added to display case",
-            message: `${gameEntry.game_name}`,
-          });
-        })
-        .catch((error) => {
-          showApiRequestErrorNotification(handleApiRequestError(error));
-        });
-    } else {
-      dispatch(updateGameEntry(newGameEntry))
-        .unwrap()
-        .then(() => {
-          console.log("updated");
-          showSuccessNotification({
-            title: "Entry updated",
-            message: `${gameEntry.game_name}`,
-          });
-        })
-        .catch((error) => {
-          showApiRequestErrorNotification(handleApiRequestError(error));
-        });
-    }
-  };
-
-  const deleteCurrentGameEntry = () => {
-    if (!gameEntry) {
-      return;
-    }
-    dispatch(deleteGameEntry(gameEntry.id))
-      .unwrap()
-      .then(() => {
-        form.reset();
-        console.log("deleted");
-        showSuccessNotification({
-          title: "Game deleted from display case",
-          message: `${gameEntry.game_name}`,
-        });
-      })
-      .catch((error) => {
-        showApiRequestErrorNotification(handleApiRequestError(error));
-      });
-  };
-
-  const handleDeleteClick = () => {
-    openConfirmModal({
-      title: "Delete entry",
-      children: (
-        <Text size="sm">Are you sure you want to delete this entry?</Text>
-      ),
-      labels: { confirm: "Delete", cancel: "Cancel" },
-      confirmProps: { color: "red" },
-      onConfirm: () => deleteCurrentGameEntry(),
-    });
-  };
-
-  return (
-    <div className={classes.box} style={{ minWidth: 250 }}>
-      <PageHeader
-        title={game?.name || "Loading"}
-        description={
-          game
-            ? `Add ${game?.name} to your list or check out the game's details`
-            : "Error occurred"
-        }
-      />
-      <Stack>
-        {game && <Image src={game?.cover} alt="Game Cover" radius="md" />}
-        {user && (
-          <>
-            {gameEntry ? (
-              <Text size="sm">Update this game in your display case!</Text>
-            ) : (
-              <Text size="sm">Add this game to your display case!</Text>
-            )}
-            <Divider my="sm" color="dark.5" />
-            <form onSubmit={form.onSubmit(submitGameEntry)}>
-              <Select
-                label="Status"
-                placeholder="Pick one"
-                data={STATUS_DATA}
-                {...form.getInputProps("status")}
-              />
-              <Select
-                label="Rating"
-                placeholder="Out of 10"
-                data={Array(11)
-                  .fill(0)
-                  .map((_, index) => `${index}`)}
-                {...form.getInputProps("rating")}
-              />
-              <Text mt={10} size="sm">
-                {game?.platforms.length === 1 ? "Platform" : "Platforms"}
-              </Text>
-              <Chip.Group {...form.getInputProps("platforms")} mt={10} multiple>
-                {game?.platforms.map((platform) => {
-                  return (
-                    <Chip value={platform} key={platform}>
-                      {platform}
-                    </Chip>
-                  );
-                })}
-              </Chip.Group>
-              <Space h="md" />
-              <Button type="submit" fullWidth>
-                {gameEntry ? "Update" : "Add"}
-              </Button>
-            </form>
-            {gameEntry && (
-              <Button onClick={handleDeleteClick} color="red">
-                Delete
-              </Button>
-            )}
-          </>
-        )}
-      </Stack>
-    </div>
-  );
-};
 
 const Games: NextPage = () => {
   const router = useRouter();
@@ -317,12 +142,40 @@ const Games: NextPage = () => {
           {game?.name}
         </Title>
       </Center>
-      <Grid grow>
-        <Grid.Col span={2}>
-          <GameDetailsSidebar game={game} gameEntry={gameEntry} user={user} />
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <div className={classes.box}>
+      <div className={classes.box}>
+        <Grid grow>
+          <Grid.Col sm={2} style={{ position: "relative", height: 400 }}>
+            {game && (
+              <div
+                className={classes.image}
+                style={{ backgroundImage: `url(${game.cover})` }}
+              >
+                {!gameEntry && user && (
+                  <ActionIcon
+                    className={classes.quickButton}
+                    variant="filled"
+                    color="red"
+                    size={40}
+                    onClick={handleEditModalOpen}
+                  >
+                    <BsPlus size={38} />
+                  </ActionIcon>
+                )}
+                {gameEntry && user && (
+                  <ActionIcon
+                    className={classes.quickButton}
+                    variant="filled"
+                    color="green"
+                    size={40}
+                    onClick={handleEditModalOpen}
+                  >
+                    <TbFileText size={30} />
+                  </ActionIcon>
+                )}
+              </div>
+            )}
+          </Grid.Col>
+          <Grid.Col sm={6} style={{ position: "relative" }}>
             <Stack>
               <Text>{game?.summary}</Text>
               <Divider my="sm" color="dark.5" />
@@ -338,11 +191,10 @@ const Games: NextPage = () => {
                   return <Badge key={i}>{value}</Badge>;
                 })}
               </Group>
-              <Button onClick={handleEditModalOpen}>Add</Button>
             </Stack>
-          </div>
-        </Grid.Col>
-      </Grid>
+          </Grid.Col>
+        </Grid>
+      </div>
       {gameEntryModalData && (
         <GameEntryEditModal
           opened={isEditModalOpen}
