@@ -5,6 +5,7 @@ import {
 import { getGameByIdApi } from "@api/games_api";
 import { Game, GameEntry, GameEntryStatus, User } from "@api/types";
 import PageHeader from "@components/PageHeader";
+import GameEntryEditModal from "@components/profile/GameEntryEditModal";
 import {
   Badge,
   Button,
@@ -247,9 +248,23 @@ const Games: NextPage = () => {
   const gameEntry = useAppSelector((state) =>
     selectGameEntryByGameId(state, game?.id ?? -1)
   );
+  const [gameEntryModalData, setGameEntryModalData] = useState<
+    GameEntry | undefined
+  >(undefined);
+  const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
   const user = useAppSelector(selectUser);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const newGameEntry = {
+    id: 0,
+    user_id: user?.id ?? 0,
+    game_id: game?.id ?? 0,
+    game_name: game?.name ?? "",
+    game_cover: game?.cover ?? "",
+    review: "",
+    is_favourite: false,
+    status: GameEntryStatus.WISHLIST,
+  };
 
   useEffect(() => {
     if (!router.isReady) {
@@ -271,6 +286,18 @@ const Games: NextPage = () => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
+
+  const handleEditModalOpen = () => {
+    if (gameEntry === undefined) {
+      setGameEntryModalData(newGameEntry);
+    } else {
+      setGameEntryModalData(gameEntry);
+    }
+    setEditModalOpen(true);
+  };
+  const handleEditModalClose = () => {
+    setEditModalOpen(false);
+  };
 
   return (
     <>
@@ -311,10 +338,19 @@ const Games: NextPage = () => {
                   return <Badge key={i}>{value}</Badge>;
                 })}
               </Group>
+              <Button onClick={handleEditModalOpen}>Add</Button>
             </Stack>
           </div>
         </Grid.Col>
       </Grid>
+      {gameEntryModalData && (
+        <GameEntryEditModal
+          opened={isEditModalOpen}
+          onClose={handleEditModalClose}
+          gameEntry={gameEntryModalData}
+          isAddingGame={gameEntry === undefined}
+        />
+      )}
     </>
   );
 };
