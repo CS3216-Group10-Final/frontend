@@ -55,7 +55,6 @@ const GameEntryEditModal = (props: Props) => {
 
   useEffect(() => {
     if (opened) {
-      console.log(gameEntry);
       setIsLoading(true);
 
       getGameByIdApi(gameEntry.game_id)
