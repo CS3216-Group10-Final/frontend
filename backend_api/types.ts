@@ -86,6 +86,7 @@ export interface BadgeEntry {
 
 export interface ReviewEntry {
   user_username: string;
+  user_picture: string;
   game_id: number;
   rating: number;
   review: string;

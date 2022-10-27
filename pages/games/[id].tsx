@@ -3,19 +3,25 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
-import { Game, GameEntry, GameEntryStatus } from "@api/types";
+import { getReviewsApi } from "@api/reviews_api";
+import { Game, GameEntry, GameEntryStatus, ReviewEntry } from "@api/types";
 import PageHeader from "@components/PageHeader";
 import GameEntryEditModal from "@components/profile/GameEntryEditModal";
 import {
   ActionIcon,
+  Anchor,
+  Avatar,
   Badge,
+  Blockquote,
   Button,
+  Card,
   Center,
   createStyles,
   Divider,
   Grid,
   Group,
   LoadingOverlay,
+  Spoiler,
   Stack,
   Text,
   Title,
@@ -75,6 +81,10 @@ const Games = ({
   const gameEntry = useAppSelector((state) =>
     selectGameEntryByGameId(state, game?.id ?? -1)
   );
+  const [friendReviewEntries, setFriendReviewEntries] = useState<ReviewEntry[]>(
+    []
+  );
+  const [friendRatings, setFriendRatings] = useState<ReviewEntry[]>([]);
   const [gameEntryModalData, setGameEntryModalData] = useState<
     GameEntry | undefined
   >(undefined);
@@ -98,7 +108,8 @@ const Games = ({
       return;
     }
     setIsLoading(true);
-    getGameByIdApi(Number(id))
+
+    const gamePromise = getGameByIdApi(Number(id))
       .then((game) => {
         setGame(game);
         if (user) {
@@ -111,6 +122,35 @@ const Games = ({
       .finally(() => {
         setIsLoading(false);
       });
+
+    const reviewPromise = getReviewsApi({
+      game_id: Number(id),
+      following_only: true,
+      page: 1,
+      has_review: true,
+    })
+      .then((reviews) => {
+        setFriendReviewEntries(reviews);
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+
+    const ratingPromise = getReviewsApi({
+      game_id: Number(id),
+      following_only: true,
+      page: 1,
+      has_rating: true,
+    })
+      .then((reviews) => {
+        setFriendRatings(reviews);
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+    Promise.all([gamePromise, reviewPromise, ratingPromise]).finally(() => {
+      setIsLoading(false);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
@@ -201,6 +241,68 @@ const Games = ({
           </Grid.Col>
         </Grid>
       </div>
+      {user && friendRatings.length == 0 && friendReviewEntries.length == 0 && (
+        <div className={classes.box} style={{ flexDirection: "column" }}>
+          <Text align="center">
+            You are not following anyone who has played this game.
+          </Text>
+        </div>
+      )}
+      {user && friendRatings.length > 0 && (
+        <div className={classes.box} style={{ flexDirection: "column" }}>
+          <Title size={25} mb={8}>
+            Ratings
+          </Title>
+          <Group>
+            {friendRatings.map((reviewEntry) => {
+              return (
+                <Card key={reviewEntry.user_username}>
+                  <Group>
+                    <Link href={`/user/${reviewEntry.user_username}`}>
+                      <Avatar
+                        src={reviewEntry.user_picture}
+                        size={35}
+                        radius={5}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </Link>
+                    <Link href={`/user/${reviewEntry.user_username}`} passHref>
+                      <Anchor component="a" style={{ color: "white" }}>
+                        {reviewEntry.user_username}
+                      </Anchor>
+                    </Link>
+                    <Text>{reviewEntry.rating}/10</Text>
+                  </Group>
+                </Card>
+              );
+            })}
+          </Group>
+        </div>
+      )}
+      {user && friendReviewEntries?.length > 0 && (
+        <div className={classes.box} style={{ flexDirection: "column" }}>
+          <Title size={25} mb={8}>
+            Reviews
+          </Title>
+          {friendReviewEntries.map((reviewEntry) => {
+            return (
+              <Blockquote
+                cite={`- ${reviewEntry.user_username}${
+                  reviewEntry.rating === null ||
+                  reviewEntry.rating === undefined
+                    ? ""
+                    : `, who gave this game ${reviewEntry.rating}/10`
+                }`}
+                key={reviewEntry.user_username}
+              >
+                <Spoiler maxHeight={250} showLabel="Show more" hideLabel="Hide">
+                  {reviewEntry.review}
+                </Spoiler>
+              </Blockquote>
+            );
+          })}
+        </div>
+      )}
       {gameEntryModalData && (
         <GameEntryEditModal
           opened={isEditModalOpen}
