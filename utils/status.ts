@@ -28,6 +28,21 @@ export const GAME_SECTION_ORDER = [
   GameEntryStatus.WISHLIST,
 ];
 
+export const STATUS_MANTINE_COLOR: Record<GameEntryStatus, string> = {
+  [GameEntryStatus.WISHLIST]: "dark.3",
+  [GameEntryStatus.BACKLOG]: "blue.5",
+  [GameEntryStatus.PLAYING]: "yellow.5",
+  [GameEntryStatus.COMPLETED]: "green.5",
+  [GameEntryStatus.DROPPED]: "red.5",
+};
+
+export const statusOrderComparator = (
+  a: GameEntryStatus,
+  b: GameEntryStatus
+) => {
+  return GAME_SECTION_ORDER.indexOf(a) - GAME_SECTION_ORDER.indexOf(b);
+};
+
 export const STATUS_DATA = LIST_OF_STATUSES.map((status) => {
   return {
     value: String(status),

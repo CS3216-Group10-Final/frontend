@@ -90,4 +90,5 @@ export interface ReviewEntry {
   game_id: number;
   rating: number;
   review: string;
+  status: GameEntryStatus;
 }

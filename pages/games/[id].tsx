@@ -17,6 +17,7 @@ import {
   Button,
   Card,
   Center,
+  Chip,
   createStyles,
   Divider,
   Grid,
@@ -26,7 +27,9 @@ import {
   Stack,
   Text,
   Title,
+  useMantineTheme,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
 import {
   getGameEntries,
@@ -40,6 +43,13 @@ import { useEffect, useState } from "react";
 import { AiOutlineLeft } from "react-icons/ai";
 import { BsPlus } from "react-icons/bs";
 import { TbFileText } from "react-icons/tb";
+import {
+  gameEntryStatusToString,
+  GAME_SECTION_ORDER,
+  LIST_OF_STATUSES,
+  statusOrderComparator,
+  STATUS_MANTINE_COLOR,
+} from "utils/status";
 
 const useStyles = createStyles((theme) => ({
   box: {
@@ -77,9 +87,9 @@ const Games = ({
   id,
   title,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter();
-  const { classes } = useStyles();
+  const user = useAppSelector(selectUser);
   const [game, setGame] = useState<Game>();
+
   const gameEntry = useAppSelector((state) =>
     selectGameEntryByGameId(state, game?.id ?? -1)
   );
@@ -87,13 +97,17 @@ const Games = ({
     []
   );
   const [friendRatings, setFriendRatings] = useState<ReviewEntry[]>([]);
+
   const [gameEntryModalData, setGameEntryModalData] = useState<
     GameEntry | undefined
   >(undefined);
   const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const user = useAppSelector(selectUser);
   const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { classes } = useStyles();
+
   const newGameEntry = {
     id: 0,
     user_id: user?.id ?? 0,
@@ -145,7 +159,9 @@ const Games = ({
       has_rating: true,
     })
       .then((reviews) => {
-        setFriendRatings(reviews);
+        setFriendRatings(
+          reviews.sort((a, b) => statusOrderComparator(a.status, b.status))
+        );
       })
       .catch((error) => {
         showApiRequestErrorNotification(handleApiRequestError(error));
@@ -164,6 +180,7 @@ const Games = ({
     }
     setEditModalOpen(true);
   };
+
   const handleEditModalClose = () => {
     setEditModalOpen(false);
   };
@@ -248,35 +265,7 @@ const Games = ({
         </div>
       )}
       {user && friendRatings.length > 0 && (
-        <div className={classes.box} style={{ flexDirection: "column" }}>
-          <Title size={25} mb={8}>
-            Ratings
-          </Title>
-          <Group>
-            {friendRatings.map((reviewEntry) => {
-              return (
-                <Card key={reviewEntry.user_username}>
-                  <Group>
-                    <Link href={`/user/${reviewEntry.user_username}`}>
-                      <Avatar
-                        src={reviewEntry.user_picture}
-                        size={35}
-                        radius={5}
-                        style={{ cursor: "pointer" }}
-                      />
-                    </Link>
-                    <Link href={`/user/${reviewEntry.user_username}`} passHref>
-                      <Anchor component="a" style={{ color: "white" }}>
-                        {reviewEntry.user_username}
-                      </Anchor>
-                    </Link>
-                    <Text>{reviewEntry.rating}/10</Text>
-                  </Group>
-                </Card>
-              );
-            })}
-          </Group>
-        </div>
+        <RatingSection friendRatings={friendRatings} />
       )}
       {user && friendReviewEntries?.length > 0 && (
         <div className={classes.box} style={{ flexDirection: "column" }}>
@@ -311,6 +300,91 @@ const Games = ({
         />
       )}
     </>
+  );
+};
+
+interface RatingProps {
+  friendRatings: ReviewEntry[];
+}
+
+const RatingSection = ({ friendRatings }: RatingProps) => {
+  const theme = useMantineTheme();
+  const badgeColor = {
+    [GameEntryStatus.DROPPED]: theme.colors.red[5],
+    [GameEntryStatus.COMPLETED]: theme.colors.green[5],
+    [GameEntryStatus.PLAYING]: theme.colors.yellow[5],
+    [GameEntryStatus.BACKLOG]: theme.colors.blue[5],
+    [GameEntryStatus.WISHLIST]: theme.colors.dark[3],
+  };
+  const { classes } = useStyles();
+
+  const statusFilterform = useForm<{ statusFilter: string[] }>({
+    initialValues: {
+      statusFilter: LIST_OF_STATUSES.map((x) => gameEntryStatusToString(x)),
+    },
+  });
+  return (
+    <div className={classes.box} style={{ flexDirection: "column" }}>
+      <Group>
+        <Title size={25} mb={8}>
+          Ratings
+        </Title>
+        <Chip.Group
+          {...statusFilterform.getInputProps("statusFilter")}
+          mb={5}
+          multiple
+        >
+          {GAME_SECTION_ORDER.map((status) => {
+            return (
+              <Chip
+                value={gameEntryStatusToString(status)}
+                key={status}
+                color={STATUS_MANTINE_COLOR[status]}
+              >
+                {gameEntryStatusToString(status)}
+              </Chip>
+            );
+          })}
+        </Chip.Group>
+      </Group>
+      <Group>
+        {friendRatings.map((reviewEntry) => {
+          if (
+            !statusFilterform.values.statusFilter.includes(
+              gameEntryStatusToString(reviewEntry.status)
+            )
+          ) {
+            return;
+          }
+          return (
+            <Card
+              key={reviewEntry.user_username}
+              style={{
+                borderLeft: "5px solid",
+                borderColor: badgeColor[reviewEntry.status],
+              }}
+            >
+              <Group>
+                <Link href={`/user/${reviewEntry.user_username}`}>
+                  <Avatar
+                    src={reviewEntry.user_picture}
+                    size={35}
+                    radius={5}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Link>
+                <Link href={`/user/${reviewEntry.user_username}`} passHref>
+                  <Anchor component="a" style={{ color: "white" }}>
+                    {reviewEntry.user_username}
+                  </Anchor>
+                </Link>
+                <Text>{reviewEntry.rating}/10</Text>
+              </Group>
+            </Card>
+          );
+        })}
+      </Group>
+    </div>
   );
 };
 
