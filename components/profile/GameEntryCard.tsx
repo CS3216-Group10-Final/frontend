@@ -10,6 +10,7 @@ import {
   Image,
   Stack,
   Text,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
@@ -87,24 +88,6 @@ const GameEntryCard = (props: Props) => {
                 </Text>
               </Link>
               <Group>
-                {review && (
-                  <HoverCard width={100} shadow="md">
-                    <HoverCard.Target>
-                      <ActionIcon
-                        onClick={() => {
-                          setReviewModalIsOpen(true);
-                        }}
-                      >
-                        <TbFileText size={30} />
-                      </ActionIcon>
-                    </HoverCard.Target>
-                    <HoverCard.Dropdown p={6}>
-                      <Text size="xs" align="center">
-                        Read review
-                      </Text>
-                    </HoverCard.Dropdown>
-                  </HoverCard>
-                )}
                 <Group>
                   {allPlatformCategories.map((platformCategory) => {
                     if (categorizedPlatforms[platformCategory].length === 0) {
@@ -136,6 +119,17 @@ const GameEntryCard = (props: Props) => {
           </Grid.Col>
           <Grid.Col span={isMobile ? 4 : 2} p={0}>
             <Group sx={{ height: "100%" }} position="right" mr="sm">
+              {review && (
+                <Tooltip label="Read review">
+                  <ActionIcon
+                    onClick={() => {
+                      setReviewModalIsOpen(true);
+                    }}
+                  >
+                    <TbFileText size={18} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
               {rating !== undefined && rating !== null && (
                 <Text
                   size="md"
@@ -147,14 +141,16 @@ const GameEntryCard = (props: Props) => {
                 </Text>
               )}
               {isEditable && (
-                <ActionIcon
-                  mr="sm"
-                  onClick={() => {
-                    onClickEdit && onClickEdit(gameEntry);
-                  }}
-                >
-                  <TbEdit size={18} />
-                </ActionIcon>
+                <Tooltip label="Edit game entry">
+                  <ActionIcon
+                    mr="sm"
+                    onClick={() => {
+                      onClickEdit && onClickEdit(gameEntry);
+                    }}
+                  >
+                    <TbEdit size={18} />
+                  </ActionIcon>
+                </Tooltip>
               )}
             </Group>
           </Grid.Col>
