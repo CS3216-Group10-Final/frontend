@@ -4,6 +4,7 @@ import {
 } from "@api/error_handling";
 import { getGameByIdApi } from "@api/games_api";
 import { Game, GameEntry, GameEntryStatus } from "@api/types";
+import PageHeader from "@components/PageHeader";
 import GameEntryEditModal from "@components/profile/GameEntryEditModal";
 import {
   ActionIcon,
@@ -25,7 +26,7 @@ import {
   selectGameEntryByGameId,
 } from "@redux/slices/GameEntry_slice";
 import { selectUser } from "@redux/slices/User_slice";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -65,10 +66,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const Games: NextPage = () => {
+const Games = ({
+  id,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { classes } = useStyles();
-  const { id } = router.query;
   const [game, setGame] = useState<Game>();
   const gameEntry = useAppSelector((state) =>
     selectGameEntryByGameId(state, game?.id ?? -1)
@@ -126,6 +128,10 @@ const Games: NextPage = () => {
 
   return (
     <>
+      <PageHeader
+        title={game?.name ?? "Game"}
+        description="View this game on DisplayCase"
+      />
       <LoadingOverlay visible={isLoading} overlayBlur={3} zIndex="1" />
       <Link href="/games">
         <Button
@@ -207,4 +213,15 @@ const Games: NextPage = () => {
   );
 };
 
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { id } = context.query;
+
+  return {
+    props: {
+      id: id as string,
+    },
+  };
+};
 export default Games;
