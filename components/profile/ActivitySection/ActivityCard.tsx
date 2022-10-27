@@ -131,6 +131,16 @@ const ActivityCard = (props: Props) => {
         >
           {activityContent[activity_type]}
         </Text>
+        <Link href={`/games/${game.id}`}>
+          <Image
+            width={48}
+            height={48}
+            src={activity.game.cover}
+            alt="profile picture"
+            radius="md"
+            sx={{ cursor: "pointer" }}
+          />
+        </Link>
       </Box>
     </Card>
   );
