@@ -318,16 +318,24 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const { id } = context.query;
-  const gameResponse = await fetch(
-    process.env.NEXT_PUBLIC_BE_ENDPOINT + getPathForGameWithId(Number(id))
-  );
-  const game: Game = await gameResponse.json();
-
-  return {
-    props: {
-      id: id as string,
-      title: game.name ?? "Game",
-    },
-  };
+  try {
+    const gameResponse = await fetch(
+      process.env.NEXT_PUBLIC_BE_ENDPOINT + getPathForGameWithId(Number(id))
+    );
+    const game: Game = await gameResponse.json();
+    return {
+      props: {
+        id: id as string,
+        title: game.name ?? "Game",
+      },
+    };
+  } catch {
+    return {
+      props: {
+        id: id as string,
+        title: "Game",
+      },
+    };
+  }
 };
 export default Games;
