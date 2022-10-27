@@ -1,3 +1,4 @@
+import { getPathForGameWithId } from "@api/endpoint_paths";
 import {
   handleApiRequestError,
   showApiRequestErrorNotification,
@@ -74,6 +75,7 @@ const useStyles = createStyles((theme) => ({
 
 const Games = ({
   id,
+  title,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { classes } = useStyles();
@@ -168,10 +170,7 @@ const Games = ({
 
   return (
     <>
-      <PageHeader
-        title={game?.name ?? "Game"}
-        description="View this game on DisplayCase"
-      />
+      <PageHeader title={title} description="View this game on DisplayCase" />
       <LoadingOverlay visible={isLoading} overlayBlur={3} zIndex="1" />
       <Link href="/games">
         <Button
@@ -319,10 +318,15 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const { id } = context.query;
+  const gameResponse = await fetch(
+    process.env.NEXT_PUBLIC_BE_ENDPOINT + getPathForGameWithId(Number(id))
+  );
+  const game: Game = await gameResponse.json();
 
   return {
     props: {
       id: id as string,
+      title: game.name ?? "Game",
     },
   };
 };
