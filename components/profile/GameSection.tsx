@@ -271,26 +271,29 @@ const GridGameSections = ({
       statusFilter: LIST_OF_STATUSES.map((x) => gameEntryStatusToString(x)),
     },
   });
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState<boolean>(false);
   return (
     <>
-      <Chip.Group
-        {...statusFilterform.getInputProps("statusFilter")}
-        mb={15}
-        mt={25}
-        multiple
-      >
-        {GAME_SECTION_ORDER.map((status) => {
-          return (
-            <Chip
-              value={gameEntryStatusToString(status)}
-              key={status}
-              color={STATUS_MANTINE_COLOR[status]}
-            >
-              {gameEntryStatusToString(status)}
-            </Chip>
-          );
-        })}
-      </Chip.Group>
+      <Group mb={15} mt={25}>
+        <Chip.Group
+          {...statusFilterform.getInputProps("statusFilter")}
+          multiple
+        >
+          {GAME_SECTION_ORDER.map((status) => {
+            return (
+              <Chip
+                value={gameEntryStatusToString(status)}
+                key={status}
+                color={STATUS_MANTINE_COLOR[status]}
+              >
+                {gameEntryStatusToString(status)}
+              </Chip>
+            );
+          })}
+        </Chip.Group>
+        <Chip onChange={(v) => setShowOnlyFavorites(v)}>Favorites</Chip>
+      </Group>
+
       <SimpleGrid
         cols={5}
         spacing="lg"
@@ -302,24 +305,26 @@ const GridGameSections = ({
         mt={10}
       >
         {GAME_SECTION_ORDER.map((section) => {
-          if (
-            !statusFilterform.values.statusFilter.includes(
-              gameEntryStatusToString(section)
-            )
-          ) {
+          const strSection = gameEntryStatusToString(section);
+          if (!statusFilterform.values.statusFilter.includes(strSection)) {
             return;
           }
           return (
             <>
-              {games[section].map((gameEntry) => (
-                <GridGameEntryCard
-                  username={user.username}
-                  gameEntry={gameEntry}
-                  onClickEdit={handleEdit}
-                  isEditable={isSelfUser}
-                  key={gameEntry.id}
-                />
-              ))}
+              {games[section].map((gameEntry) => {
+                if (showOnlyFavorites && !gameEntry.is_favourite) {
+                  return;
+                }
+                return (
+                  <GridGameEntryCard
+                    username={user.username}
+                    gameEntry={gameEntry}
+                    onClickEdit={handleEdit}
+                    isEditable={isSelfUser}
+                    key={gameEntry.id}
+                  />
+                );
+              })}
             </>
           );
         })}

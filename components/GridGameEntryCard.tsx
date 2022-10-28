@@ -1,3 +1,7 @@
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import { GameEntry } from "@api/types";
 import {
   ActionIcon,
@@ -8,11 +12,15 @@ import {
   Paper,
   Stack,
   Text,
+  ThemeIcon,
 } from "@mantine/core";
+import { useAppDispatch } from "@redux/hooks";
+import { updateGameEntryFavorite } from "@redux/slices/GameEntry_slice";
 import Link from "next/link";
 import { useState } from "react";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import { AiFillStar, AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
 import { TbEdit, TbFileText } from "react-icons/tb";
+import { showSuccessNotification } from "utils/notifications";
 import {
   allPlatformCategories,
   categorizePlatforms,
@@ -107,14 +115,34 @@ const GridGameEntryCard = ({
     game_cover: cover,
     rating,
     review,
+    is_favourite,
     platforms,
     status,
   } = gameEntry;
   const categorizedPlatforms = categorizePlatforms(platforms ?? []);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState<boolean>(false);
 
+  const dispatch = useAppDispatch();
   const badgeColor = useStatusColor();
 
+  const handleUpdateFavorite = (isFavorite: boolean) => {
+    if (!isEditable) {
+      return;
+    }
+    dispatch(updateGameEntryFavorite({ gameEntry, isFavorite: isFavorite }))
+      .unwrap()
+      .then(() => {
+        showSuccessNotification({
+          title: isFavorite
+            ? "Game added to favorites"
+            : "Game removed from favorites",
+          message: gameEntry.game_name,
+        });
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+  };
   return (
     <div className={classes.card}>
       <Card
@@ -134,9 +162,16 @@ const GridGameEntryCard = ({
         />
         <div className={classes.overlay} />
 
+        {is_favourite && (
+          <div style={{ position: "absolute", top: 8, left: 8, zIndex: 4 }}>
+            <ThemeIcon>
+              <AiFillStar size={18} />
+            </ThemeIcon>
+          </div>
+        )}
         {rating !== null && rating !== undefined && (
           <div style={{ position: "absolute", top: 8, right: 8, zIndex: 7 }}>
-            <Paper p={3}>
+            <Paper py={2} px={6}>
               <Text color={"white"}>{rating}/10</Text>
             </Paper>
           </div>
@@ -158,15 +193,49 @@ const GridGameEntryCard = ({
                 flexDirection: "row",
               }}
             >
+              {(review || is_favourite || (isEditable && !is_favourite)) && (
+                <Stack mr={12}>
+                  {isEditable && !is_favourite && (
+                    <ActionIcon
+                      onClick={() => {
+                        handleUpdateFavorite(true);
+                      }}
+                      variant="light"
+                    >
+                      <AiOutlineStar size={18} />
+                    </ActionIcon>
+                  )}
+                  {is_favourite && (
+                    <ActionIcon
+                      onClick={() => {
+                        handleUpdateFavorite(false);
+                      }}
+                      variant="light"
+                    >
+                      <AiFillStar size={18} />
+                    </ActionIcon>
+                  )}
+                  {review && (
+                    <ActionIcon
+                      variant="light"
+                      onClick={() => {
+                        setReviewModalIsOpen(true);
+                      }}
+                    >
+                      <TbFileText size={24} />
+                    </ActionIcon>
+                  )}
+                </Stack>
+              )}
               <Stack>
-                {review && (
+                {isEditable && (
                   <ActionIcon
                     variant="light"
                     onClick={() => {
-                      setReviewModalIsOpen(true);
+                      onClickEdit(gameEntry);
                     }}
                   >
-                    <TbFileText size={24} />
+                    <TbEdit size={24} />
                   </ActionIcon>
                 )}
                 <Link href={`/games/${game_id}`}>
@@ -175,17 +244,6 @@ const GridGameEntryCard = ({
                   </ActionIcon>
                 </Link>
               </Stack>
-              {isEditable && (
-                <ActionIcon
-                  variant="light"
-                  onClick={() => {
-                    onClickEdit(gameEntry);
-                  }}
-                  ml={12}
-                >
-                  <TbEdit size={24} />
-                </ActionIcon>
-              )}
             </div>
 
             <div style={{ position: "absolute", bottom: 8, left: 3 }}>

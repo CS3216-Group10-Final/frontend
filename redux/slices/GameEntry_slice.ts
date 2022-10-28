@@ -57,7 +57,25 @@ const gameEntrySlice = createSlice({
       const currentEntries = current(state.gameEntries);
       for (const id of Object.keys(currentEntries)) {
         if (Number(id) == action.meta.arg.gameEntry.id) {
-          newEntries[Number(id)] = action.meta.arg.gameEntry;
+          newEntries[Number(id)] = {
+            ...action.meta.arg.gameEntry,
+            status: action.meta.arg.newStatus,
+          };
+          continue;
+        }
+        newEntries[Number(id)] = currentEntries[Number(id)];
+      }
+      state.gameEntries = newEntries;
+    });
+    builder.addCase(updateGameEntryFavorite.fulfilled, (state, action) => {
+      const newEntries: Record<number, GameEntry> = {};
+      const currentEntries = current(state.gameEntries);
+      for (const id of Object.keys(currentEntries)) {
+        if (Number(id) == action.meta.arg.gameEntry.id) {
+          newEntries[Number(id)] = {
+            ...action.meta.arg.gameEntry,
+            is_favourite: action.meta.arg.isFavorite,
+          };
           continue;
         }
         newEntries[Number(id)] = currentEntries[Number(id)];
@@ -115,6 +133,15 @@ export const changeGameEntryStatus = createAsyncThunk<
   { state: RootState }
 >("gameEntry/changeGameEntryStatus", async ({ gameEntry, newStatus }) => {
   const newGameEntry: GameEntry = { ...gameEntry, status: newStatus };
+  await updateGameEntryApi(newGameEntry);
+});
+
+export const updateGameEntryFavorite = createAsyncThunk<
+  void,
+  { gameEntry: GameEntry; isFavorite: boolean },
+  { state: RootState }
+>("gameEntry/updateGameEntryFavorite", async ({ gameEntry, isFavorite }) => {
+  const newGameEntry: GameEntry = { ...gameEntry, is_favourite: isFavorite };
   await updateGameEntryApi(newGameEntry);
 });
 
