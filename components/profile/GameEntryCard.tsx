@@ -191,11 +191,13 @@ const GameEntryCard = (props: Props) => {
                   </Tooltip>
                 )}
               </Group>
-              <Select
-                value={String(status)}
-                data={STATUS_DATA}
-                onChange={handleStatusChange}
-              />
+              {isEditable && (
+                <Select
+                  value={String(status)}
+                  data={STATUS_DATA}
+                  onChange={handleStatusChange}
+                />
+              )}
               {/* <Menu position="bottom-end">
                 <Menu.Target>
                   <Anchor align="right">Update status</Anchor>
