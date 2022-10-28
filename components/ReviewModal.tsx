@@ -1,4 +1,4 @@
-import { Blockquote, Modal, Title } from "@mantine/core";
+import { Blockquote, Modal, Spoiler, Title } from "@mantine/core";
 import { useMobile } from "utils/useMobile";
 
 interface Props {
@@ -37,7 +37,9 @@ const ReviewModal = ({
               : `, who gave this game ${rating}/10`
           }`}
         >
-          {review}
+          <Spoiler maxHeight={250} showLabel="Show more" hideLabel="Hide">
+            {review}
+          </Spoiler>
         </Blockquote>
       </>
     </Modal>

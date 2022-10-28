@@ -83,3 +83,12 @@ export interface BadgeEntry {
   badge_description: string;
   time_achieved: string;
 }
+
+export interface ReviewEntry {
+  user_username: string;
+  user_picture: string;
+  game_id: number;
+  rating: number;
+  review: string;
+  status: GameEntryStatus;
+}

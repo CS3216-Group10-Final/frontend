@@ -1,20 +1,12 @@
-import {
-  handleApiRequestError,
-  showApiRequestErrorNotification,
-} from "@api/error_handling";
-import { Game, GameEntryStatus } from "@api/types";
+import { Game, GameEntry, GameEntryStatus } from "@api/types";
 import { ActionIcon, Card, createStyles, Text } from "@mantine/core";
-import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import {
-  createGameEntry,
-  selectGameEntryByGameId,
-} from "@redux/slices/GameEntry_slice";
+import { useAppSelector } from "@redux/hooks";
+import { selectGameEntryByGameId } from "@redux/slices/GameEntry_slice";
 import { selectUser } from "@redux/slices/User_slice";
 import Link from "next/link";
 import { useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { TbFileText } from "react-icons/tb";
-import { showSuccessNotification } from "utils/notifications";
 import GameEntryEditModal from "./profile/GameEntryEditModal";
 
 type Props = {
@@ -79,38 +71,30 @@ const GameCard = ({ game }: Props) => {
     selectGameEntryByGameId(state, game.id)
   );
   const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [gameEntryModalData, setGameEntryModalData] = useState<
+    GameEntry | undefined
+  >(undefined);
   const selfUser = useAppSelector(selectUser);
-  const dispatch = useAppDispatch();
-
+  const newGameEntry = {
+    id: 0,
+    user_id: selfUser?.id ?? 0,
+    game_id: game.id,
+    game_name: game.name,
+    game_cover: game.cover,
+    review: "",
+    is_favourite: false,
+    status: GameEntryStatus.WISHLIST,
+  };
+  const handleEditModalOpen = (isAdding: boolean) => {
+    if (isAdding) {
+      setGameEntryModalData(newGameEntry);
+    } else {
+      setGameEntryModalData(gameEntry);
+    }
+    setEditModalOpen(true);
+  };
   const handleEditModalClose = () => {
     setEditModalOpen(false);
-  };
-
-  const quickAddGameEntry = () => {
-    if (!selfUser) {
-      return;
-    }
-    const newGameEntry = {
-      id: 0,
-      user_id: selfUser.id,
-      game_id: game.id,
-      game_name: game.name,
-      game_cover: game.cover,
-      is_favourite: false,
-      status: GameEntryStatus.WISHLIST,
-    };
-    dispatch(createGameEntry(newGameEntry))
-      .unwrap()
-      .then((gameEntry) => {
-        console.log("created");
-        showSuccessNotification({
-          title: "Game added to display case",
-          message: `${gameEntry.game_name}`,
-        });
-      })
-      .catch((error) => {
-        showApiRequestErrorNotification(handleApiRequestError(error));
-      });
   };
 
   return (
@@ -121,24 +105,22 @@ const GameCard = ({ game }: Props) => {
           variant="filled"
           color="red"
           size={30}
-          onClick={quickAddGameEntry}
+          onClick={() => handleEditModalOpen(true)}
         >
           <BsPlus size={28} />
         </ActionIcon>
       )}
-
       {gameEntry && selfUser && (
         <ActionIcon
           className={classes.quickButton}
           variant="filled"
           color="green"
           size={30}
-          onClick={() => setEditModalOpen(true)}
+          onClick={() => handleEditModalOpen(false)}
         >
           <TbFileText size={20} />
         </ActionIcon>
       )}
-
       <Link href={"/games/" + game.id}>
         <Card
           p="lg"
@@ -157,11 +139,12 @@ const GameCard = ({ game }: Props) => {
           </div>
         </Card>
       </Link>
-      {gameEntry && (
+      {gameEntryModalData && (
         <GameEntryEditModal
           opened={isEditModalOpen}
-          gameEntry={gameEntry}
+          gameEntry={gameEntryModalData}
           onClose={handleEditModalClose}
+          isAddingGame={gameEntry === undefined}
         />
       )}
     </div>

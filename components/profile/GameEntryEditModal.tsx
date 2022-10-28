@@ -6,18 +6,24 @@ import { getGameByIdApi } from "@api/games_api";
 import { Game, GameEntry } from "@api/types";
 import {
   Button,
+  Chip,
   Group,
   LoadingOverlay,
   Modal,
-  MultiSelect,
   Select,
+  Text,
   Textarea,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
+import { openConfirmModal } from "@mantine/modals";
 import { useAppDispatch } from "@redux/hooks";
-import { updateGameEntry } from "@redux/slices/GameEntry_slice";
+import {
+  createGameEntry,
+  deleteGameEntry,
+  updateGameEntry,
+} from "@redux/slices/GameEntry_slice";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
 import { STATUS_DATA } from "utils/status";
@@ -33,10 +39,11 @@ type Props = {
   opened: boolean;
   onClose: () => void;
   gameEntry: GameEntry;
+  isAddingGame: boolean;
 };
 
 const GameEntryEditModal = (props: Props) => {
-  const { opened, onClose, gameEntry } = props;
+  const { opened, onClose, gameEntry, isAddingGame } = props;
 
   const [game, setGame] = useState<Game | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,19 +54,22 @@ const GameEntryEditModal = (props: Props) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setIsLoading(true);
+    if (opened) {
+      setIsLoading(true);
 
-    getGameByIdApi(gameEntry.game_id)
-      .then((game) => {
-        setGame(game);
-      })
-      .catch((error) => {
-        showApiRequestErrorNotification(handleApiRequestError(error));
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [gameEntry.game_id]);
+      getGameByIdApi(gameEntry.game_id)
+        .then((game) => {
+          setGame(game);
+        })
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened]);
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -84,13 +94,60 @@ const GameEntryEditModal = (props: Props) => {
       review: values.review,
     };
 
-    dispatch(updateGameEntry(newGameEntry))
+    if (isAddingGame) {
+      dispatch(createGameEntry(newGameEntry))
+        .unwrap()
+        .then(() => {
+          onClose();
+          showSuccessNotification({
+            title: "Entry added",
+            message: gameEntry.game_name,
+          });
+        })
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+        });
+    } else {
+      dispatch(updateGameEntry(newGameEntry))
+        .unwrap()
+        .then(() => {
+          onClose();
+          showSuccessNotification({
+            title: "Entry updated",
+            message: gameEntry.game_name,
+          });
+        })
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+        });
+    }
+  };
+
+  const handleDeleteClick = () => {
+    openConfirmModal({
+      title: "Delete entry",
+      children: (
+        <Text size="sm">Are you sure you want to delete this entry?</Text>
+      ),
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: deleteCurrentGameEntry,
+    });
+    onClose();
+  };
+
+  const deleteCurrentGameEntry = () => {
+    if (!gameEntry) {
+      return;
+    }
+    dispatch(deleteGameEntry(gameEntry.id))
       .unwrap()
       .then(() => {
-        onClose();
+        form.reset();
+        console.log("deleted");
         showSuccessNotification({
-          title: "Entry updated",
-          message: gameEntry.game_name,
+          title: "Game deleted from display case",
+          message: `${gameEntry.game_name}`,
         });
       })
       .catch((error) => {
@@ -121,12 +178,6 @@ const GameEntryEditModal = (props: Props) => {
             .map((_, index) => `${index}`)}
           {...form.getInputProps("rating")}
         />
-        <MultiSelect
-          label="Platform"
-          placeholder="Pick any"
-          data={game?.platforms || []}
-          {...form.getInputProps("platforms")}
-        />
         <Textarea
           label="Review"
           placeholder="Write a Review"
@@ -135,11 +186,26 @@ const GameEntryEditModal = (props: Props) => {
           maxRows={6}
           {...form.getInputProps("review")}
         />
+        <Text mt={10} size="sm">
+          {game?.platforms.length === 1 ? "Platform" : "Platforms"}
+        </Text>
+        <Chip.Group {...form.getInputProps("platforms")} mt={10} multiple>
+          {game?.platforms.map((platform) => {
+            return (
+              <Chip value={platform} key={platform}>
+                {platform}
+              </Chip>
+            );
+          })}
+        </Chip.Group>
 
-        <Group position="right">
-          <Button type="submit" mt="md">
-            Update
-          </Button>
+        <Group position="right" mt="md">
+          {!isAddingGame && (
+            <Button color="red" onClick={handleDeleteClick}>
+              Delete
+            </Button>
+          )}
+          <Button type="submit">{isAddingGame ? "Add" : "Update"}</Button>
         </Group>
       </form>
     </Modal>
