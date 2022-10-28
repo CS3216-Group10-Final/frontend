@@ -78,6 +78,11 @@ const GameSection = (props: Props) => {
   };
 
   const isMobile = useMobile();
+  useEffect(() => {
+    if (isMobile) {
+      setSectionViewMode("grid");
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     if (isSelfUser) {
@@ -102,34 +107,38 @@ const GameSection = (props: Props) => {
     <Box>
       <Group position="apart" px={8}>
         <Group spacing="xs">
-          <ActionIcon
-            color="primary"
-            variant="filled"
-            component="a"
-            sx={{
-              width: 28,
-              height: 28,
-            }}
-            onClick={() => {
-              setSectionViewMode("list");
-            }}
-          >
-            <BsListUl size={24} />
-          </ActionIcon>
-          <ActionIcon
-            color="primary"
-            variant="filled"
-            component="a"
-            sx={{
-              width: 28,
-              height: 28,
-            }}
-            onClick={() => {
-              setSectionViewMode("grid");
-            }}
-          >
-            <BsFillGrid3X3GapFill size={24} />
-          </ActionIcon>
+          {!isMobile && (
+            <>
+              <ActionIcon
+                color="primary"
+                variant="filled"
+                component="a"
+                sx={{
+                  width: 28,
+                  height: 28,
+                }}
+                onClick={() => {
+                  setSectionViewMode("list");
+                }}
+              >
+                <BsListUl size={24} />
+              </ActionIcon>
+              <ActionIcon
+                color="primary"
+                variant="filled"
+                component="a"
+                sx={{
+                  width: 28,
+                  height: 28,
+                }}
+                onClick={() => {
+                  setSectionViewMode("grid");
+                }}
+              >
+                <BsFillGrid3X3GapFill size={24} />
+              </ActionIcon>
+            </>
+          )}
         </Group>
         {isSelfUser && selfHasGames && (
           <Link href="/games">
