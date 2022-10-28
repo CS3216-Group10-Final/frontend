@@ -23,6 +23,7 @@ import ReviewModal from "./ReviewModal";
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const coloredOverlay = getRef("coloredOverlay");
+  const coloredOverlayContent = getRef("coloredOverlayContent");
   return {
     card: {
       position: "relative",
@@ -31,6 +32,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
       [`&:hover .${coloredOverlay}`]: {
         width: "100%",
         visibility: "visible",
+      },
+      [`&:hover .${coloredOverlayContent}`]: {
+        visibility: "visible",
+        transitionDelay: "80ms",
       },
     },
     image: {
@@ -64,6 +69,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
       transition: "80ms",
       visibility: "hidden",
       zIndex: 5,
+    },
+
+    coloredOverlayContent: {
+      ref: coloredOverlayContent,
+      visibility: "hidden",
     },
 
     content: {
@@ -138,70 +148,74 @@ const GridGameEntryCard = ({
           className={classes.coloredOverlay}
           style={{ background: badgeColor[status] }}
         >
-          <div
-            style={{
-              position: "absolute",
-              top: 8,
-              left: 3,
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
-            <Stack>
-              {review && (
+          <div className={classes.coloredOverlayContent}>
+            <div
+              style={{
+                position: "absolute",
+                top: 8,
+                left: 3,
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              <Stack>
+                {review && (
+                  <ActionIcon
+                    variant="light"
+                    onClick={() => {
+                      setReviewModalIsOpen(true);
+                    }}
+                  >
+                    <TbFileText size={24} />
+                  </ActionIcon>
+                )}
+                <Link href={`/games/${game_id}`}>
+                  <ActionIcon variant="light">
+                    <AiOutlineInfoCircle size={24} />
+                  </ActionIcon>
+                </Link>
+              </Stack>
+              {isEditable && (
                 <ActionIcon
                   variant="light"
                   onClick={() => {
-                    setReviewModalIsOpen(true);
+                    onClickEdit(gameEntry);
                   }}
+                  ml={12}
                 >
-                  <TbFileText size={24} />
+                  <TbEdit size={24} />
                 </ActionIcon>
               )}
-              <Link href={`/games/${game_id}`}>
-                <ActionIcon variant="light">
-                  <AiOutlineInfoCircle size={24} />
-                </ActionIcon>
-              </Link>
-            </Stack>
-            {isEditable && (
-              <ActionIcon
-                variant="light"
-                onClick={() => {
-                  onClickEdit(gameEntry);
-                }}
-                ml={12}
-              >
-                <TbEdit size={24} />
-              </ActionIcon>
-            )}
-          </div>
+            </div>
 
-          <div style={{ position: "absolute", bottom: 8, left: 3 }}>
-            <Group>
-              {allPlatformCategories.map((platformCategory) => {
-                if (categorizedPlatforms[platformCategory].length === 0) {
-                  return <></>;
-                } else {
-                  return (
-                    <>
-                      <HoverCard shadow="md" width={100} position="top">
-                        <HoverCard.Target>
-                          <ActionIcon variant="filled">
-                            {getPlatformCategoryIcon(platformCategory)}
-                          </ActionIcon>
-                        </HoverCard.Target>
-                        <HoverCard.Dropdown p={6}>
-                          <Text size="xs" align="center">
-                            {categorizedPlatforms[platformCategory].join(", ")}
-                          </Text>
-                        </HoverCard.Dropdown>
-                      </HoverCard>
-                    </>
-                  );
-                }
-              })}
-            </Group>
+            <div style={{ position: "absolute", bottom: 8, left: 3 }}>
+              <Group spacing="xs">
+                {allPlatformCategories.map((platformCategory) => {
+                  if (categorizedPlatforms[platformCategory].length === 0) {
+                    return <></>;
+                  } else {
+                    return (
+                      <>
+                        <HoverCard shadow="md" width={100} position="top">
+                          <HoverCard.Target>
+                            <ActionIcon variant="filled">
+                              {getPlatformCategoryIcon(platformCategory)}
+                            </ActionIcon>
+                          </HoverCard.Target>
+                          <HoverCard.Dropdown p={6}>
+                            <Text size="xs" align="center">
+                              {categorizedPlatforms[platformCategory].join(
+                                ", "
+                              )}
+                            </Text>
+                          </HoverCard.Dropdown>
+                        </HoverCard>
+                      </>
+                    );
+                  }
+                })}
+              </Group>
+            </div>
           </div>
         </div>
       </Card>
