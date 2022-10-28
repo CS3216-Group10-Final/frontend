@@ -1,4 +1,5 @@
 import { GameEntryStatus } from "@api/types";
+import { useMantineTheme } from "@mantine/core";
 
 export function gameEntryStatusToString(status: GameEntryStatus): string {
   const mapping: Record<GameEntryStatus, string> = {
@@ -35,6 +36,17 @@ export const STATUS_MANTINE_COLOR: Record<GameEntryStatus, string> = {
   [GameEntryStatus.COMPLETED]: "green.5",
   [GameEntryStatus.DROPPED]: "red.5",
 };
+
+export function useStatusColor() {
+  const theme = useMantineTheme();
+  return {
+    [GameEntryStatus.DROPPED]: theme.colors.red[5],
+    [GameEntryStatus.COMPLETED]: theme.colors.green[5],
+    [GameEntryStatus.PLAYING]: theme.colors.yellow[5],
+    [GameEntryStatus.BACKLOG]: theme.colors.blue[5],
+    [GameEntryStatus.WISHLIST]: theme.colors.dark[3],
+  };
+}
 
 export const statusOrderComparator = (
   a: GameEntryStatus,

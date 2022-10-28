@@ -27,7 +27,6 @@ import {
   Stack,
   Text,
   Title,
-  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
@@ -49,6 +48,7 @@ import {
   LIST_OF_STATUSES,
   statusOrderComparator,
   STATUS_MANTINE_COLOR,
+  useStatusColor,
 } from "utils/status";
 
 const useStyles = createStyles((theme) => ({
@@ -308,14 +308,7 @@ interface RatingProps {
 }
 
 const RatingSection = ({ friendRatings }: RatingProps) => {
-  const theme = useMantineTheme();
-  const badgeColor = {
-    [GameEntryStatus.DROPPED]: theme.colors.red[5],
-    [GameEntryStatus.COMPLETED]: theme.colors.green[5],
-    [GameEntryStatus.PLAYING]: theme.colors.yellow[5],
-    [GameEntryStatus.BACKLOG]: theme.colors.blue[5],
-    [GameEntryStatus.WISHLIST]: theme.colors.dark[3],
-  };
+  const badgeColor = useStatusColor();
   const { classes } = useStyles();
 
   const statusFilterform = useForm<{ statusFilter: string[] }>({

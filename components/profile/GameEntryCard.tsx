@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { GameEntry, GameEntryStatus } from "@api/types";
+import { GameEntry } from "@api/types";
 import ReviewModal from "@components/ReviewModal";
 import {
   ActionIcon,
@@ -10,7 +10,6 @@ import {
   Image,
   Stack,
   Text,
-  useMantineTheme,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
@@ -21,12 +20,13 @@ import {
   categorizePlatforms,
   getPlatformCategoryIcon,
 } from "utils/platform_categories";
+import { useStatusColor } from "utils/status";
 import { useMobile } from "utils/useMobile";
 
 type Props = {
   gameEntry: GameEntry;
   username: string;
-  onClickEdit?: (gameEntry: GameEntry) => void;
+  onClickEdit: (gameEntry: GameEntry) => void;
   isEditable: boolean;
 };
 
@@ -44,16 +44,9 @@ const GameEntryCard = (props: Props) => {
   const isMobile = useMobile();
   const { ref, hovered } = useHover();
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState<boolean>(false);
-  const theme = useMantineTheme();
   const categorizedPlatforms = categorizePlatforms(platforms ?? []);
 
-  const badgeColor = {
-    [GameEntryStatus.DROPPED]: theme.colors.red[5],
-    [GameEntryStatus.COMPLETED]: theme.colors.green[5],
-    [GameEntryStatus.PLAYING]: theme.colors.yellow[5],
-    [GameEntryStatus.BACKLOG]: theme.colors.blue[5],
-    [GameEntryStatus.WISHLIST]: theme.colors.dark[3],
-  };
+  const badgeColor = useStatusColor();
 
   return (
     <div>
@@ -150,7 +143,7 @@ const GameEntryCard = (props: Props) => {
                 <ActionIcon
                   mr="sm"
                   onClick={() => {
-                    onClickEdit && onClickEdit(gameEntry);
+                    onClickEdit(gameEntry);
                   }}
                 >
                   <TbEdit size={18} />
