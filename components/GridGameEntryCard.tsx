@@ -1,3 +1,7 @@
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
 import { GameEntry } from "@api/types";
 import {
   ActionIcon,
@@ -8,11 +12,15 @@ import {
   Paper,
   Stack,
   Text,
+  ThemeIcon,
 } from "@mantine/core";
+import { useAppDispatch } from "@redux/hooks";
+import { updateGameEntryFavorite } from "@redux/slices/GameEntry_slice";
 import Link from "next/link";
 import { useState } from "react";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import { AiFillStar, AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
 import { TbEdit, TbFileText } from "react-icons/tb";
+import { showSuccessNotification } from "utils/notifications";
 import {
   allPlatformCategories,
   categorizePlatforms,
@@ -23,6 +31,7 @@ import ReviewModal from "./ReviewModal";
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const coloredOverlay = getRef("coloredOverlay");
+  const coloredOverlayContent = getRef("coloredOverlayContent");
   return {
     card: {
       position: "relative",
@@ -31,6 +40,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
       [`&:hover .${coloredOverlay}`]: {
         width: "100%",
         visibility: "visible",
+      },
+      [`&:hover .${coloredOverlayContent}`]: {
+        visibility: "visible",
+        transitionDelay: "80ms",
       },
     },
     image: {
@@ -66,6 +79,11 @@ const useStyles = createStyles((theme, _params, getRef) => {
       zIndex: 5,
     },
 
+    coloredOverlayContent: {
+      ref: coloredOverlayContent,
+      visibility: "hidden",
+    },
+
     content: {
       height: "100%",
       position: "relative",
@@ -97,14 +115,34 @@ const GridGameEntryCard = ({
     game_cover: cover,
     rating,
     review,
+    is_favourite,
     platforms,
     status,
   } = gameEntry;
   const categorizedPlatforms = categorizePlatforms(platforms ?? []);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState<boolean>(false);
 
+  const dispatch = useAppDispatch();
   const badgeColor = useStatusColor();
 
+  const handleUpdateFavorite = (isFavorite: boolean) => {
+    if (!isEditable) {
+      return;
+    }
+    dispatch(updateGameEntryFavorite({ gameEntry, isFavorite: isFavorite }))
+      .unwrap()
+      .then(() => {
+        showSuccessNotification({
+          title: isFavorite
+            ? "Game added to favorites"
+            : "Game removed from favorites",
+          message: gameEntry.game_name,
+        });
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+  };
   return (
     <div className={classes.card}>
       <Card
@@ -124,9 +162,16 @@ const GridGameEntryCard = ({
         />
         <div className={classes.overlay} />
 
+        {is_favourite && (
+          <div style={{ position: "absolute", top: 8, left: 8, zIndex: 4 }}>
+            <ThemeIcon>
+              <AiFillStar size={18} />
+            </ThemeIcon>
+          </div>
+        )}
         {rating !== null && rating !== undefined && (
           <div style={{ position: "absolute", top: 8, right: 8, zIndex: 7 }}>
-            <Paper p={3}>
+            <Paper py={2} px={6}>
               <Text color={"white"}>{rating}/10</Text>
             </Paper>
           </div>
@@ -138,70 +183,97 @@ const GridGameEntryCard = ({
           className={classes.coloredOverlay}
           style={{ background: badgeColor[status] }}
         >
-          <div
-            style={{
-              position: "absolute",
-              top: 8,
-              left: 3,
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
-            <Stack>
-              {review && (
-                <ActionIcon
-                  variant="light"
-                  onClick={() => {
-                    setReviewModalIsOpen(true);
-                  }}
-                >
-                  <TbFileText size={24} />
-                </ActionIcon>
+          <div className={classes.coloredOverlayContent}>
+            <div
+              style={{
+                position: "absolute",
+                top: 8,
+                left: 3,
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              {(review || is_favourite || (isEditable && !is_favourite)) && (
+                <Stack mr={12}>
+                  {isEditable && !is_favourite && (
+                    <ActionIcon
+                      onClick={() => {
+                        handleUpdateFavorite(true);
+                      }}
+                      variant="light"
+                    >
+                      <AiOutlineStar size={18} />
+                    </ActionIcon>
+                  )}
+                  {is_favourite && (
+                    <ActionIcon
+                      onClick={() => {
+                        handleUpdateFavorite(false);
+                      }}
+                      variant="light"
+                    >
+                      <AiFillStar size={18} />
+                    </ActionIcon>
+                  )}
+                  {review && (
+                    <ActionIcon
+                      variant="light"
+                      onClick={() => {
+                        setReviewModalIsOpen(true);
+                      }}
+                    >
+                      <TbFileText size={24} />
+                    </ActionIcon>
+                  )}
+                </Stack>
               )}
-              <Link href={`/games/${game_id}`}>
-                <ActionIcon variant="light">
-                  <AiOutlineInfoCircle size={24} />
-                </ActionIcon>
-              </Link>
-            </Stack>
-            {isEditable && (
-              <ActionIcon
-                variant="light"
-                onClick={() => {
-                  onClickEdit(gameEntry);
-                }}
-                ml={12}
-              >
-                <TbEdit size={24} />
-              </ActionIcon>
-            )}
-          </div>
+              <Stack>
+                {isEditable && (
+                  <ActionIcon
+                    variant="light"
+                    onClick={() => {
+                      onClickEdit(gameEntry);
+                    }}
+                  >
+                    <TbEdit size={24} />
+                  </ActionIcon>
+                )}
+                <Link href={`/games/${game_id}`}>
+                  <ActionIcon variant="light">
+                    <AiOutlineInfoCircle size={24} />
+                  </ActionIcon>
+                </Link>
+              </Stack>
+            </div>
 
-          <div style={{ position: "absolute", bottom: 8, left: 3 }}>
-            <Group>
-              {allPlatformCategories.map((platformCategory) => {
-                if (categorizedPlatforms[platformCategory].length === 0) {
-                  return <></>;
-                } else {
-                  return (
-                    <>
-                      <HoverCard shadow="md" width={100} position="top">
-                        <HoverCard.Target>
-                          <ActionIcon variant="filled">
-                            {getPlatformCategoryIcon(platformCategory)}
-                          </ActionIcon>
-                        </HoverCard.Target>
-                        <HoverCard.Dropdown p={6}>
-                          <Text size="xs" align="center">
-                            {categorizedPlatforms[platformCategory].join(", ")}
-                          </Text>
-                        </HoverCard.Dropdown>
-                      </HoverCard>
-                    </>
-                  );
-                }
-              })}
-            </Group>
+            <div style={{ position: "absolute", bottom: 8, left: 3 }}>
+              <Group spacing="xs">
+                {allPlatformCategories.map((platformCategory) => {
+                  if (categorizedPlatforms[platformCategory].length === 0) {
+                    return <></>;
+                  } else {
+                    return (
+                      <>
+                        <HoverCard shadow="md" width={100} position="top">
+                          <HoverCard.Target>
+                            <ActionIcon variant="filled">
+                              {getPlatformCategoryIcon(platformCategory)}
+                            </ActionIcon>
+                          </HoverCard.Target>
+                          <HoverCard.Dropdown p={6}>
+                            <Text size="xs" align="center">
+                              {categorizedPlatforms[platformCategory].join(
+                                ", "
+                              )}
+                            </Text>
+                          </HoverCard.Dropdown>
+                        </HoverCard>
+                      </>
+                    );
+                  }
+                })}
+              </Group>
+            </div>
           </div>
         </div>
       </Card>
