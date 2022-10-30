@@ -134,7 +134,13 @@ const ActivitySection = (props: Props) => {
           })}
         >
           <Card
-            style={{ height: isMobile ? 100 : 180, cursor: "pointer" }}
+            style={{
+              height: isMobile ? 100 : 180,
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+            }}
             p="lg"
             shadow="lg"
             radius="md"
@@ -142,9 +148,7 @@ const ActivitySection = (props: Props) => {
               setSelectedRecentGameId(undefined);
             }}
           >
-            <Center>
-              <Text size={24}>All</Text>
-            </Center>
+            <Text size="md">All Activities</Text>
           </Card>
         </Box>
         {recentGames.map((game) => {
@@ -164,6 +168,7 @@ const ActivitySection = (props: Props) => {
                 game={game}
                 height={isMobile ? 100 : 180}
                 hideTitle={isMobile ? true : false}
+                titleSize="md"
                 overrideOnClick={() => {
                   setSelectedRecentGameId(game.id);
                 }}
