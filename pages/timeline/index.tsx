@@ -1,4 +1,5 @@
 import TokenService from "@api/authentication/token_service";
+import PageHeader from "@components/PageHeader";
 import ActivitySection from "@components/profile/ActivitySection";
 import { Loader, Stack, Text } from "@mantine/core";
 import { useAppSelector } from "@redux/hooks";
@@ -19,6 +20,10 @@ const TimelinePage = () => {
 
   return (
     <>
+      <PageHeader
+        title="Timeline"
+        description="View your friend's activities"
+      />
       {user && <ActivitySection user={user} isTimeline />}
       {!user && (
         <Stack align="center">

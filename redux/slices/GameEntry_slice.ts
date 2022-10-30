@@ -32,19 +32,16 @@ const gameEntrySlice = createSlice({
       const newEntries: Record<number, GameEntry> = {};
       const currentEntries = current(state.gameEntries);
       for (const id of Object.keys(currentEntries)) {
-        if (Number(id) == action.payload.id) {
-          newEntries[Number(id)] = action.payload;
-          continue;
-        }
         newEntries[Number(id)] = currentEntries[Number(id)];
       }
+      newEntries[action.payload.id] = action.payload;
       state.gameEntries = newEntries;
     });
     builder.addCase(updateGameEntry.fulfilled, (state, action) => {
       const newEntries: Record<number, GameEntry> = {};
       const currentEntries = current(state.gameEntries);
       for (const id of Object.keys(currentEntries)) {
-        if (Number(id) == action.meta.arg.id) {
+        if (Number(id) === action.meta.arg.id) {
           newEntries[Number(id)] = action.meta.arg;
           continue;
         }
@@ -56,7 +53,7 @@ const gameEntrySlice = createSlice({
       const newEntries: Record<number, GameEntry> = {};
       const currentEntries = current(state.gameEntries);
       for (const id of Object.keys(currentEntries)) {
-        if (Number(id) == action.meta.arg.gameEntry.id) {
+        if (Number(id) === action.meta.arg.gameEntry.id) {
           newEntries[Number(id)] = {
             ...action.meta.arg.gameEntry,
             status: action.meta.arg.newStatus,
@@ -71,7 +68,7 @@ const gameEntrySlice = createSlice({
       const newEntries: Record<number, GameEntry> = {};
       const currentEntries = current(state.gameEntries);
       for (const id of Object.keys(currentEntries)) {
-        if (Number(id) == action.meta.arg.gameEntry.id) {
+        if (Number(id) === action.meta.arg.gameEntry.id) {
           newEntries[Number(id)] = {
             ...action.meta.arg.gameEntry,
             is_favourite: action.meta.arg.isFavorite,
@@ -86,7 +83,7 @@ const gameEntrySlice = createSlice({
       const newEntries: Record<number, GameEntry> = {};
       const currentEntries = current(state.gameEntries);
       for (const id of Object.keys(currentEntries)) {
-        if (Number(id) == action.meta.arg) {
+        if (Number(id) === action.meta.arg) {
           continue;
         }
         newEntries[Number(id)] = currentEntries[Number(id)];
