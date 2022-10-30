@@ -11,6 +11,9 @@ import GameEntryEditModal from "./profile/GameEntryEditModal";
 
 type Props = {
   game: Game;
+  height?: number;
+  hideTitle?: boolean;
+  overrideOnClick?: () => void;
 };
 const useStyles = createStyles((theme, _params, getRef) => {
   const image = getRef("image");
@@ -65,7 +68,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
   };
 });
 
-const GameCard = ({ game }: Props) => {
+const GameCard = ({ game, height, hideTitle, overrideOnClick }: Props) => {
   const { classes } = useStyles();
   const gameEntry = useAppSelector((state) =>
     selectGameEntryByGameId(state, game.id)
@@ -98,7 +101,7 @@ const GameCard = ({ game }: Props) => {
   };
 
   return (
-    <div className={classes.card}>
+    <div className={classes.card} style={height ? { height: height } : {}}>
       {!gameEntry && selfUser && (
         <ActionIcon
           className={classes.quickButton}
@@ -121,12 +124,13 @@ const GameCard = ({ game }: Props) => {
           <TbFileText size={20} />
         </ActionIcon>
       )}
-      <Link href={"/games/" + game.id}>
+      <Link href={overrideOnClick ? "" : "/games/" + game.id}>
         <Card
           p="lg"
           shadow="lg"
           radius="md"
           style={{ width: "100%", height: "100%" }}
+          onClick={overrideOnClick}
         >
           <div
             className={classes.image}
@@ -135,7 +139,7 @@ const GameCard = ({ game }: Props) => {
           <div className={classes.overlay} />
 
           <div className={classes.content}>
-            <Text size="lg">{game.name}</Text>
+            {!hideTitle && <Text size="lg">{game.name}</Text>}
           </div>
         </Card>
       </Link>

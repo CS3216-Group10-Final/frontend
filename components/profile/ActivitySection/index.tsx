@@ -1,18 +1,26 @@
-import { getSelfTimelineApi, getUserActivityByIdApi } from "@api/activity_api";
+import {
+  getSelfTimelineApi,
+  getSelfTimelineRecentGamesApi,
+  getUserActivityByIdApi,
+} from "@api/activity_api";
 import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
-import { Activity, User } from "@api/types";
+import { Activity, Game, User } from "@api/types";
+import GameCard from "@components/GameCard";
 import {
   Box,
+  Card,
   Center,
   Divider,
   LoadingOverlay,
   Pagination,
+  SimpleGrid,
   Stack,
   Text,
   Title,
+  useMantineTheme,
 } from "@mantine/core";
 import { differenceInDays, format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
@@ -24,6 +32,8 @@ type Props = {
   isTimeline: boolean;
 };
 
+const NUM_OF_RECENT_GAMES = 5;
+
 const ActivitySection = (props: Props) => {
   const { user, isTimeline } = props;
 
@@ -31,13 +41,20 @@ const ActivitySection = (props: Props) => {
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(99);
 
+  const [recentGames, setRecentGames] = useState<Game[]>([]);
+  const [selectedRecentGameId, setSelectedRecentGameId] = useState<number>();
+
   const [isLoading, setIsLoading] = useState(false);
+  const theme = useMantineTheme();
   const isMobile = useMobile();
 
   useEffect(() => {
     setIsLoading(true);
     if (isTimeline) {
-      getSelfTimelineApi({ page: activePage })
+      const timelinePromise = getSelfTimelineApi({
+        page: activePage,
+        game_id: selectedRecentGameId,
+      })
         .then(({ activities, totalPage }) => {
           setActivities(activities);
           setTotalPage(totalPage ?? 0);
@@ -45,10 +62,23 @@ const ActivitySection = (props: Props) => {
         .catch((error) => {
           showApiRequestErrorNotification(handleApiRequestError(error));
           setActivities([]);
-        })
-        .finally(() => {
-          setIsLoading(false);
         });
+
+      const recentGamesPromise = getSelfTimelineRecentGamesApi(
+        NUM_OF_RECENT_GAMES
+      )
+        .then((games) => {
+          setRecentGames(games);
+          console.log(games);
+        })
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+          setRecentGames([]);
+        });
+
+      Promise.all([timelinePromise, recentGamesPromise]).finally(() => {
+        setIsLoading(false);
+      });
     } else {
       getUserActivityByIdApi(user.id, activePage)
         .then(({ activities, totalPage }) => {
@@ -62,7 +92,7 @@ const ActivitySection = (props: Props) => {
           setIsLoading(false);
         });
     }
-  }, [user.id, isTimeline, activePage]);
+  }, [user.id, isTimeline, activePage, selectedRecentGameId]);
 
   const loadPage = (page: number) => {
     setActivePage(page);
@@ -86,6 +116,62 @@ const ActivitySection = (props: Props) => {
   return (
     <Box>
       {isLoading && <LoadingOverlay visible={isLoading} mt="md" />}
+      <SimpleGrid
+        cols={6}
+        spacing="lg"
+        breakpoints={[
+          { maxWidth: theme.breakpoints.md, cols: 3, spacing: "sm" },
+          { maxWidth: theme.breakpoints.sm, cols: 2, spacing: "sm" },
+        ]}
+      >
+        <Box
+          sx={(theme) => ({
+            padding: 2,
+            borderRadius: theme.radius.md,
+            backgroundColor: !selectedRecentGameId
+              ? theme.colors.yellow[5]
+              : "",
+          })}
+        >
+          <Card
+            style={{ height: isMobile ? 100 : 180, cursor: "pointer" }}
+            p="lg"
+            shadow="lg"
+            radius="md"
+            onClick={() => {
+              setSelectedRecentGameId(undefined);
+            }}
+          >
+            <Center>
+              <Text size={24}>All</Text>
+            </Center>
+          </Card>
+        </Box>
+        {recentGames.map((game) => {
+          return (
+            <Box
+              key={game.id}
+              sx={(theme) => ({
+                padding: 2,
+                borderRadius: theme.radius.md,
+                backgroundColor:
+                  selectedRecentGameId === game.id
+                    ? theme.colors.yellow[5]
+                    : "",
+              })}
+            >
+              <GameCard
+                game={game}
+                height={isMobile ? 100 : 180}
+                hideTitle={isMobile ? true : false}
+                overrideOnClick={() => {
+                  setSelectedRecentGameId(game.id);
+                }}
+              />
+            </Box>
+          );
+        })}
+      </SimpleGrid>
       <Box sx={{ position: "relative", height: isLoading ? 300 : "auto" }}>
         {activityDates.map((date) => {
           return (
