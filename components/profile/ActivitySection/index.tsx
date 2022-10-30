@@ -6,8 +6,10 @@ import {
 import { Activity, User } from "@api/types";
 import {
   Box,
+  Center,
   Divider,
   LoadingOverlay,
+  Pagination,
   Stack,
   Text,
   Title,
@@ -25,27 +27,33 @@ type Props = {
 const ActivitySection = (props: Props) => {
   const { user, isTimeline } = props;
 
-  const [isLoading, setIsLoading] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [activePage, setActivePage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(99);
+
+  const [isLoading, setIsLoading] = useState(false);
   const isMobile = useMobile();
 
   useEffect(() => {
     setIsLoading(true);
     if (isTimeline) {
-      getSelfTimelineApi()
-        .then((_activities) => {
-          setActivities(_activities);
+      getSelfTimelineApi({ page: activePage })
+        .then(({ activities, totalPage }) => {
+          setActivities(activities);
+          setTotalPage(totalPage ?? 0);
         })
         .catch((error) => {
           showApiRequestErrorNotification(handleApiRequestError(error));
+          setActivities([]);
         })
         .finally(() => {
           setIsLoading(false);
         });
     } else {
-      getUserActivityByIdApi(user.id)
-        .then((_activities) => {
-          setActivities(_activities);
+      getUserActivityByIdApi(user.id, activePage)
+        .then(({ activities, totalPage }) => {
+          setActivities(activities);
+          setTotalPage(totalPage ?? 0);
         })
         .catch((error) => {
           showApiRequestErrorNotification(handleApiRequestError(error));
@@ -54,7 +62,11 @@ const ActivitySection = (props: Props) => {
           setIsLoading(false);
         });
     }
-  }, [user.id, isTimeline]);
+  }, [user.id, isTimeline, activePage]);
+
+  const loadPage = (page: number) => {
+    setActivePage(page);
+  };
 
   const activitiesByDate = activities.reduce(
     (acc: Record<string, Activity[]>, activity) => {
@@ -98,6 +110,15 @@ const ActivitySection = (props: Props) => {
               <Text size={isMobile ? 14 : 18}>Try following some people!</Text>
             )}
           </Stack>
+        )}
+        {totalPage > 0 && (
+          <Center mt={20}>
+            <Pagination
+              total={totalPage}
+              page={activePage}
+              onChange={loadPage}
+            />
+          </Center>
         )}
       </Box>
     </Box>
