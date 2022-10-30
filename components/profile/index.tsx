@@ -3,6 +3,7 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { followUserApi, unfollowUserApi } from "@api/follow_api";
+import { loginSteamApi } from "@api/steam_api";
 import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
@@ -27,6 +28,7 @@ import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
 import { AiOutlineCamera, AiOutlineEdit } from "react-icons/ai";
+import { FaSteam } from "react-icons/fa";
 import { useMobile } from "utils/useMobile";
 import ActivitySection from "./ActivitySection";
 import Badge from "./Badge";
@@ -133,6 +135,14 @@ const ProfilePage = (props: Props) => {
     }
   };
 
+  const loginSteam = () => {
+    loginSteamApi().then((html) => {
+      const parser = new DOMParser();
+      const document = parser.parseFromString(html, "text/html");
+      console.log(document);
+    });
+  };
+
   const SectionComponent = {
     [Section.STATISTICS]: (
       <StatisticsSection user={user} userStatistics={userStatistics} />
@@ -224,6 +234,13 @@ const ProfilePage = (props: Props) => {
               </Card>
               {isSelfProfilePage && (
                 <Group position={isMobile ? "center" : "right"} mt={12}>
+                  <Button
+                    leftIcon={<FaSteam />}
+                    variant="default"
+                    onClick={loginSteam}
+                  >
+                    Sync Steam
+                  </Button>
                   <Button
                     onClick={openChangeUserNameModal}
                     leftIcon={<AiOutlineEdit />}
