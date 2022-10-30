@@ -22,6 +22,8 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { useAppDispatch } from "@redux/hooks";
+import { getGameEntries } from "@redux/slices/GameEntry_slice";
 import { differenceInDays, format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { useMobile } from "utils/useMobile";
@@ -47,6 +49,8 @@ const ActivitySection = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const theme = useMantineTheme();
   const isMobile = useMobile();
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setIsLoading(true);
@@ -93,6 +97,14 @@ const ActivitySection = (props: Props) => {
         });
     }
   }, [user.id, isTimeline, activePage, selectedRecentGameId]);
+
+  useEffect(() => {
+    dispatch(getGameEntries({ user_id: user.id }))
+      .unwrap()
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      });
+  });
 
   const loadPage = (page: number) => {
     setActivePage(page);
