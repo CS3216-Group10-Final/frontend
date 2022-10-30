@@ -1,6 +1,10 @@
 import axiosInstance from "./axios";
-import { getPathForUserActivityWithId, TIMELINE_PATH } from "./endpoint_paths";
-import { Activity } from "./types";
+import {
+  getPathForUserActivityWithId,
+  TIMELINE_PATH,
+  TIMELINE_RECENT_GAMES_PATH,
+} from "./endpoint_paths";
+import { Activity, Game } from "./types";
 
 interface GetActivityResponse {
   activities: Activity[];
@@ -27,7 +31,7 @@ export async function getUserActivityByIdApi(
   return { activities: response.data, totalPage: totalPage };
 }
 
-interface TimelineProps {
+interface TimelineParams {
   game_id?: number;
   username?: string;
   query?: string;
@@ -39,7 +43,7 @@ export async function getSelfTimelineApi({
   username,
   query,
   page,
-}: TimelineProps): Promise<GetActivityResponse> {
+}: TimelineParams): Promise<GetActivityResponse> {
   const response = await axiosInstance.get<Activity[]>(TIMELINE_PATH, {
     params: {
       ...(game_id ? { game_id: game_id } : {}),
@@ -54,4 +58,15 @@ export async function getSelfTimelineApi({
     ? Number(pageNumber)
     : undefined;
   return { activities: response.data, totalPage: totalPage };
+}
+
+export async function getSelfTimelineRecentGamesApi(
+  n: number
+): Promise<Game[]> {
+  const response = await axiosInstance.get<Game[]>(TIMELINE_RECENT_GAMES_PATH, {
+    params: {
+      ...(n ? { n: n } : {}),
+    },
+  });
+  return response.data;
 }

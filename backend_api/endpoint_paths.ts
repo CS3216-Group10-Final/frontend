@@ -48,6 +48,7 @@ export function getPathForUserActivityWithId(id: number) {
 
 // Timeline
 export const TIMELINE_PATH = "/timeline";
+export const TIMELINE_RECENT_GAMES_PATH = "/timeline/recentgames";
 
 // Reviews
 export const REVIEW_PATH = "/reviews";
