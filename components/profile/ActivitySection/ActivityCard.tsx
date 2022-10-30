@@ -1,6 +1,14 @@
 import { Activity, ActivityType, GameEntryStatus } from "@api/types";
 import ReviewModal from "@components/ReviewModal";
-import { Anchor, Box, Card, Image, Text, ThemeIcon } from "@mantine/core";
+import {
+  Anchor,
+  Avatar,
+  Box,
+  Card,
+  Image,
+  Text,
+  ThemeIcon,
+} from "@mantine/core";
 import Link from "next/link";
 import { useState } from "react";
 import { AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
@@ -117,9 +125,8 @@ const ActivityCard = (props: Props) => {
         <ThemeIcon color={activityIconColors[activity_type]}>
           {activityIcons[activity_type]}
         </ThemeIcon>
-        <Image
-          width={48}
-          height={48}
+        <Avatar
+          size={48}
           src={activity.user.profile_picture_link}
           alt="profile picture"
           radius="md"
@@ -136,7 +143,7 @@ const ActivityCard = (props: Props) => {
             width={48}
             height={48}
             src={activity.game.cover}
-            alt="profile picture"
+            alt="Game picture"
             radius="md"
             sx={{ cursor: "pointer" }}
           />
