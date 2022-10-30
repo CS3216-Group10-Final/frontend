@@ -116,67 +116,69 @@ const ActivitySection = (props: Props) => {
   return (
     <Box>
       {isLoading && <LoadingOverlay visible={isLoading} mt="md" />}
-      <SimpleGrid
-        cols={6}
-        spacing="lg"
-        breakpoints={[
-          { maxWidth: theme.breakpoints.md, cols: 3, spacing: "sm" },
-          { maxWidth: theme.breakpoints.sm, cols: 2, spacing: "sm" },
-        ]}
-      >
-        <Box
-          sx={(theme) => ({
-            padding: 2,
-            borderRadius: theme.radius.md,
-            backgroundColor: !selectedRecentGameId
-              ? theme.colors.yellow[5]
-              : "",
-          })}
+      {isTimeline && (
+        <SimpleGrid
+          cols={6}
+          spacing="lg"
+          breakpoints={[
+            { maxWidth: theme.breakpoints.md, cols: 3, spacing: "sm" },
+            { maxWidth: theme.breakpoints.sm, cols: 2, spacing: "sm" },
+          ]}
         >
-          <Card
-            style={{
-              height: isMobile ? 100 : 180,
-              cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-            }}
-            p="lg"
-            shadow="lg"
-            radius="md"
-            onClick={() => {
-              setSelectedRecentGameId(undefined);
-            }}
+          <Box
+            sx={(theme) => ({
+              padding: 2,
+              borderRadius: theme.radius.md,
+              backgroundColor: !selectedRecentGameId
+                ? theme.colors.yellow[5]
+                : "",
+            })}
           >
-            <Text size="md">All Activities</Text>
-          </Card>
-        </Box>
-        {recentGames.map((game) => {
-          return (
-            <Box
-              key={game.id}
-              sx={(theme) => ({
-                padding: 2,
-                borderRadius: theme.radius.md,
-                backgroundColor:
-                  selectedRecentGameId === game.id
-                    ? theme.colors.yellow[5]
-                    : "",
-              })}
+            <Card
+              style={{
+                height: isMobile ? 100 : 180,
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+              }}
+              p="lg"
+              shadow="lg"
+              radius="md"
+              onClick={() => {
+                setSelectedRecentGameId(undefined);
+              }}
             >
-              <GameCard
-                game={game}
-                height={isMobile ? 100 : 180}
-                hideTitle={isMobile ? true : false}
-                titleSize="md"
-                overrideOnClick={() => {
-                  setSelectedRecentGameId(game.id);
-                }}
-              />
-            </Box>
-          );
-        })}
-      </SimpleGrid>
+              <Text size="md">All Activities</Text>
+            </Card>
+          </Box>
+          {recentGames.map((game) => {
+            return (
+              <Box
+                key={game.id}
+                sx={(theme) => ({
+                  padding: 2,
+                  borderRadius: theme.radius.md,
+                  backgroundColor:
+                    selectedRecentGameId === game.id
+                      ? theme.colors.yellow[5]
+                      : "",
+                })}
+              >
+                <GameCard
+                  game={game}
+                  height={isMobile ? 100 : 180}
+                  hideTitle={isMobile ? true : false}
+                  titleSize="md"
+                  overrideOnClick={() => {
+                    setSelectedRecentGameId(game.id);
+                  }}
+                />
+              </Box>
+            );
+          })}
+        </SimpleGrid>
+      )}
       <Box sx={{ position: "relative", height: isLoading ? 300 : "auto" }}>
         {activityDates.map((date) => {
           return (
