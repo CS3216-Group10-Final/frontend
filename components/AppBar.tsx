@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useMobile } from "utils/useMobile";
 import AuthModal from "./AuthModal";
+import UserSearch from "./UserSearch";
 
 const AppBar = () => {
   const [authModalIsOpen, setAuthModalIsOpen] = useState(false);
@@ -103,6 +104,7 @@ const AppBar = () => {
           )}
         </Group>
         <Group>
+          {user && !isMobile && <UserSearch />}
           {user && (
             <Link href={`/user/${user.username}`}>
               <Avatar
