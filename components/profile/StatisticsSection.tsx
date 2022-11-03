@@ -1,5 +1,5 @@
 import { GameEntryStatus, User, UserStatistics } from "@api/types";
-import { Box, Card, Grid, Group, Text } from "@mantine/core";
+import { Box, Card, Grid, Group, Text, ThemeIcon } from "@mantine/core";
 import ChartBarDistribution from "./ChartBarDistribution";
 import { TbStars, TbDeviceGamepad2 } from "react-icons/tb";
 
@@ -29,23 +29,21 @@ const StatisticsSection = (props: Props) => {
     <Box>
       <Grid>
         <Grid.Col xs={12} sm={6}>
-          <Card
-            radius="lg"
-            shadow="sm"
-            p="xl"
-            color="yellow"
-            sx={(theme) => ({
-              backgroundImage: theme.fn.linearGradient(
-                45,
-                theme.colors.yellow[5],
-                theme.colors.orange[5]
-              ),
-              color: theme.white,
-            })}
-          >
+          <Card radius="lg" shadow="sm" p="xl">
             <Group position="apart">
               <Group>
-                <TbStars size={64} />
+                <ThemeIcon
+                  size={80}
+                  radius="lg"
+                  variant="gradient"
+                  gradient={{
+                    from: "yellow",
+                    to: "orange",
+                    deg: 45,
+                  }}
+                >
+                  <TbStars size={64} />
+                </ThemeIcon>
                 <Text
                   align="center"
                   size={24}
@@ -63,23 +61,21 @@ const StatisticsSection = (props: Props) => {
           </Card>
         </Grid.Col>
         <Grid.Col xs={12} sm={6}>
-          <Card
-            radius="lg"
-            shadow="sm"
-            p="xl"
-            color="yellow"
-            sx={(theme) => ({
-              backgroundImage: theme.fn.linearGradient(
-                45,
-                theme.colors.yellow[5],
-                theme.colors.orange[5]
-              ),
-              color: theme.white,
-            })}
-          >
+          <Card radius="lg" shadow="sm" p="xl">
             <Group position="apart">
               <Group>
-                <TbDeviceGamepad2 size={64} />
+                <ThemeIcon
+                  size={80}
+                  radius="lg"
+                  variant="gradient"
+                  gradient={{
+                    from: "yellow",
+                    to: "orange",
+                    deg: 45,
+                  }}
+                >
+                  <TbDeviceGamepad2 size={64} />
+                </ThemeIcon>
                 <Text
                   align="center"
                   size={24}
