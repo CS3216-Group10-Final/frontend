@@ -1,6 +1,10 @@
 import { AuthExpectedError } from "./authentication/authentication_api";
 import axiosInstance from "./axios";
-import { getPathForGetUser, USER_PATH } from "./endpoint_paths";
+import {
+  getPathForGetUser,
+  USER_COLLECTION_PATH,
+  USER_PATH,
+} from "./endpoint_paths";
 import { ErrorType } from "./error_handling";
 import { User } from "./types";
 
@@ -64,6 +68,25 @@ export async function updateSelfUsernameApi(username: string): Promise<User> {
 export async function updateSelfBioApi(bio: string): Promise<User> {
   const response = await axiosInstance.patch<User>(USER_PATH, {
     bio: bio,
+  });
+  return response.data;
+}
+
+interface UserListParams {
+  page: number;
+  query: string;
+}
+
+export async function getListOfUsersApi({
+  page,
+  query,
+}: UserListParams): Promise<User[]> {
+  const response = await axiosInstance.get<User[]>(USER_COLLECTION_PATH, {
+    params: {
+      ...(page ? { page: page } : {}),
+      ...(query ? { query: query } : {}),
+    },
+    authNotRequired: true,
   });
   return response.data;
 }
