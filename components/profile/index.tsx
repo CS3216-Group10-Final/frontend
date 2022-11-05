@@ -137,9 +137,11 @@ const ProfilePage = (props: Props) => {
 
   const loginSteam = () => {
     loginSteamApi().then((html) => {
-      const parser = new DOMParser();
-      const document = parser.parseFromString(html, "text/html");
-      console.log(document);
+      const myWindow = window.open("", "response", "resizable=yes");
+      if (myWindow) {
+        console.log(html);
+        myWindow.document.write(html);
+      }
     });
   };
 
