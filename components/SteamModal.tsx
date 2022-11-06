@@ -98,10 +98,10 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
         </Button>
       </Group>
       <Space h="md" />
-      <Divider />
-      <Space h="md" />
-      {games.length > 0 && (
+      {games.length > 0 && user?.steamid && (
         <>
+          <Divider />
+          <Space h="md" />
           <div style={{ position: "relative" }}>
             <LoadingOverlay visible={isLoading} overlayBlur={1} zIndex="1" />
             <SimpleGrid
@@ -151,16 +151,18 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
           <Space h="lg" />
         </>
       )}
-      <Group position="right">
-        <Tooltip
-          label="You can choose which games to add to your DisplayCase!"
-          position="bottom"
-        >
-          <Button leftIcon={<FaSteam />} color="green">
-            Import Games from Steam
-          </Button>
-        </Tooltip>
-      </Group>
+      {user?.steamid && (
+        <Group position="right">
+          <Tooltip
+            label="You can choose which games to add to your DisplayCase!"
+            position="bottom"
+          >
+            <Button leftIcon={<FaSteam />} color="green">
+              Import Games from Steam
+            </Button>
+          </Tooltip>
+        </Group>
+      )}
     </Modal>
   );
 };
