@@ -2,7 +2,6 @@ import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
-import { getGameListApi } from "@api/games_api";
 import { getSteamGamesApi, getSteamLoginUrl } from "@api/steam_api";
 import { Game, GameEntryStatus } from "@api/types";
 import {
@@ -19,10 +18,12 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useAppSelector } from "@redux/hooks";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import { importAllSteamGames } from "@redux/slices/GameEntry_slice";
 import { selectUser } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
 import { FaSteam } from "react-icons/fa";
+import { showSuccessNotification } from "utils/notifications";
 import { STATUS_DATA } from "utils/status";
 import { useMobile } from "utils/useMobile";
 import GameCard from "./GameCard";
@@ -43,12 +44,12 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const isMobile = useMobile();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && user?.steamid) {
       setIsLoading(true);
-      //TODO Replace with actual get game list for steam
-      getGameListApi({ page: activePage })
+      getSteamGamesApi({ page: activePage })
         .then(({ games, totalPage }) => {
           setGames(games);
           setTotalPage(totalPage ? totalPage : 0);
@@ -59,9 +60,14 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
         })
         .finally(() => {
           setIsLoading(false);
+          showSuccessNotification({
+            title: "Games successfully added!",
+            message: `Added all games to your DisplayCase!`,
+          });
+          onClose();
         });
     }
-  }, [activePage, isOpen, user]);
+  }, [activePage, isOpen, user, onClose]);
 
   const loginSteam = () => {
     const steamUrl = getSteamLoginUrl();
@@ -73,8 +79,14 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
   };
 
   const addAllGamesToDisplayCase = () => {
-    // TODO implement
-    // addAllSteamGamesApi(addAllGamesStatus)
+    setIsLoading(true);
+    dispatch(importAllSteamGames({ status: addAllGamesStatus }))
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -155,7 +167,7 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
                 }
               />
             </Group>
-            <Button>Add All</Button>
+            <Button onClick={addAllGamesToDisplayCase}>Add All</Button>
           </Group>
         </>
       )}
