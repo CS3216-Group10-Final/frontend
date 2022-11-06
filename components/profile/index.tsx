@@ -3,11 +3,11 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { followUserApi, unfollowUserApi } from "@api/follow_api";
-import { loginSteamApi } from "@api/steam_api";
 import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import GameSection from "@components/profile/GameSection";
+import SteamModal from "@components/SteamModal";
 import {
   ActionIcon,
   Avatar,
@@ -66,6 +66,7 @@ const ProfilePage = (props: Props) => {
   const [activeSection, setActiveSection] = useState(Section.GAMES);
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
+  const [steamModalIsOpen, setSteamModalIsOpen] = useState(false);
 
   async function updateUserStatistics(username: string) {
     getUserStatisticsByNameApi(username)
@@ -133,16 +134,6 @@ const ProfilePage = (props: Props) => {
       followUserApi(user.username);
       setUser({ ...user, is_following: true });
     }
-  };
-
-  const loginSteam = () => {
-    loginSteamApi().then((html) => {
-      const myWindow = window.open("", "response", "resizable=yes");
-      if (myWindow) {
-        console.log(html);
-        myWindow.document.write(html);
-      }
-    });
   };
 
   const SectionComponent = {
@@ -239,7 +230,9 @@ const ProfilePage = (props: Props) => {
                   <Button
                     leftIcon={<FaSteam />}
                     variant="default"
-                    onClick={loginSteam}
+                    onClick={() => {
+                      setSteamModalIsOpen(true);
+                    }}
                   >
                     Sync Steam
                   </Button>
@@ -277,6 +270,10 @@ const ProfilePage = (props: Props) => {
       <UploadProfileModal
         opened={profilePicModalIsOpen}
         onClose={() => setProfilePicModalIsOpen(false)}
+      />
+      <SteamModal
+        isOpen={steamModalIsOpen}
+        onClose={() => setSteamModalIsOpen(false)}
       />
     </>
   );

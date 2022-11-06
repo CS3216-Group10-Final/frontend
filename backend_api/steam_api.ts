@@ -1,13 +1,8 @@
 import TokenService from "./authentication/token_service";
-import axiosInstance from "./axios";
 import { STEAM_LOGIN_PATH } from "./endpoint_paths";
 
-export async function loginSteamApi() {
+export function getSteamLoginUrl() {
   const accessToken = TokenService.getLocalAccessToken();
-  const response = await axiosInstance.get(STEAM_LOGIN_PATH, {
-    params: {
-      user: accessToken,
-    },
-  });
-  return response.data;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BE_ENDPOINT;
+  return API_BASE_URL + STEAM_LOGIN_PATH + "?user=" + accessToken;
 }

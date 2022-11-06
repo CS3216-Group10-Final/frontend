@@ -1,0 +1,168 @@
+import {
+  handleApiRequestError,
+  showApiRequestErrorNotification,
+} from "@api/error_handling";
+import { getGameListApi } from "@api/games_api";
+import { getSteamLoginUrl } from "@api/steam_api";
+import { Game, GameEntryStatus } from "@api/types";
+import {
+  Button,
+  Center,
+  Divider,
+  Group,
+  LoadingOverlay,
+  Modal,
+  Pagination,
+  Select,
+  SimpleGrid,
+  Space,
+  Text,
+  Tooltip,
+} from "@mantine/core";
+import { useAppSelector } from "@redux/hooks";
+import { selectUser } from "@redux/slices/User_slice";
+import { useEffect, useState } from "react";
+import { FaSteam } from "react-icons/fa";
+import { STATUS_DATA } from "utils/status";
+import { useMobile } from "utils/useMobile";
+import GameCard from "./GameCard";
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const SteamModal = ({ isOpen, onClose }: Props) => {
+  const user = useAppSelector(selectUser);
+  const [activePage, setActivePage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(99);
+  const [games, setGames] = useState<Game[]>([]);
+  const [addAllGamesStatus, setAddAllGamesStatus] = useState<GameEntryStatus>(
+    GameEntryStatus.COMPLETED
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const isMobile = useMobile();
+
+  useEffect(() => {
+    setIsLoading(true);
+    //TODO Replace with actual get game list for steam
+    getGameListApi({ page: activePage })
+      .then(({ games, totalPage }) => {
+        setGames(games);
+        setTotalPage(totalPage ? totalPage : 0);
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+        setGames([]);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [activePage]);
+
+  const loginSteam = () => {
+    const steamUrl = getSteamLoginUrl();
+    window.open(steamUrl, "_blank");
+  };
+
+  const loadPage = (page: number) => {
+    setActivePage(page);
+  };
+
+  const addAllGamesToDisplayCase = () => {
+    // TODO implement
+    // addAllSteamGamesApi(addAllGamesStatus)
+  };
+
+  return (
+    <Modal
+      title={
+        <Group>
+          <FaSteam />
+          <Text>Steam</Text>
+        </Group>
+      }
+      opened={isOpen}
+      onClose={onClose}
+      size={isMobile ? "md" : "xl"}
+    >
+      <Group position="apart">
+        <Text>Account Synced: </Text>
+        <Text>{user?.personaname ? user.personaname : "None"}</Text>
+      </Group>
+      <Space h="md" />
+      <Group position="right">
+        <Button leftIcon={<FaSteam />} variant="default" onClick={loginSteam}>
+          Sync New Account
+        </Button>
+      </Group>
+      <Space h="md" />
+      <Divider />
+      <Space h="md" />
+      {games.length > 0 && (
+        <>
+          <div style={{ position: "relative" }}>
+            <LoadingOverlay visible={isLoading} overlayBlur={1} zIndex="1" />
+            <SimpleGrid
+              cols={4}
+              spacing="lg"
+              breakpoints={[{ maxWidth: 755, cols: 2, spacing: "sm" }]}
+            >
+              {games.map((game) => {
+                return (
+                  <GameCard
+                    game={game}
+                    key={game.id}
+                    height={isMobile ? 100 : 220}
+                    hideTitle={isMobile ? true : false}
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    overrideOnClick={() => {}}
+                  />
+                );
+              })}
+            </SimpleGrid>
+          </div>
+          <Space h="lg" />
+          <Center>
+            <Pagination
+              total={totalPage}
+              page={activePage}
+              onChange={loadPage}
+              // size={isMobile ? "sm" : "md"}
+            />
+          </Center>
+          <Space h="md" />
+          <Divider />
+          <Space h="md" />
+          <Group position="apart">
+            <Group>
+              <Text>Add all games to: </Text>
+              <Select
+                value={String(addAllGamesStatus)}
+                data={STATUS_DATA}
+                onChange={(newStatus) =>
+                  setAddAllGamesStatus(Number(newStatus))
+                }
+              />
+            </Group>
+            <Button>Add All</Button>
+          </Group>
+          <Space h="lg" />
+        </>
+      )}
+      <Group position="right">
+        <Tooltip
+          label="You can choose which games to add to your DisplayCase!"
+          position="bottom"
+        >
+          <Button leftIcon={<FaSteam />} color="green">
+            Import Games from Steam
+          </Button>
+        </Tooltip>
+      </Group>
+    </Modal>
+  );
+};
+
+export default SteamModal;

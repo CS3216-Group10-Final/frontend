@@ -26,6 +26,8 @@ export interface User {
   profile_picture_link: string;
   is_following: boolean;
   badges: BadgeEntry[];
+  steamid?: string;
+  personaname?: string;
 }
 
 export interface UserStatistics {
