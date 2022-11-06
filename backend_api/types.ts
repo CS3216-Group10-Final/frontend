@@ -30,6 +30,7 @@ export interface User {
 
 export interface UserStatistics {
   average_rating: number;
+  total_games_played: number;
   game_status_distribution: Partial<Record<GameEntryStatus, number>>;
   game_genre_distribution: Partial<Record<Genre, number>>;
   platform_distribution: Partial<Record<Platform, number>>;

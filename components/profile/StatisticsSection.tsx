@@ -87,8 +87,7 @@ const StatisticsSection = (props: Props) => {
                 </Text>
               </Group>
               <Text align="center" size={64} weight={700}>
-                {/* TODO: change to total game count */}
-                {121}
+                {userStatistics.total_games_played}
               </Text>
             </Group>
           </Card>
