@@ -9,7 +9,7 @@ import {
 import { useAppSelector } from "@redux/hooks";
 import { selectGameEntryByGameId } from "@redux/slices/GameEntry_slice";
 import { selectUser } from "@redux/slices/User_slice";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { TbFileText } from "react-icons/tb";
@@ -91,6 +91,7 @@ const GameCard = ({
     GameEntry | undefined
   >(undefined);
   const selfUser = useAppSelector(selectUser);
+  const router = useRouter();
   const newGameEntry = {
     id: 0,
     user_id: selfUser?.id ?? 0,
@@ -101,6 +102,7 @@ const GameCard = ({
     is_favourite: false,
     status: GameEntryStatus.WISHLIST,
   };
+
   const handleEditModalOpen = (isAdding: boolean) => {
     if (isAdding) {
       setGameEntryModalData(newGameEntry);
@@ -109,8 +111,13 @@ const GameCard = ({
     }
     setEditModalOpen(true);
   };
+
   const handleEditModalClose = () => {
     setEditModalOpen(false);
+  };
+
+  const goToGamePage = () => {
+    router.push("/games/" + game.id);
   };
 
   return (
@@ -137,27 +144,25 @@ const GameCard = ({
           <TbFileText size={20} />
         </ActionIcon>
       )}
-      <Link href={overrideOnClick ? "" : "/games/" + game.id}>
-        <Card
-          p="lg"
-          shadow="lg"
-          radius="md"
-          style={{ width: "100%", height: "100%" }}
-          onClick={overrideOnClick}
-        >
-          <div
-            className={classes.image}
-            style={{ backgroundImage: `url(${game.cover})` }}
-          />
-          <div className={classes.overlay} />
+      <Card
+        p="lg"
+        shadow="lg"
+        radius="md"
+        style={{ width: "100%", height: "100%" }}
+        onClick={overrideOnClick ? overrideOnClick : goToGamePage}
+      >
+        <div
+          className={classes.image}
+          style={{ backgroundImage: `url(${game.cover})` }}
+        />
+        <div className={classes.overlay} />
 
-          <div className={classes.content}>
-            {!hideTitle && (
-              <Text size={titleSize ? titleSize : "lg"}>{game.name}</Text>
-            )}
-          </div>
-        </Card>
-      </Link>
+        <div className={classes.content}>
+          {!hideTitle && (
+            <Text size={titleSize ? titleSize : "lg"}>{game.name}</Text>
+          )}
+        </div>
+      </Card>
       {gameEntryModalData && (
         <GameEntryEditModal
           opened={isEditModalOpen}
