@@ -3,7 +3,7 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameListApi } from "@api/games_api";
-import { getSteamLoginUrl } from "@api/steam_api";
+import { getSteamGamesApi, getSteamLoginUrl } from "@api/steam_api";
 import { Game, GameEntryStatus } from "@api/types";
 import {
   Button,
@@ -17,7 +17,7 @@ import {
   SimpleGrid,
   Space,
   Text,
-  Tooltip,
+  Title,
 } from "@mantine/core";
 import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
@@ -45,21 +45,23 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
   const isMobile = useMobile();
 
   useEffect(() => {
-    setIsLoading(true);
-    //TODO Replace with actual get game list for steam
-    getGameListApi({ page: activePage })
-      .then(({ games, totalPage }) => {
-        setGames(games);
-        setTotalPage(totalPage ? totalPage : 0);
-      })
-      .catch((error) => {
-        showApiRequestErrorNotification(handleApiRequestError(error));
-        setGames([]);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [activePage]);
+    if (isOpen) {
+      setIsLoading(true);
+      //TODO Replace with actual get game list for steam
+      getGameListApi({ page: activePage })
+        .then(({ games, totalPage }) => {
+          setGames(games);
+          setTotalPage(totalPage ? totalPage : 0);
+        })
+        .catch((error) => {
+          showApiRequestErrorNotification(handleApiRequestError(error));
+          setGames([]);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [activePage, isOpen, user]);
 
   const loginSteam = () => {
     const steamUrl = getSteamLoginUrl();
@@ -98,12 +100,19 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
         </Button>
       </Group>
       <Space h="md" />
+      <LoadingOverlay visible={isLoading} overlayBlur={1} zIndex="1" />
+      {games.length === 0 && user?.steamid && (
+        <Title size={18} align="center" mt={15}>
+          All games in your Steam library are already in your DisplayCase!
+        </Title>
+      )}
       {games.length > 0 && user?.steamid && (
         <>
           <Divider />
           <Space h="md" />
+          <Title size={22}>Games from your Steam Library</Title>
+          <Space h="md" />
           <div style={{ position: "relative" }}>
-            <LoadingOverlay visible={isLoading} overlayBlur={1} zIndex="1" />
             <SimpleGrid
               cols={4}
               spacing="lg"
@@ -148,20 +157,7 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
             </Group>
             <Button>Add All</Button>
           </Group>
-          <Space h="lg" />
         </>
-      )}
-      {user?.steamid && (
-        <Group position="right">
-          <Tooltip
-            label="You can choose which games to add to your DisplayCase!"
-            position="bottom"
-          >
-            <Button leftIcon={<FaSteam />} color="green">
-              Import Games from Steam
-            </Button>
-          </Tooltip>
-        </Group>
       )}
     </Modal>
   );
