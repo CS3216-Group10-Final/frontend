@@ -60,11 +60,6 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
         })
         .finally(() => {
           setIsLoading(false);
-          showSuccessNotification({
-            title: "Games successfully added!",
-            message: `Added all games to your DisplayCase!`,
-          });
-          onClose();
         });
     }
   }, [activePage, isOpen, user, onClose]);
@@ -86,6 +81,11 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
       })
       .finally(() => {
         setIsLoading(false);
+        showSuccessNotification({
+          title: "Games successfully added!",
+          message: `Added all games to your DisplayCase!`,
+        });
+        onClose();
       });
   };
 
