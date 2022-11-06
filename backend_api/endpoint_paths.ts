@@ -9,7 +9,6 @@ export const LOGOUT_PATH = "/logout";
 export const VERIFY_AUTHENTICATION = "/tokens/verify";
 export const REFRESH_TOKEN_PATH = "/tokens/refresh";
 export const GOOGLE_LOGIN_PATH = "/login/google";
-export const STEAM_LOGIN_PATH = "/login/steam";
 
 // User
 export const USER_PATH = "/user";
@@ -53,3 +52,7 @@ export const TIMELINE_RECENT_GAMES_PATH = "/timeline/recentgames";
 
 // Reviews
 export const REVIEW_PATH = "/reviews";
+
+// Steam
+export const STEAM_LOGIN_PATH = "/login/steam";
+export const STEAM_GAMES_PATH = "/steam/import";

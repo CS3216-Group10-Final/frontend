@@ -4,6 +4,7 @@ import {
   getGameEntryListApi,
   updateGameEntryApi,
 } from "@api/game_entries_api";
+import { importAllSteamGamesApi } from "@api/steam_api";
 import { GameEntry, GameEntryStatus } from "@api/types";
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import { RootState } from "../store";
@@ -90,6 +91,17 @@ const gameEntrySlice = createSlice({
       }
       state.gameEntries = newEntries;
     });
+    builder.addCase(importAllSteamGames.fulfilled, (state, action) => {
+      const newEntries: Record<number, GameEntry> = {};
+      const currentEntries = current(state.gameEntries);
+      for (const id of Object.keys(currentEntries)) {
+        newEntries[Number(id)] = currentEntries[Number(id)];
+      }
+      for (const gameEntry of action.payload) {
+        newEntries[gameEntry.id] = gameEntry;
+      }
+      state.gameEntries = newEntries;
+    });
   },
 });
 
@@ -148,6 +160,15 @@ export const deleteGameEntry = createAsyncThunk<
   { state: RootState }
 >("gameEntry/deleteGameEntry", async (id) => {
   await deleteGameEntryApi(id);
+});
+
+export const importAllSteamGames = createAsyncThunk<
+  GameEntry[],
+  { status: GameEntryStatus },
+  { state: RootState }
+>("gameEntry/importAllSteamGames", async ({ status }) => {
+  const response = await importAllSteamGamesApi({ status: status });
+  return response;
 });
 
 function filterGameEntriesByStatus(
