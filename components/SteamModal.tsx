@@ -1,4 +1,5 @@
 import {
+  ErrorType,
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
@@ -42,6 +43,9 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
     GameEntryStatus.COMPLETED
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [noGamesText, setNoGamesText] = useState<string>(
+    "All games in your Steam library are already in your DisplayCase!"
+  );
 
   const isMobile = useMobile();
   const dispatch = useAppDispatch();
@@ -55,7 +59,14 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
           setTotalPage(totalPage ? totalPage : 0);
         })
         .catch((error) => {
-          showApiRequestErrorNotification(handleApiRequestError(error));
+          const requestError = handleApiRequestError(error);
+          if (requestError.errorType === ErrorType.NO_STEAM_GAMES) {
+            setNoGamesText(
+              `No games found. Make sure your Steam 'Game details' privacy setting is set to public`
+            );
+          } else {
+            showApiRequestErrorNotification(requestError);
+          }
           setGames([]);
         })
         .finally(() => {
@@ -115,7 +126,7 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
       <LoadingOverlay visible={isLoading} overlayBlur={1} zIndex="1" />
       {games.length === 0 && user?.steamid && (
         <Title size={18} align="center" mt={15}>
-          All games in your Steam library are already in your DisplayCase!
+          {noGamesText}
         </Title>
       )}
       {games.length > 0 && user?.steamid && (

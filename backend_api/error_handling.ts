@@ -13,6 +13,7 @@ export enum ErrorType {
   INCORRECT_LOGIN_DETAILS,
   TOKEN_NOT_VALID,
   INVALID_USERNAME,
+  NO_STEAM_GAMES,
 }
 
 /**
@@ -91,6 +92,11 @@ const ERROR_DETAILS: Record<ErrorType, NotificationProps> = {
   [ErrorType.INVALID_USERNAME]: {
     title: "Invalid Username",
     message: "Names can only contain alphanumeric characters",
+  },
+  [ErrorType.NO_STEAM_GAMES]: {
+    title: "No Steam Games found",
+    message:
+      "Make sure your Steam 'Game details' privacy setting is set to public",
   },
 };
 

@@ -1,6 +1,8 @@
+import { ExpectedError } from "./authentication/authentication_api";
 import TokenService from "./authentication/token_service";
 import axiosInstance from "./axios";
 import { STEAM_GAMES_PATH, STEAM_LOGIN_PATH } from "./endpoint_paths";
+import { ErrorType } from "./error_handling";
 import { Game, GameEntry, GameEntryStatus } from "./types";
 
 export function getSteamLoginUrl() {
@@ -20,16 +22,30 @@ interface GetGameListResponse {
 export async function getSteamGamesApi({
   page,
 }: GetSteamGamesParams): Promise<GetGameListResponse> {
-  const response = await axiosInstance.get<Game[]>(STEAM_GAMES_PATH, {
-    params: {
-      ...(page ? { page: page } : {}),
-    },
-  });
+  const response = await axiosInstance.get<Game[] | ExpectedError>(
+    STEAM_GAMES_PATH,
+    {
+      params: {
+        ...(page ? { page: page } : {}),
+      },
+    }
+  );
+  const authExpectedError = response.data as ExpectedError;
+  if (authExpectedError.error_code == 1) {
+    throw {
+      errorType: ErrorType.NO_STEAM_GAMES,
+      errorMessage: authExpectedError.error_message,
+    };
+  } else if (authExpectedError.error_code) {
+    throw {
+      errorType: ErrorType.UNKNOWN,
+    };
+  }
   const pageNumber = response.headers["pages"];
   const totalPage = !Number.isNaN(Number(pageNumber))
     ? Number(pageNumber)
     : undefined;
-  return { games: response.data, totalPage: totalPage };
+  return { games: response.data as Game[], totalPage: totalPage };
 }
 
 interface ImportSteamGamesParams {
