@@ -1,4 +1,4 @@
-import { AuthExpectedError } from "./authentication/authentication_api";
+import { ExpectedError } from "./authentication/authentication_api";
 import axiosInstance from "./axios";
 import {
   getPathForGetUser,
@@ -39,14 +39,11 @@ export async function getUserApi(
  * Change self user's username
  */
 export async function updateSelfUsernameApi(username: string): Promise<User> {
-  const response = await axiosInstance.patch<User | AuthExpectedError>(
-    USER_PATH,
-    {
-      username: username,
-    }
-  );
+  const response = await axiosInstance.patch<User | ExpectedError>(USER_PATH, {
+    username: username,
+  });
 
-  const authExpectedError = response.data as AuthExpectedError;
+  const authExpectedError = response.data as ExpectedError;
   if (authExpectedError.error_code == 1) {
     throw {
       errorType: ErrorType.USERNAME_IN_USE,

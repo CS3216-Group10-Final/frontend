@@ -160,7 +160,7 @@ const GameEntryEditModal = (props: Props) => {
       opened={opened}
       onClose={onClose}
       title={gameEntry.game_name}
-      size={isScreenSmall ? "md" : "lg"}
+      size={isScreenSmall ? "sm" : "lg"}
     >
       <LoadingOverlay visible={isLoading} />
       <form onSubmit={form.onSubmit(handleSubmit)}>

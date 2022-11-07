@@ -52,3 +52,7 @@ export const TIMELINE_RECENT_GAMES_PATH = "/timeline/recentgames";
 
 // Reviews
 export const REVIEW_PATH = "/reviews";
+
+// Steam
+export const STEAM_LOGIN_PATH = "/login/steam";
+export const STEAM_GAMES_PATH = "/steam/import";

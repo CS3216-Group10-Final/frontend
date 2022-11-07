@@ -7,6 +7,7 @@ import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import GameSection from "@components/profile/GameSection";
+import SteamModal from "@components/SteamModal";
 import {
   ActionIcon,
   Avatar,
@@ -27,6 +28,7 @@ import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
 import { AiOutlineCamera, AiOutlineEdit } from "react-icons/ai";
+import { FaSteam } from "react-icons/fa";
 import { useMobile } from "utils/useMobile";
 import ActivitySection from "./ActivitySection";
 import Badge from "./Badge";
@@ -64,6 +66,7 @@ const ProfilePage = (props: Props) => {
   const [activeSection, setActiveSection] = useState(Section.GAMES);
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
+  const [steamModalIsOpen, setSteamModalIsOpen] = useState(false);
 
   async function updateUserStatistics(username: string) {
     getUserStatisticsByNameApi(username)
@@ -225,6 +228,15 @@ const ProfilePage = (props: Props) => {
               {isSelfProfilePage && (
                 <Group position={isMobile ? "center" : "right"} mt={12}>
                   <Button
+                    leftIcon={<FaSteam />}
+                    variant="default"
+                    onClick={() => {
+                      setSteamModalIsOpen(true);
+                    }}
+                  >
+                    Sync Steam
+                  </Button>
+                  <Button
                     onClick={openChangeUserNameModal}
                     leftIcon={<AiOutlineEdit />}
                   >
@@ -258,6 +270,10 @@ const ProfilePage = (props: Props) => {
       <UploadProfileModal
         opened={profilePicModalIsOpen}
         onClose={() => setProfilePicModalIsOpen(false)}
+      />
+      <SteamModal
+        isOpen={steamModalIsOpen}
+        onClose={() => setSteamModalIsOpen(false)}
       />
     </>
   );
