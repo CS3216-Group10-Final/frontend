@@ -135,6 +135,20 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
           <Space h="md" />
           <Title size={22}>Games from your Steam Library</Title>
           <Space h="md" />
+          <Group position="apart">
+            <Group>
+              <Text>Add all games to: </Text>
+              <Select
+                value={String(addAllGamesStatus)}
+                data={STATUS_DATA}
+                onChange={(newStatus) =>
+                  setAddAllGamesStatus(Number(newStatus))
+                }
+              />
+            </Group>
+            <Button onClick={addAllGamesToDisplayCase}>Add All</Button>
+          </Group>
+          <Space h="md" />
           <div style={{ position: "relative" }}>
             <SimpleGrid
               cols={4}
@@ -166,20 +180,6 @@ const SteamModal = ({ isOpen, onClose }: Props) => {
           </Center>
           <Space h="md" />
           <Divider />
-          <Space h="md" />
-          <Group position="apart">
-            <Group>
-              <Text>Add all games to: </Text>
-              <Select
-                value={String(addAllGamesStatus)}
-                data={STATUS_DATA}
-                onChange={(newStatus) =>
-                  setAddAllGamesStatus(Number(newStatus))
-                }
-              />
-            </Group>
-            <Button onClick={addAllGamesToDisplayCase}>Add All</Button>
-          </Group>
         </>
       )}
     </Modal>
