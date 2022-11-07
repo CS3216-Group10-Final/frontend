@@ -20,7 +20,7 @@ interface TokenResponseData {
   refresh: string;
 }
 
-export interface AuthExpectedError {
+export interface ExpectedError {
   error_code: number;
   error_message: string;
 }
@@ -39,12 +39,14 @@ export interface UserRegisterDetails {
 export async function registerUserApi(
   userRegisterDetails: UserRegisterDetails
 ) {
-  const response = await axiosInstance.post<
-    TokenResponseData | AuthExpectedError
-  >(REGISTER_PATH, userRegisterDetails, {
-    skipAuthRefresh: true,
-    authNotRequired: true,
-  });
+  const response = await axiosInstance.post<TokenResponseData | ExpectedError>(
+    REGISTER_PATH,
+    userRegisterDetails,
+    {
+      skipAuthRefresh: true,
+      authNotRequired: true,
+    }
+  );
   const tokenResponseData = response.data as TokenResponseData;
   if (tokenResponseData.access && tokenResponseData.refresh) {
     TokenService.setTokens({
@@ -53,7 +55,7 @@ export async function registerUserApi(
     });
     return;
   }
-  const authExpectedError = response.data as AuthExpectedError;
+  const authExpectedError = response.data as ExpectedError;
   if (authExpectedError.error_code == 1) {
     throw {
       errorType: ErrorType.USERNAME_IN_USE,
@@ -73,9 +75,11 @@ export async function registerUserApi(
 }
 
 export async function loginApi(userLoginDetails: UserLoginDetails) {
-  const response = await axiosInstance.post<
-    TokenResponseData | AuthExpectedError
-  >(LOGIN_PATH, userLoginDetails, { skipAuthRefresh: true });
+  const response = await axiosInstance.post<TokenResponseData | ExpectedError>(
+    LOGIN_PATH,
+    userLoginDetails,
+    { skipAuthRefresh: true }
+  );
   const tokenResponseData = response.data as TokenResponseData;
   if (tokenResponseData.access && tokenResponseData.refresh) {
     TokenService.setTokens({
@@ -84,7 +88,7 @@ export async function loginApi(userLoginDetails: UserLoginDetails) {
     });
     return;
   }
-  const authExpectedError = response.data as AuthExpectedError;
+  const authExpectedError = response.data as ExpectedError;
   if (authExpectedError.error_code == 1) {
     throw {
       errorType: ErrorType.INCORRECT_LOGIN_DETAILS,
