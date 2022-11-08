@@ -1,5 +1,9 @@
 import axiosInstance from "./axios";
-import { GAMES_PATH, getPathForGameWithId } from "./endpoint_paths";
+import {
+  GAMES_PATH,
+  getPathForGameWithId,
+  POPULAR_GAMES_PATH,
+} from "./endpoint_paths";
 import { Game } from "./types";
 
 export async function getGameByIdApi(id: number): Promise<Game> {
@@ -35,4 +39,11 @@ export async function getGameListApi({
     ? Number(pageNumber)
     : undefined;
   return { games: response.data, totalPage: totalPage };
+}
+
+export async function getPopularGameListApi(): Promise<Game[]> {
+  const response = await axiosInstance.get<Game[]>(POPULAR_GAMES_PATH, {
+    authNotRequired: true,
+  });
+  return response.data;
 }

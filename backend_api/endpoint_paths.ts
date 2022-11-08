@@ -33,6 +33,7 @@ export const GAMES_PATH = "/games";
 export function getPathForGameWithId(id: number) {
   return GAMES_PATH + "/" + id;
 }
+export const POPULAR_GAMES_PATH = "/games/recent";
 
 // Game Entries
 export const GAME_ENTRIES_PATH = "/game-entries";
