@@ -243,6 +243,13 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@mantine/carousel@^5.7.1":
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/@mantine/carousel/-/carousel-5.7.1.tgz#e95204acc28a5ed55fe83e10d7bb2fb7f97ab4e7"
+  integrity sha512-wWQ03IjutYId2RpdVP9TMRak+M+vO4KM4cn0pCwG7MoBBPUusMjEKMAXMrIhYMHTxE6q5KP1WeXWlbxse8/twQ==
+  dependencies:
+    "@mantine/utils" "5.7.1"
+
 "@mantine/core@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@mantine/core/-/core-5.5.0.tgz#c28f220d209adcab8954e82b4e103a0249e39c11"
@@ -320,6 +327,11 @@
   version "5.5.5"
   resolved "https://registry.yarnpkg.com/@mantine/utils/-/utils-5.5.5.tgz#22b412b6e9d78f2515f9f98db3f5ed83deca91ca"
   integrity sha512-nt8+A0N1cV4cJNqlKuXazShoEwqtLohHNKFuywEdF3B6vHWdbY799PbT2WmqGTwNQ+se8y5/nBMmamBZrUN4fg==
+
+"@mantine/utils@5.7.1":
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/@mantine/utils/-/utils-5.7.1.tgz#d6890be0650cdd499afd2d954713901672d15711"
+  integrity sha512-YHn6BDI2kkmLY6Zdv8MnFaolKbD+sJyCBG1GY0yO6aHiz8/vTxiaTJv7mhro7Pc1XzclDzVJvd9kAd6lzumAyg==
 
 "@next/env@12.3.1":
   version "12.3.1"
@@ -1264,6 +1276,18 @@ eastasianwidth@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz#696ce2ec0aa0e6ea93a397ffcf24aa7840c827cb"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
+
+embla-carousel-react@^7.0.4:
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/embla-carousel-react/-/embla-carousel-react-7.0.4.tgz#e5fe99db334e33f08f753fec65507c3aabb86f63"
+  integrity sha512-pSnxrvsLMt3TwVS8uqYMZGfJvRLy+3rcg3JOImVDgvNEtEbbzXoL8tR34Dph6Jh38e/Z9IZW7jVX0igu/haLyQ==
+  dependencies:
+    embla-carousel "7.0.4"
+
+embla-carousel@7.0.4:
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/embla-carousel/-/embla-carousel-7.0.4.tgz#2ca87d51da3a45d1ba6d0caee576a05340d42242"
+  integrity sha512-2/EO9Zh6yT1EiTNkCUhbYfAqe6PVODSYFZQxTeuLGFYYNTKTkHvalfuFVIdEDmtxbbGepuYtLqCmk6yzJfJeyw==
 
 emoji-regex@^8.0.0:
   version "8.0.0"

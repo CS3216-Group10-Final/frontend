@@ -1,0 +1,27 @@
+import { Genre } from "@api/types";
+
+export const allGenres: Genre[] = [
+  "Fighting",
+  "Shooter",
+  "Music",
+  "Platform",
+  "Puzzle",
+  "Racing",
+  "Real Time Strategy (RTS)",
+  "Role-playing (RPG)",
+  "Simulator",
+  "Sport",
+  "Strategy",
+  "Turn-based strategy (TBS)",
+  "Tactical",
+  "Quiz/Trivia",
+  "Hack and slash/Beat 'em up",
+  "Pinball",
+  "Adventure",
+  "Arcade",
+  "Visual Novel",
+  "Indie",
+  "Card & Board Game",
+  "MOBA",
+  "Point-and-click",
+];

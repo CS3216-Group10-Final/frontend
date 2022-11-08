@@ -1,4 +1,4 @@
-import { Platform } from "@api/types";
+import { Platform, PlatformCategory } from "@api/types";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { MdComputer } from "react-icons/md";
 import {
@@ -12,20 +12,23 @@ import {
   SiXbox,
 } from "react-icons/si";
 
-export enum PlatformCategory {
-  OTHERS = 0,
-  XBOX = 1,
-  PLAYSTATION = 2,
-  COMPUTER = 3,
-  IOS = 4,
-  ANDROID = 5,
-  NINTENDO_SWITCH = 6,
-  NINTENDO_HANDHELD = 7,
-  NINTENDO_OTHER = 8,
-  SEGA = 9,
-}
+export const PLATFORM_CATEGORY_STRINGS: Record<PlatformCategory, string> = {
+  [PlatformCategory.OTHERS]: "Others",
+  [PlatformCategory.XBOX]: "Xbox",
+  [PlatformCategory.PLAYSTATION]: "Playstation",
+  [PlatformCategory.COMPUTER]: "PC",
+  [PlatformCategory.IOS]: "iOS",
+  [PlatformCategory.ANDROID]: "Android",
+  [PlatformCategory.NINTENDO_SWITCH]: "Nintendo Switch",
+  [PlatformCategory.NINTENDO_HANDHELD]: "Nintendo Handheld",
+  [PlatformCategory.NINTENDO_OTHER]: "Nintendo",
+  [PlatformCategory.SEGA]: "Sega",
+};
 
-const PLATFORM_CATEGORY_MAPPINGS: Record<PlatformCategory, Set<Platform>> = {
+export const PLATFORM_CATEGORY_MAPPINGS: Record<
+  PlatformCategory,
+  Set<Platform>
+> = {
   [PlatformCategory.OTHERS]: new Set(),
   [PlatformCategory.XBOX]: new Set([
     "Xbox",
