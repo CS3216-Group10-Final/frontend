@@ -255,7 +255,7 @@ const Games = ({
               </Group>
               {game?.first_release_date && (
                 <Text>
-                  Release Year:{" "}
+                  First Release Year:{" "}
                   {new Date(game.first_release_date).getFullYear()}
                 </Text>
               )}
