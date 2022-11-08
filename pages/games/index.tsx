@@ -141,7 +141,7 @@ const GamesList: NextPage = () => {
         <>
           <Group position="center">
             <AiOutlineFire size={28} />
-            <Title>Popular</Title>
+            <Title size={28}>Popular New Releases</Title>
           </Group>
           <Space h="md" />
           <Carousel
