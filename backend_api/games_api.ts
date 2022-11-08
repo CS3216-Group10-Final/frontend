@@ -33,7 +33,6 @@ export async function getGameListApi({
   platforms,
   genres,
 }: GameListParams): Promise<GetGameListResponse> {
-  console.log(release_years);
   const params = new URLSearchParams();
   if (page) {
     params.append("page", String(page));
