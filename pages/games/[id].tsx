@@ -253,6 +253,12 @@ const Games = ({
                   return <Badge key={i}>{value}</Badge>;
                 })}
               </Group>
+              {game?.first_release_date && (
+                <Text>
+                  Release Year:{" "}
+                  {new Date(game.first_release_date).getFullYear()}
+                </Text>
+              )}
             </Stack>
           </Grid.Col>
         </Grid>
