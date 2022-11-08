@@ -95,3 +95,22 @@ export interface ReviewEntry {
   review: string;
   status: GameEntryStatus;
 }
+
+export enum PlatformCategory {
+  OTHERS = 0,
+  XBOX = 1,
+  PLAYSTATION = 2,
+  COMPUTER = 3,
+  IOS = 4,
+  ANDROID = 5,
+  NINTENDO_SWITCH = 6,
+  NINTENDO_HANDHELD = 7,
+  NINTENDO_OTHER = 8,
+  SEGA = 9,
+}
+
+export interface GameFilter {
+  release_years: Set<number>;
+  platforms: Set<PlatformCategory>;
+  genres: Set<Genre>;
+}

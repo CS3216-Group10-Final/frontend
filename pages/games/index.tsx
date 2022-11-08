@@ -3,11 +3,13 @@ import {
   showApiRequestErrorNotification,
 } from "@api/error_handling";
 import { getGameListApi, getPopularGameListApi } from "@api/games_api";
-import { Game } from "@api/types";
+import { Game, GameFilter } from "@api/types";
+import FilterModal from "@components/FilterModal";
 import GameCard from "@components/GameCard";
 import PageHeader from "@components/PageHeader";
 import { Carousel } from "@mantine/carousel";
 import {
+  Button,
   Center,
   Group,
   LoadingOverlay,
@@ -24,7 +26,9 @@ import { selectUser } from "@redux/slices/User_slice";
 import type { NextPage } from "next";
 import { ChangeEvent, useEffect, useState } from "react";
 import { AiOutlineFire, AiOutlineSearch } from "react-icons/ai";
+import { FiFilter } from "react-icons/fi";
 import { IoGameController } from "react-icons/io5";
+import { PLATFORM_CATEGORY_MAPPINGS } from "utils/platform_categories";
 import { useMobile } from "utils/useMobile";
 
 const GamesList: NextPage = () => {
@@ -33,12 +37,19 @@ const GamesList: NextPage = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearchTerm] = useDebouncedValue(searchTerm, 300);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [popularGames, setPopularGames] = useState<Game[]>([]);
+  const [gameFilter, setGameFilter] = useState<GameFilter>({
+    release_years: new Set(),
+    platforms: new Set(),
+    genres: new Set(),
+  });
+  const [filterModalIsOpen, setFilterModalIsOpen] = useState<boolean>(false);
 
   const isMobile = useMobile();
   const selfUser = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (selfUser) {
@@ -53,7 +64,17 @@ const GamesList: NextPage = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    getGameListApi({ page: activePage, query: debouncedSearchTerm })
+    getGameListApi({
+      page: activePage,
+      query: debouncedSearchTerm,
+      release_years: Array.from(gameFilter.release_years.values()),
+      platforms: Array.from(gameFilter.platforms.values())
+        .map((category) =>
+          Array.from(PLATFORM_CATEGORY_MAPPINGS[category].values())
+        )
+        .flat(),
+      genres: Array.from(gameFilter.genres.values()),
+    })
       .then(({ games, totalPage }) => {
         setGames(games);
         setTotalPage(totalPage ? totalPage : 0);
@@ -69,19 +90,18 @@ const GamesList: NextPage = () => {
   }, [activePage]);
 
   useEffect(() => {
-    getPopularGameListApi()
-      .then((games) => {
-        setPopularGames(games);
-      })
-      .catch((error) => {
-        showApiRequestErrorNotification(handleApiRequestError(error));
-        setPopularGames([]);
-      });
-  }, []);
-
-  useEffect(() => {
     setIsLoading(true);
-    getGameListApi({ page: 1, query: debouncedSearchTerm })
+    getGameListApi({
+      page: 1,
+      query: debouncedSearchTerm,
+      release_years: Array.from(gameFilter.release_years.values()),
+      platforms: Array.from(gameFilter.platforms.values())
+        .map((category) =>
+          Array.from(PLATFORM_CATEGORY_MAPPINGS[category].values())
+        )
+        .flat(),
+      genres: Array.from(gameFilter.genres.values()),
+    })
       .then(({ games, totalPage }) => {
         setGames(games);
         setTotalPage(totalPage ? totalPage : 0);
@@ -94,11 +114,22 @@ const GamesList: NextPage = () => {
         setIsLoading(false);
       });
     setActivePage(1);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, gameFilter]);
 
   const loadPage = (page: number) => {
     setActivePage(page);
   };
+
+  useEffect(() => {
+    getPopularGameListApi()
+      .then((games) => {
+        setPopularGames(games);
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+        setPopularGames([]);
+      });
+  }, []);
 
   return (
     <>
@@ -118,6 +149,7 @@ const GamesList: NextPage = () => {
             height={300}
             slideGap="md"
             draggable={false}
+            controlSize={40}
             loop
           >
             {popularGames.map((game) => {
@@ -135,14 +167,23 @@ const GamesList: NextPage = () => {
         <Title>Games</Title>
       </Group>
       <Space h="md" />
-      <TextInput
-        placeholder="Search"
-        icon={<AiOutlineSearch />}
-        value={searchTerm}
-        onChange={(event: ChangeEvent) =>
-          setSearchTerm((event.currentTarget as HTMLInputElement).value)
-        }
-      />
+      <Group style={{ width: "100%" }}>
+        <TextInput
+          placeholder="Search"
+          icon={<AiOutlineSearch />}
+          value={searchTerm}
+          onChange={(event: ChangeEvent) =>
+            setSearchTerm((event.currentTarget as HTMLInputElement).value)
+          }
+          style={{ flexGrow: 1 }}
+        />
+        <Button
+          leftIcon={<FiFilter />}
+          onClick={() => setFilterModalIsOpen(true)}
+        >
+          Filter
+        </Button>
+      </Group>
       <Space h="md" />
       <div style={{ position: "relative" }}>
         <LoadingOverlay visible={isLoading} overlayBlur={1} zIndex="1" />
@@ -168,6 +209,12 @@ const GamesList: NextPage = () => {
           size={isMobile ? "sm" : "md"}
         />
       </Center>
+      <FilterModal
+        isOpen={filterModalIsOpen}
+        onClose={() => setFilterModalIsOpen(false)}
+        gameFilter={gameFilter}
+        setGameFilter={(gameFilter) => setGameFilter(gameFilter)}
+      />
     </>
   );
 };

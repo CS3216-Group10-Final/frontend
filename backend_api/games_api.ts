@@ -16,6 +16,9 @@ export async function getGameByIdApi(id: number): Promise<Game> {
 interface GameListParams {
   page?: number;
   query?: string;
+  release_years?: number[];
+  platforms?: string[];
+  genres?: string[];
 }
 
 interface GetGameListResponse {
@@ -26,12 +29,30 @@ interface GetGameListResponse {
 export async function getGameListApi({
   page,
   query,
+  release_years,
+  platforms,
+  genres,
 }: GameListParams): Promise<GetGameListResponse> {
+  console.log(release_years);
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", String(page));
+  }
+  if (query) {
+    params.append("query", query);
+  }
+  for (const year of release_years ?? []) {
+    params.append("release_year", String(year));
+  }
+  for (const platform of platforms ?? []) {
+    params.append("platform", platform);
+  }
+  for (const genre of genres ?? []) {
+    params.append("genre", genre);
+  }
+
   const response = await axiosInstance.get<Game[]>(GAMES_PATH, {
-    params: {
-      ...(page ? { page: page } : {}),
-      ...(query ? { query: query } : {}),
-    },
+    params: params,
     authNotRequired: true,
   });
   const pageNumber = response.headers["pages"];
