@@ -1,4 +1,4 @@
-import { GameEntryStatus, User, UserStatistics } from "@api/types";
+import { User, UserStatistics } from "@api/types";
 import { Box, Card, Grid, Group, Text, ThemeIcon } from "@mantine/core";
 import { TbDeviceGamepad2, TbStars } from "react-icons/tb";
 import ChartBarDistribution from "./charts/ChartBarDistribution";
@@ -10,16 +10,6 @@ type Props = {
 
 const StatisticsSection = (props: Props) => {
   const { userStatistics } = props;
-
-  // useEffect(() => {
-  //   getUserStatisticsByNameApi(user.username)
-  //     .then((apiUserStatistics) => {
-  //       setUserStatistics(apiUserStatistics);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, [user]);
 
   if (!userStatistics) {
     return null;

@@ -59,7 +59,6 @@ const ProfilePage = (props: Props) => {
   const [user, setUser] = useState<User | null>(null);
   const isMobile = useMobile();
 
-  // TODO: refactor to context
   const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(
     null
   );

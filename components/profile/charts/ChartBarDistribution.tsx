@@ -28,7 +28,6 @@ const ChartBarDistribution = (props: Props) => {
     gameGenreDistribution,
     platformDistribution,
     releaseYearDistribution,
-    playYearDistribution,
   } = props;
 
   const isMobile = useMobile();
