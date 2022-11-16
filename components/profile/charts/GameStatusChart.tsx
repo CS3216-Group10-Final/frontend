@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { toProperCase } from "utils/helpers";
 import { GameEntryStatus } from "@api/types";
-import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 import { MantineTheme, useMantineTheme } from "@mantine/core";
+import React, { useState } from "react";
+import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
+import { toProperCase } from "utils/helpers";
 import { useStatusColor } from "utils/status";
 
 type Props = {
@@ -107,8 +107,6 @@ const GameStatusChart = (props: Props) => {
 
   const gameStatusData = Object.entries(gameStatusDistribution).map((entry) => {
     const [key, value] = entry;
-
-    console.log(Number(key));
 
     return {
       // Object.entries automatically maps the key into a String type

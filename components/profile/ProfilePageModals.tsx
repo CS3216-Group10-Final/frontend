@@ -65,7 +65,6 @@ export const UploadProfileModal = (props: Props) => {
     dispatch(updateProfilePic(picture))
       .unwrap()
       .then(() => {
-        console.log("SUCCESS!");
         onClose();
         showSuccessNotification({
           title: "Picture Uploaded",

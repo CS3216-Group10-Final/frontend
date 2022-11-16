@@ -73,7 +73,6 @@ const ActivitySection = (props: Props) => {
       )
         .then((games) => {
           setRecentGames(games);
-          console.log(games);
         })
         .catch((error) => {
           showApiRequestErrorNotification(handleApiRequestError(error));
