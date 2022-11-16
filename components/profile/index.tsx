@@ -16,6 +16,7 @@ import {
   Grid,
   Group,
   LoadingOverlay,
+  Menu,
   ScrollArea,
   SegmentedControl,
   SimpleGrid,
@@ -28,6 +29,7 @@ import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
 import { AiOutlineCamera, AiOutlineEdit } from "react-icons/ai";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaSteam } from "react-icons/fa";
 import { useMobile } from "utils/useMobile";
 import ActivitySection from "./ActivitySection";
@@ -225,28 +227,36 @@ const ProfilePage = (props: Props) => {
                 )}
               </Card>
               {isSelfProfilePage && (
-                <Group position={isMobile ? "center" : "right"} mt={12}>
-                  <Button
-                    leftIcon={<FaSteam />}
-                    variant="default"
-                    onClick={() => {
-                      setSteamModalIsOpen(true);
-                    }}
-                  >
-                    Sync Steam
-                  </Button>
-                  <Button
-                    onClick={openChangeUserNameModal}
-                    leftIcon={<AiOutlineEdit />}
-                  >
-                    Change Username
-                  </Button>
-                  <Button
-                    onClick={() => setProfilePicModalIsOpen(true)}
-                    leftIcon={<AiOutlineCamera />}
-                  >
-                    Upload Picture
-                  </Button>
+                <Group position={"right"} mt={12}>
+                  <Menu shadow="md" width={200}>
+                    <Menu.Target>
+                      <ActionIcon size="lg">
+                        <BsThreeDotsVertical size={20} />
+                      </ActionIcon>
+                    </Menu.Target>
+
+                    <Menu.Dropdown>
+                      <Menu.Item icon={<AiOutlineCamera />}>
+                        <Text onClick={() => setProfilePicModalIsOpen(true)}>
+                          Upload Picture
+                        </Text>
+                      </Menu.Item>
+                      <Menu.Item icon={<AiOutlineEdit />}>
+                        <Text onClick={openChangeUserNameModal}>
+                          Change Username
+                        </Text>
+                      </Menu.Item>
+                      <Menu.Item icon={<FaSteam />}>
+                        <Text
+                          onClick={() => {
+                            setSteamModalIsOpen(true);
+                          }}
+                        >
+                          Sync Steam
+                        </Text>
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
                 </Group>
               )}
             </Grid.Col>
