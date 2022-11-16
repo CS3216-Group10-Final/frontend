@@ -31,11 +31,13 @@ import { useEffect, useState } from "react";
 import { AiOutlineCamera, AiOutlineEdit } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaSteam } from "react-icons/fa";
+import { TbLock } from "react-icons/tb";
 import { useMobile } from "utils/useMobile";
 import ActivitySection from "./ActivitySection";
 import Badge from "./Badge";
 import {
   BioModalContent,
+  ChangePasswordModal,
   UploadProfileModal,
   UsernameModalContent,
 } from "./ProfilePageModals";
@@ -68,6 +70,8 @@ const ProfilePage = (props: Props) => {
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
   const [steamModalIsOpen, setSteamModalIsOpen] = useState(false);
+  const [changePasswordModalIsOpen, setChangePasswordModalIsOpen] =
+    useState(false);
 
   async function updateUserStatistics(username: string) {
     getUserStatisticsByNameApi(username)
@@ -246,6 +250,15 @@ const ProfilePage = (props: Props) => {
                           Change Username
                         </Text>
                       </Menu.Item>
+                      <Menu.Item icon={<TbLock />}>
+                        <Text
+                          onClick={() => {
+                            setChangePasswordModalIsOpen(true);
+                          }}
+                        >
+                          Change Password
+                        </Text>
+                      </Menu.Item>
                       <Menu.Item icon={<FaSteam />}>
                         <Text
                           onClick={() => {
@@ -283,6 +296,10 @@ const ProfilePage = (props: Props) => {
       <SteamModal
         isOpen={steamModalIsOpen}
         onClose={() => setSteamModalIsOpen(false)}
+      />
+      <ChangePasswordModal
+        opened={changePasswordModalIsOpen}
+        onClose={() => setChangePasswordModalIsOpen(false)}
       />
     </>
   );
