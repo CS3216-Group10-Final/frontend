@@ -27,7 +27,7 @@ import { FaSteam } from "react-icons/fa";
 import { showSuccessNotification } from "utils/notifications";
 import { STATUS_DATA } from "utils/status";
 import { useMobile } from "utils/useMobile";
-import GameCard from "./GameCard";
+import GameCard from "../GameCard";
 
 interface Props {
   isOpen: boolean;

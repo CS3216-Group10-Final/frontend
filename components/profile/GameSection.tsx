@@ -4,7 +4,7 @@ import {
 } from "@api/error_handling";
 import { getGameEntryListApi } from "@api/game_entries_api";
 import { GameEntry, GameEntryStatus, User } from "@api/types";
-import GridGameEntryCard from "@components/GridGameEntryCard";
+import GridGameEntryCard from "@components/profile/GridGameEntryCard";
 import {
   ActionIcon,
   Box,

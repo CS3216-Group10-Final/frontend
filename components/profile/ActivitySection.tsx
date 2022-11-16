@@ -27,7 +27,7 @@ import { getGameEntries } from "@redux/slices/GameEntry_slice";
 import { differenceInDays, format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { useMobile } from "utils/useMobile";
-import ActivityCard from "./ActivityCard";
+import ActivityCard from "../ActivityCard";
 
 type Props = {
   user: User;

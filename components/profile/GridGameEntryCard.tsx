@@ -27,7 +27,7 @@ import {
   getPlatformCategoryIcon,
 } from "utils/platform_categories";
 import { useStatusColor } from "utils/status";
-import ReviewModal from "./ReviewModal";
+import ReviewModal from "../ReviewModal";
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const coloredOverlay = getRef("coloredOverlay");

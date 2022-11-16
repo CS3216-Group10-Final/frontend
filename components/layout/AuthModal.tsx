@@ -26,7 +26,7 @@ import { getSelfUser } from "@redux/slices/User_slice";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
-import { GoogleButton } from "./SocialButtons";
+import { GoogleButton } from "../SocialButtons";
 
 type Props = {
   isOpen: boolean;

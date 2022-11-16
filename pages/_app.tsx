@@ -1,4 +1,4 @@
-import Layout from "@components/Layout";
+import Layout from "@components/layout/Layout";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { NotificationsProvider } from "@mantine/notifications";

@@ -1,7 +1,7 @@
 import { GameEntryStatus, User, UserStatistics } from "@api/types";
 import { Box, Card, Grid, Group, Text, ThemeIcon } from "@mantine/core";
-import ChartBarDistribution from "./ChartBarDistribution";
-import { TbStars, TbDeviceGamepad2 } from "react-icons/tb";
+import { TbDeviceGamepad2, TbStars } from "react-icons/tb";
+import ChartBarDistribution from "./charts/ChartBarDistribution";
 
 type Props = {
   user: User;

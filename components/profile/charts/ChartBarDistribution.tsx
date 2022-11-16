@@ -1,10 +1,10 @@
-import { Stack, Card, Box, Title } from "@mantine/core";
 import { GameEntryStatus, Genre, Platform } from "@api/types";
+import { Box, Card, Stack, Title } from "@mantine/core";
 import { useMobile } from "utils/useMobile";
-import GameStatusChart from "./charts/GameStatusChart";
-import GenreChart from "./charts/GenreChart";
-import PlatformChart from "./charts/PlatformChart";
-import ReleaseYearChart from "./charts/ReleaseYearChart";
+import GameStatusChart from "./GameStatusChart";
+import GenreChart from "./GenreChart";
+import PlatformChart from "./PlatformChart";
+import ReleaseYearChart from "./ReleaseYearChart";
 
 type Props = {
   gameStatusDistribution: Partial<Record<GameEntryStatus, number>>;

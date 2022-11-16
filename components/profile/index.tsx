@@ -7,7 +7,7 @@ import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import GameSection from "@components/profile/GameSection";
-import SteamModal from "@components/SteamModal";
+import SteamModal from "@components/profile/SteamModal";
 import {
   ActionIcon,
   Avatar,
