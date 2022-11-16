@@ -77,8 +77,15 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
         return value ? null : "Username is required";
       },
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: () =>
-        passwordStrength === 100 ? null : "Password does not meet requirements",
+      password: (value) => {
+        if (modalType === "login") {
+          return value ? null : "Password cannot be empty";
+        } else {
+          return passwordStrength === 100
+            ? null
+            : "Password does not meet requirements";
+        }
+      },
     },
   });
 
