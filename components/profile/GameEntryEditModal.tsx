@@ -144,7 +144,6 @@ const GameEntryEditModal = (props: Props) => {
       .unwrap()
       .then(() => {
         form.reset();
-        console.log("deleted");
         showSuccessNotification({
           title: "Game deleted from display case",
           message: `${gameEntry.game_name}`,

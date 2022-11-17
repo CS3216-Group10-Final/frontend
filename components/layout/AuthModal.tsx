@@ -7,6 +7,7 @@ import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
+import { PasswordStrength } from "@components/PasswordStrength";
 import {
   Anchor,
   Button,
@@ -26,7 +27,7 @@ import { getSelfUser } from "@redux/slices/User_slice";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { showSuccessNotification } from "utils/notifications";
-import { GoogleButton } from "./SocialButtons";
+import { GoogleButton } from "../SocialButtons";
 
 type Props = {
   isOpen: boolean;
@@ -35,6 +36,7 @@ type Props = {
 
 const AuthModal = ({ isOpen, onClose }: Props) => {
   const router = useRouter();
+  const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [googleAuthLink, setGoogleAuthLink] = useState<string>("");
   const theme = useMantineTheme();
@@ -75,7 +77,15 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
         return value ? null : "Username is required";
       },
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) => (value ? null : "Password is required"),
+      password: (value) => {
+        if (modalType === "login") {
+          return value ? null : "Password cannot be empty";
+        } else {
+          return passwordStrength === 100
+            ? null
+            : "Password does not meet requirements";
+        }
+      },
     },
   });
 
@@ -147,8 +157,6 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
               <GoogleButton link={googleAuthLink}>
                 Login with Google
               </GoogleButton>
-              {/* <TwitterButton>Login with Twitter</TwitterButton> */}
-              {/* <FaceBookButton>Login with Facebook</FaceBookButton> */}
               <Divider />
             </Stack>
           )}
@@ -169,6 +177,13 @@ const AuthModal = ({ isOpen, onClose }: Props) => {
             label="Password"
             {...form.getInputProps("password")}
           />
+          {modalType === "register" && (
+            <PasswordStrength
+              password={form.values.password}
+              passwordStrength={passwordStrength}
+              setPasswordStrength={setPasswordStrength}
+            />
+          )}
           <Space h="lg" />
           <Group position="apart">
             <Anchor

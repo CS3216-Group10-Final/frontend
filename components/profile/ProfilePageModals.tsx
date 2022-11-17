@@ -1,7 +1,9 @@
+import { changePasswordApi } from "@api/authentication/authentication_api";
 import {
   handleApiRequestError,
   showApiRequestErrorNotification,
 } from "@api/error_handling";
+import { PasswordStrength } from "@components/PasswordStrength";
 import {
   Button,
   Center,
@@ -9,6 +11,7 @@ import {
   Group,
   Image,
   Modal,
+  PasswordInput,
   Space,
   Stack,
   Textarea,
@@ -62,7 +65,6 @@ export const UploadProfileModal = (props: Props) => {
     dispatch(updateProfilePic(picture))
       .unwrap()
       .then(() => {
-        console.log("SUCCESS!");
         onClose();
         showSuccessNotification({
           title: "Picture Uploaded",
@@ -75,12 +77,7 @@ export const UploadProfileModal = (props: Props) => {
   };
 
   return (
-    <Modal
-      title="Upload Profile Picture"
-      opened={opened}
-      centered
-      onClose={onClose}
-    >
+    <Modal title="Upload Profile Picture" opened={opened} onClose={onClose}>
       <Stack>
         <form onSubmit={form.onSubmit(handleSubmit)}>
           {form.values.picture ? (
@@ -208,5 +205,91 @@ export const BioModalContent = () => {
         Change
       </Button>
     </>
+  );
+};
+
+export const ChangePasswordModal = (props: Props) => {
+  const { opened, onClose } = props;
+  const [passwordStrength, setPasswordStrength] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+
+  interface FormValues {
+    oldPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+  }
+
+  const form = useForm<FormValues>({
+    initialValues: {
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
+
+    validate: {
+      oldPassword: (value) => (value ? null : "Please enter your old password"),
+      newPassword: () => {
+        return passwordStrength === 100
+          ? null
+          : "Password does not meet requirements";
+      },
+      confirmNewPassword: (value, values) => {
+        if (value !== values.newPassword) {
+          return "Passwords do not match";
+        }
+        return value ? null : "Please confirm your new password";
+      },
+    },
+  });
+
+  const handleSubmit = (values: FormValues) => {
+    const { oldPassword, newPassword } = values;
+    setLoading(true);
+    changePasswordApi(oldPassword, newPassword)
+      .then(() => {
+        onClose();
+        showSuccessNotification({
+          title: "Success!",
+          message: `Password successfully changed`,
+        });
+      })
+      .catch((error) => {
+        showApiRequestErrorNotification(handleApiRequestError(error));
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return (
+    <Modal title="Change Password" opened={opened} onClose={onClose}>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack>
+          <PasswordInput
+            label="Old Password"
+            withAsterisk
+            {...form.getInputProps("oldPassword")}
+          />
+          <PasswordInput
+            label="New Password"
+            withAsterisk
+            {...form.getInputProps("newPassword")}
+          />
+          <PasswordStrength
+            password={form.values.newPassword}
+            passwordStrength={passwordStrength}
+            setPasswordStrength={setPasswordStrength}
+          />
+          <PasswordInput
+            label="Confirm New Password"
+            withAsterisk
+            {...form.getInputProps("confirmNewPassword")}
+          />
+          <Button type="submit" fullWidth loading={loading}>
+            Change Password
+          </Button>
+        </Stack>
+      </form>
+    </Modal>
   );
 };

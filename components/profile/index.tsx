@@ -7,7 +7,7 @@ import { User, UserStatistics } from "@api/types";
 import { getUserApi } from "@api/users_api";
 import { getUserStatisticsByNameApi } from "@api/user_statistics_api";
 import GameSection from "@components/profile/GameSection";
-import SteamModal from "@components/SteamModal";
+import SteamModal from "@components/profile/SteamModal";
 import {
   ActionIcon,
   Avatar,
@@ -16,6 +16,7 @@ import {
   Grid,
   Group,
   LoadingOverlay,
+  Menu,
   ScrollArea,
   SegmentedControl,
   SimpleGrid,
@@ -28,12 +29,15 @@ import { useAppSelector } from "@redux/hooks";
 import { selectUser } from "@redux/slices/User_slice";
 import { useEffect, useState } from "react";
 import { AiOutlineCamera, AiOutlineEdit } from "react-icons/ai";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaSteam } from "react-icons/fa";
+import { TbLock } from "react-icons/tb";
 import { useMobile } from "utils/useMobile";
 import ActivitySection from "./ActivitySection";
 import Badge from "./Badge";
 import {
   BioModalContent,
+  ChangePasswordModal,
   UploadProfileModal,
   UsernameModalContent,
 } from "./ProfilePageModals";
@@ -59,7 +63,6 @@ const ProfilePage = (props: Props) => {
   const [user, setUser] = useState<User | null>(null);
   const isMobile = useMobile();
 
-  // TODO: refactor to context
   const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(
     null
   );
@@ -67,6 +70,8 @@ const ProfilePage = (props: Props) => {
 
   const [profilePicModalIsOpen, setProfilePicModalIsOpen] = useState(false);
   const [steamModalIsOpen, setSteamModalIsOpen] = useState(false);
+  const [changePasswordModalIsOpen, setChangePasswordModalIsOpen] =
+    useState(false);
 
   async function updateUserStatistics(username: string) {
     getUserStatisticsByNameApi(username)
@@ -226,28 +231,45 @@ const ProfilePage = (props: Props) => {
                 )}
               </Card>
               {isSelfProfilePage && (
-                <Group position={isMobile ? "center" : "right"} mt={12}>
-                  <Button
-                    leftIcon={<FaSteam />}
-                    variant="default"
-                    onClick={() => {
-                      setSteamModalIsOpen(true);
-                    }}
-                  >
-                    Sync Steam
-                  </Button>
-                  <Button
-                    onClick={openChangeUserNameModal}
-                    leftIcon={<AiOutlineEdit />}
-                  >
-                    Change Username
-                  </Button>
-                  <Button
-                    onClick={() => setProfilePicModalIsOpen(true)}
-                    leftIcon={<AiOutlineCamera />}
-                  >
-                    Upload Picture
-                  </Button>
+                <Group position={"right"} mt={12}>
+                  <Menu shadow="md" width={200}>
+                    <Menu.Target>
+                      <ActionIcon size="lg">
+                        <BsThreeDotsVertical size={20} />
+                      </ActionIcon>
+                    </Menu.Target>
+
+                    <Menu.Dropdown>
+                      <Menu.Item icon={<AiOutlineCamera />}>
+                        <Text onClick={() => setProfilePicModalIsOpen(true)}>
+                          Upload Picture
+                        </Text>
+                      </Menu.Item>
+                      <Menu.Item icon={<AiOutlineEdit />}>
+                        <Text onClick={openChangeUserNameModal}>
+                          Change Username
+                        </Text>
+                      </Menu.Item>
+                      <Menu.Item icon={<TbLock />}>
+                        <Text
+                          onClick={() => {
+                            setChangePasswordModalIsOpen(true);
+                          }}
+                        >
+                          Change Password
+                        </Text>
+                      </Menu.Item>
+                      <Menu.Item icon={<FaSteam />}>
+                        <Text
+                          onClick={() => {
+                            setSteamModalIsOpen(true);
+                          }}
+                        >
+                          Sync Steam
+                        </Text>
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
                 </Group>
               )}
             </Grid.Col>
@@ -274,6 +296,10 @@ const ProfilePage = (props: Props) => {
       <SteamModal
         isOpen={steamModalIsOpen}
         onClose={() => setSteamModalIsOpen(false)}
+      />
+      <ChangePasswordModal
+        opened={changePasswordModalIsOpen}
+        onClose={() => setChangePasswordModalIsOpen(false)}
       />
     </>
   );

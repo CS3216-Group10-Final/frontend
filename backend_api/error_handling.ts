@@ -14,6 +14,7 @@ export enum ErrorType {
   TOKEN_NOT_VALID,
   INVALID_USERNAME,
   NO_STEAM_GAMES,
+  INVALID_PASSWORD,
 }
 
 /**
@@ -82,8 +83,8 @@ const ERROR_DETAILS: Record<ErrorType, NotificationProps> = {
     message: "Oh no, the email has already been taken :(",
   },
   [ErrorType.INCORRECT_LOGIN_DETAILS]: {
-    title: "Invalid Credential",
-    message: "Oh no, cannot login with the provided credentials :(",
+    title: "Invalid Credentials",
+    message: "Email or Password is incorrect",
   },
   [ErrorType.TOKEN_NOT_VALID]: {
     title: "Authentication Error",
@@ -97,6 +98,10 @@ const ERROR_DETAILS: Record<ErrorType, NotificationProps> = {
     title: "No Steam Games found",
     message:
       "Make sure your Steam 'Game details' privacy setting is set to public",
+  },
+  [ErrorType.INVALID_PASSWORD]: {
+    title: "Invalid Password",
+    message: "Password is incorrect",
   },
 };
 

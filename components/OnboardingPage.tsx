@@ -20,7 +20,7 @@ import { FaGamepad } from "react-icons/fa";
 import { GiConsoleController } from "react-icons/gi";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { TbArchive, TbChartLine, TbUsers } from "react-icons/tb";
-import AuthModal from "./AuthModal";
+import AuthModal from "./layout/AuthModal";
 const useStyles = createStyles((theme) => ({
   inner: {
     display: "flex",

@@ -6,6 +6,7 @@ import { ErrorType } from "@api/error_handling";
 import axios from "axios";
 import axiosInstance from "../axios";
 import {
+  CHANGE_PASSWORD_PATH,
   GOOGLE_LOGIN_PATH,
   LOGIN_PATH,
   LOGOUT_PATH,
@@ -102,6 +103,27 @@ export async function loginApi(userLoginDetails: UserLoginDetails) {
   } else if (authExpectedError.error_code) {
     throw {
       errorType: ErrorType.UNKNOWN,
+    };
+  }
+}
+
+export async function changePasswordApi(
+  oldPassword: string,
+  newPassword: string
+) {
+  const response = await axiosInstance.post<void | ExpectedError>(
+    CHANGE_PASSWORD_PATH,
+    {
+      old_password: oldPassword,
+      new_password: newPassword,
+    },
+    { skipAuthRefresh: true }
+  );
+  const authExpectedError = response.data as ExpectedError;
+  if (authExpectedError.error_code == 1) {
+    throw {
+      errorType: ErrorType.INCORRECT_LOGIN_DETAILS,
+      errorMessage: authExpectedError.error_message,
     };
   }
 }

@@ -6,6 +6,7 @@
 export const LOGIN_PATH = "/login";
 export const REGISTER_PATH = "/register";
 export const LOGOUT_PATH = "/logout";
+export const CHANGE_PASSWORD_PATH = "/change-password";
 export const VERIFY_AUTHENTICATION = "/tokens/verify";
 export const REFRESH_TOKEN_PATH = "/tokens/refresh";
 export const GOOGLE_LOGIN_PATH = "/login/google";
