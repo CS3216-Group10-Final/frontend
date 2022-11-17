@@ -1,34 +1,34 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DisplayCase
 
-## Getting Started
+## URL: [https://www.displaycase.me/](https://www.displaycase.me/)
 
-First, run the development server:
+### Members
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+| Frontend                | Backend                       |
+| ----------------------- | ----------------------------- |
+| Dasco Gabriel A0224199X | Lui Kai Siang A0217985M       |
+| Lee Zen Been A0218515H  | Bernard Wan De Yuan A0218499L |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Set-up instructions for local testing
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Frontend
+  - Navigate to /frontend directory
+  - `yarn install` to install dependencies
+  - `yarn dev` to set-up local development server on localhost:3000
+- Backend
+  - Navigate to /backend directory
+  - `virtualenv venv` to set up a new virtual environment
+  - `source venv/bin/activate` to activate the virtual environment
+  - `pip install -r requirements.txt` to install the required packages
+  - `python manage.py migrate` to run the migrations and create a database
+  - `python managepy runserver` to set-up local development server on localhost:8000
+- Accounts for testing (only on production server)
+  - Account 1
+    - Email: gamer@gmail.com
+    - Password: Gamer1!!
+  - Account 2
+    - Email: gamer2@gmail.com
+    - Password: Gamer2!!
+  - Account 3
+    - Email: gamer3@gmail.com
+    - Password: Gamer3!!
